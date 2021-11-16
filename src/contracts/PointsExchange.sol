@@ -19,7 +19,7 @@ contract PointsExchange is Context {
     uint256 public proposalId = 0;
     mapping (uint256 => Proposal) public proposals;
     mapping (address => uint256[]) public proposalIds;
-    mapping (address => mapping (uint256 => uint256)) proposalIdToIndexes;
+    mapping (uint256 => uint256) proposalIdToIndexes;
     event ChangeExchangeRate(address bank, string rate);
 
     modifier onlyBank() {
@@ -39,18 +39,14 @@ contract PointsExchange is Context {
     function propose(string memory wantPoint, string memory givePoint, uint256 wantAmount, uint256 giveAmount) public {
         proposals[++proposalId] = Proposal(_msgSender(), wantPoint, givePoint, wantAmount, giveAmount);
         proposalIds[_msgSender()].push(proposalId);
-        proposalIdToIndexes[_msgSender()][proposalId] = proposalIds[_msgSender()].length-1;
+        proposalIdToIndexes[proposalId] = proposalIds[_msgSender()].length-1;
     }
 
-    function receiverAccept(uint256 id) public {
-        
-    }
-
-    function accept(uint256 index, uint256 id) public {
-        address proposer = proposals[id].proposer;
-        uint256[] storage tempProposalIds = proposalIds[proposer];
-        tempProposalIds[index] = tempProposalIds[tempProposalIds.length-1];
-        tempProposalIds.pop();
+    function accept(uint256 id) public {
+        uint256[] storage proposerProposalIds = proposalIds[proposals[id].proposer];
+        proposerProposalIds[proposalIdToIndexes[id]] = proposerProposalIds[proposerProposalIds.length-1];
+        proposerProposalIds.pop();
+        delete proposalIdToIndexes[id];
     }
 
 }

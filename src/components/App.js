@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import Web3 from 'web3';
 import Identicon from 'identicon.js';
 import './App.css';
-import Decentragram from '../abis/Decentragram.json'
 import Navbar from './Navbar'
 import Main from './Main'
 import Header from './Header';
 import Footer from './Footer';
+import NotFound from './NotFound';
+import { Profile } from './Profile';
+import { Login } from './Login';
+// import { Auth } from '../types';
+
+const LS_KEY = 'login-with-metamask:auth';
 
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
@@ -14,8 +21,9 @@ const ipfs = ipfsClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https' }
 class App extends Component {
 
   async componentDidMount() {
-    //await this.loadWeb3()
-    //await this.loadBlockchainData()
+    await this.loadWeb3()
+    await this.loadBlockchainData()
+    await this.loadAccessToken()
   }
 
   async loadWeb3() {
@@ -34,7 +42,7 @@ class App extends Component {
     this.setState({ account: accounts[0] })
     // Network ID
     const networkId = await web3.eth.net.getId()
-    const networkData = Decentragram.networks[networkId]
+    /* const networkData = Decentragram.networks[networkId]
     if (networkData) {
       const decentragram = new web3.eth.Contract(Decentragram.abi, networkData.address)
       this.setState({ decentragram })
@@ -55,7 +63,16 @@ class App extends Component {
       this.setState({ loading: false })
     } else {
       window.alert('Decentragram contract not deployed to detected network.')
-    }
+    } */
+  }
+
+  async loadAccessToken() {
+    // Access token is stored in localstorage
+		const ls = window.localStorage.getItem(LS_KEY);
+    console.log(ls)
+		const auth = ls && JSON.parse(ls);
+    console.log(auth)
+		this.setState({ auth });
   }
 
   captureFile = event => {
@@ -87,36 +104,60 @@ class App extends Component {
   }
 
   tipImageOwner = (id, tipAmount) => {
-    this.setState({ loading: true})
+    this.setState({ loading: true })
     this.state.decentragram.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
-      this.setState({ loading: false})
+      this.setState({ loading: false })
     })
   }
+
+	handleLoggedIn = (auth) => {
+    console.log(auth)
+		localStorage.setItem(LS_KEY, JSON.stringify(auth))
+		this.setState({ auth })
+	}
+
+	handleLoggedOut = () => {
+		localStorage.removeItem(LS_KEY)
+		this.setState({ auth: undefined })
+	}
 
   constructor(props) {
     super(props)
     this.state = {
       account: '',
+      auth: undefined,
+      sequelize: null,
       decentragram: null,
       images: [],
       loading: false
     }
   }
 
+  
+
   render() {
     return (
-      <div>
-        <Navbar/>
-        <Header/>
-        { this.state.loading
-          ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
-          : <Main 
-              
-            />
+      <Router>
+        <div>
           
-        }
-        <Footer/>
-      </div>
+          <Navbar/>
+          <Header/>
+            { this.state.loading
+              ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
+              : 
+              this.state.auth 
+              ? <Profile auth = { this.state.auth } onLoggedOut = { this.handleLoggedOut } />
+              : <Login onLoggedIn = { this.handleLoggedIn } />
+              
+              /* <Routes>
+                <Route path="/" element={<Main/>}/>
+                <Route path="*" element={<NotFound/>} />
+              </Routes> */
+              
+            }
+          <Footer/>
+        </div>
+      </Router>
     );
   }
 }

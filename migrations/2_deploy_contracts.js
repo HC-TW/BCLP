@@ -7,6 +7,16 @@ module.exports = function (deployer) {
   deployer.deploy(RPToken, "Rewarding Points", "RP").then(function () {
     return deployer.deploy(BankLiability, RPToken.address);
   }).then(function () {
+    return deployer.deploy(PointsExchange, RPToken.address);
+  }).then(function () {
+    return RPToken.deployed();
+  }).then(function (instance) { // load other contracts' information
+    instance.loadBankLiability(BankLiability.address);
+  });
+
+  /* deployer.deploy(RPToken, "Rewarding Points", "RP").then(function () {
+    return deployer.deploy(BankLiability, RPToken.address);
+  }).then(function () {
     return deployer.deploy(Credit, RPToken.address);
   }).then(function () {
     return deployer.deploy(PointsExchange, RPToken.address);
@@ -21,5 +31,5 @@ module.exports = function (deployer) {
     return BankLiability.deployed();
   }).then(function (instance) {
     return instance.loadCredit(Credit.address);
-  });
+  }); */
 };
