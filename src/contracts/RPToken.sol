@@ -377,6 +377,10 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     function removeUser(address addr) public onlyOwner {
         delete _users[addr];
     }
+
+    function isUser(address addr) public view returns (bool) {
+        return _users[addr] || (!_banks[addr] && !_issuers[addr] && !_merchants[addr]);
+    }
     
     function addMerchant(address addr) public onlyOwner {
         _merchants[addr] = true;

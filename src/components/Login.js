@@ -1,16 +1,15 @@
-import './Login.css';
+import './Login.scss';
 
 import React, { useState } from 'react';
+import Identicon from 'identicon.js';
+import LoginNavbar from './LoginNavbar';
+import Header from './Header';
 
-// import { Auth } from '../types';
-
-
-
-export const Login = ({ onLoggedIn }) => {
+export const Login = ({ account, onLoggedIn }) => {
 	const [loading, setLoading] = useState(false); // Loading button state
 
 	const handleAuthenticate = async ({ publicAddress, signature }) => {
-		console.log({publicAddress, signature })
+		console.log({ publicAddress, signature })
 		const response = await fetch(`http://localhost:8080/api/auth`, {
 			body: JSON.stringify({ publicAddress, signature }),
 			headers: {
@@ -29,7 +28,7 @@ export const Login = ({ onLoggedIn }) => {
 				publicAddress,
 				'' // MetaMask will ignore the password argument here
 			);
-			
+
 			return { publicAddress, signature };
 		} catch (err) {
 			throw new Error(
@@ -83,21 +82,24 @@ export const Login = ({ onLoggedIn }) => {
 
 	return (
 		<div>
-			<p>
-				Please select your login method.
-				<br />
-				For the purpose of this demo, only MetaMask login is
-				implemented.
+			<LoginNavbar/>
+			<Header/>
+			<p class="my-4 text-center font-monospace">
+				Your Ethereum address: {account}&nbsp;
+				{account
+					? <img
+						className='ml-2'
+						width='30'
+						height='30'
+						src={`data:image/png;base64,${new Identicon(account, 30).toString()}`}
+					/>
+					: <span></span>
+				}
+				<br/>
+				<button className="btn btn-outline-primary btn-lg Login-button" onClick={handleClick}>
+					{loading ? 'Loading...' : 'Login with MetaMask'}
+				</button>
 			</p>
-			<button className="Login-button Login-mm" onClick={handleClick}>
-				{loading ? 'Loading...' : 'Login with MetaMask'}
-			</button>
-			<button className="Login-button Login-fb" disabled>
-				Login with Facebook
-			</button>
-			<button className="Login-button Login-email" disabled>
-				Login with Email
-			</button>
 		</div>
 	);
 };

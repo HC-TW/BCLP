@@ -1,9 +1,10 @@
+@import "bootstrap";
+
 .Login-button {
-  color: white;
   display: block;
-  font-size: 16px;
+  font-size: 18px;
   height: 60px;
-  margin: 10px auto;
+  margin: 20px auto;
   width: 300px;
 }
 
@@ -22,3 +23,9 @@
 .Login-mm {
   background-color: rgb(255, 125, 0);
 }
+
+.btn-outline-primary {
+  @include button-outline-variant(rgb(255, 125, 0), rgb(255, 255, 255));
+}
+
+
