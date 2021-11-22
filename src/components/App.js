@@ -31,6 +31,7 @@ class App extends Component {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum)
       await window.ethereum.request({ method: 'eth_requestAccounts' })
+      window.ethereum.on('accountsChanged', this.handleAccountsChanged);
     } else {
       window.alert('You should install MetaMask!')
     }
@@ -47,9 +48,21 @@ class App extends Component {
     if (networkData) {
       const rpToken = new web3.eth.Contract(RPToken.abi, networkData.address)
       this.setState({ rpToken })
+      // Load role
+      if (await rpToken.methods.isBank(this.state.account).call()) {
+        this.setState({ role: 'Bank' })
+      } else if (await rpToken.methods.isIssuer(this.state.account).call()) {
+        this.setState({ role: 'Issuer' })
+      } else if (await rpToken.methods.isMerchant(this.state.account).call()) {
+        this.setState({ role: 'Merchant' })
+      } else {
+        this.setState({ role: 'User' })
+      }
+      console.log(this.state.role)
     } else {
       window.alert('RPToken contract not deployed to detected network.')
     }
+    
   }
 
   async loadAccessToken() {
@@ -57,6 +70,17 @@ class App extends Component {
     const ls = window.localStorage.getItem(LS_KEY);
     const auth = ls && JSON.parse(ls);
     this.setState({ auth });
+  }
+
+  // For now, 'eth_accounts' will continue to always return an array
+   handleAccountsChanged = (accounts) => {
+    if (accounts.length === 0) {
+      // MetaMask is locked or the user has not connected any accounts
+      console.log('Please connect to MetaMask.');
+    } else if (accounts[0] !== this.state.account) {
+      this.setState({account: accounts[0]});
+      // Do any other work!
+    }
   }
 
   captureFile = event => {
@@ -109,6 +133,7 @@ class App extends Component {
     super(props)
     this.state = {
       account: '',
+      role: '',
       auth: undefined,
       sequelize: null,
       rpToken: null,
@@ -127,7 +152,7 @@ class App extends Component {
             ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
             :
             this.state.auth
-              ? <Main account={this.state.account} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />
+              ? <Main account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />
               : <Login account={this.state.account} onLoggedIn={this.handleLoggedIn} />
             /* <Routes>
               <Route path="/" element={<Main/>}/>

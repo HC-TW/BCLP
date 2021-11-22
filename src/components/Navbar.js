@@ -5,6 +5,8 @@ import Identicon from 'identicon.js';
 
 class Navbar extends Component {
 
+	
+
 	handleClose = () => {
 		this.setState({ show: false })
 	}
@@ -19,6 +21,7 @@ class Navbar extends Component {
 			show: false
 		}
 	}
+
 	render() {
 		return (
 			<div>
@@ -43,12 +46,13 @@ class Navbar extends Component {
 							</ul>
 							<ul className="navbar-nav px-3">
 								<li className="nav-item text-nowrap">
+									<span class="me-2 badge bg-dark">{this.props.role}</span>
 									<small className="text-secondary">
 										<small id="account">{this.props.account}</small>
 									</small>
 									{this.props.account
 										? <img
-											className='ml-2'
+											className='ms-2'
 											width='30'
 											height='30'
 											src={`data:image/png;base64,${new Identicon(this.props.account, 30).toString()}`}
@@ -83,7 +87,6 @@ class Navbar extends Component {
 					</Modal.Footer>
 				</Modal>
 			</div>
-
 		);
 	}
 }

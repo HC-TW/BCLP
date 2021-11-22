@@ -85,10 +85,10 @@ export const Login = ({ account, onLoggedIn }) => {
 			<LoginNavbar/>
 			<Header/>
 			<p class="my-4 text-center font-monospace">
-				Your Ethereum address: {account}&nbsp;
+				Your Ethereum address: {account}
 				{account
 					? <img
-						className='ml-2'
+						className='ms-2'
 						width='30'
 						height='30'
 						src={`data:image/png;base64,${new Identicon(account, 30).toString()}`}

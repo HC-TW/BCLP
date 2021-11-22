@@ -369,6 +369,10 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     function removeIssuer(address addr) public onlyOwner {
         delete _issuers[addr];
     }
+
+    function isIssuer(address addr) public view returns (bool) {
+        return _issuers[addr];
+    }
     
     function addUser(address addr) public onlyOwner {
         _users[addr] = true;
@@ -379,7 +383,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     }
 
     function isUser(address addr) public view returns (bool) {
-        return _users[addr] || (!_banks[addr] && !_issuers[addr] && !_merchants[addr]);
+        return _users[addr];
     }
     
     function addMerchant(address addr) public onlyOwner {
@@ -388,6 +392,10 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     
     function removeMerchant(address addr) public onlyOwner {
         delete _merchants[addr];
+    }
+
+    function isMerchant(address addr) public view returns (bool) {
+        return _merchants[addr];
     }
     // Bank -> Issuer
     function deliver(address issuer, uint256 amount) public onlyBank returns (bool) {
