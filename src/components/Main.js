@@ -1,13 +1,14 @@
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
-import Identicon from 'identicon.js';
 import Navbar from './Navbar';
 import Header from './Header';
+import { Adminconfig } from '../config';
 
 class Main extends Component {
 
 	async componentDidMount() {
 		await this.loadUser();
+		await this.handleRole();
 	}
 
 	async loadUser() {
@@ -24,6 +25,21 @@ class Main extends Component {
 		const user = await response.json()
 		this.setState({ user })
 		console.log(this.state.user)
+	}
+
+	async handleRole() {
+		const web3 = window.web3
+		const rpToken = window.rpToken
+		if (!await rpToken.methods.isUser(this.props.account).call({from : this.props.account})) {
+			const tx = {
+				from: Adminconfig.address, 
+				to: rpToken.options.address, 
+				gas: 6721975, 
+				data: rpToken.methods.addUser(this.props.account).encodeABI() 
+			};
+			const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
+			web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', console.log)
+		}
 	}
 
 	constructor(props) {

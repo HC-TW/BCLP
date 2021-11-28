@@ -1,5 +1,3 @@
-// import { NextFunction, Request, Response } from 'express';
-
 const User = require('../../models').user;
 
 exports.find = (req, res, next) => {

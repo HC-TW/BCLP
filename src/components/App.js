@@ -1,18 +1,15 @@
+import './App.css';
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Web3 from 'web3';
-import RPToken from '../abis/RPToken.json'
-import Identicon from 'identicon.js';
-import './App.css';
-import LoginNavbar from './LoginNavbar';
-import Navbar from './Navbar'
-import Main from './Main'
-import Header from './Header';
+import RPToken from '../abis/RPToken.json';
+import Main from './Main';
+import Admin from './Admin';
 import Footer from './Footer';
 import NotFound from './NotFound';
-import { Profile } from './Profile';
 import { Login } from './Login';
+import { Adminconfig } from '../config';
 
 const LS_KEY = 'login-with-metamask:auth';
 
@@ -30,8 +27,7 @@ class App extends Component {
   async loadWeb3() {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum)
-      await window.ethereum.request({ method: 'eth_requestAccounts' })
-      window.ethereum.on('accountsChanged', this.handleAccountsChanged);
+
     } else {
       window.alert('You should install MetaMask!')
     }
@@ -40,29 +36,18 @@ class App extends Component {
   async loadBlockchainData() {
     const web3 = window.web3
     // Load account
-    const accounts = await web3.eth.getAccounts()
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    window.ethereum.on('accountsChanged', this.handleAccountsChanged);
     this.setState({ account: accounts[0] })
     // Network ID
     const networkId = await web3.eth.net.getId()
     const networkData = RPToken.networks[networkId]
     if (networkData) {
-      const rpToken = new web3.eth.Contract(RPToken.abi, networkData.address)
-      this.setState({ rpToken })
-      // Load role
-      if (await rpToken.methods.isBank(this.state.account).call()) {
-        this.setState({ role: 'Bank' })
-      } else if (await rpToken.methods.isIssuer(this.state.account).call()) {
-        this.setState({ role: 'Issuer' })
-      } else if (await rpToken.methods.isMerchant(this.state.account).call()) {
-        this.setState({ role: 'Merchant' })
-      } else {
-        this.setState({ role: 'User' })
-      }
-      console.log(this.state.role)
+      window.rpToken = new web3.eth.Contract(RPToken.abi, networkData.address)
+      this.loadRole();
     } else {
       window.alert('RPToken contract not deployed to detected network.')
     }
-    
   }
 
   async loadAccessToken() {
@@ -72,14 +57,32 @@ class App extends Component {
     this.setState({ auth });
   }
 
+  async loadRole() {
+    const rpToken = window.rpToken
+    if (this.state.account === Adminconfig.address.toLowerCase()) {
+      this.setState({ role: 'Admin' })
+    } else if (await rpToken.methods.isBank(this.state.account).call({ from: this.state.account })) {
+      this.setState({ role: 'Bank' })
+    } else if (await rpToken.methods.isIssuer(this.state.account).call({ from: this.state.account })) {
+      this.setState({ role: 'Issuer' })
+    } else if (await rpToken.methods.isMerchant(this.state.account).call({ from: this.state.account })) {
+      this.setState({ role: 'Merchant' })
+    } else {
+      this.setState({ role: 'User' })
+    }
+    console.log(this.state.role)
+  }
+
   // For now, 'eth_accounts' will continue to always return an array
-   handleAccountsChanged = (accounts) => {
+  handleAccountsChanged = (accounts) => {
     if (accounts.length === 0) {
       // MetaMask is locked or the user has not connected any accounts
       console.log('Please connect to MetaMask.');
     } else if (accounts[0] !== this.state.account) {
-      this.setState({account: accounts[0]});
-      // Do any other work!
+      this.handleLoggedOut()
+      this.setState({ account: accounts[0] })
+      this.loadRole()
+      this.alert('Account changed!', 'success')
     }
   }
 
@@ -129,6 +132,14 @@ class App extends Component {
     this.setState({ auth: undefined })
   }
 
+  alert = (message, type) => {
+    var wrapper = document.createElement('div')
+    wrapper.id = 'appAlert'
+    wrapper.innerHTML = '<div class="row"><div class="alert alert-' + type + ' d-flex align-items-center alert-dismissible fade show col-md-4 offset-md-4" role="alert"><i class="bi bi-check-circle-fill flex-shrink-0 me-2" style="font-size:24px;"></i>' + message + '</div></div>'
+
+    document.getElementById('appAlert').replaceWith(wrapper)
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -136,7 +147,6 @@ class App extends Component {
       role: '',
       auth: undefined,
       sequelize: null,
-      rpToken: null,
       images: [],
       loading: false
     }
@@ -152,12 +162,19 @@ class App extends Component {
             ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
             :
             this.state.auth
-              ? <Main account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />
+              ? <Routes>
+                  <Route path="/" element={
+                    (() => {
+                      switch (this.state.role) {
+                        case 'User': return <Main account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                        case 'Admin': return <Admin account={this.state.account} onLoggedOut={this.handleLoggedOut} />;
+                        default: return <NotFound />;
+                      }
+                    })()
+                  } />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
               : <Login account={this.state.account} onLoggedIn={this.handleLoggedIn} />
-            /* <Routes>
-              <Route path="/" element={<Main/>}/>
-              <Route path="*" element={<NotFound/>} />
-            </Routes> */
           }
           <Footer />
         </div>

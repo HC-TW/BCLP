@@ -1,11 +1,9 @@
-// const { recoverPersonalSignature } = require('eth-sig-util');
 const Web3 = require('web3');
 const web3 = new Web3('ws://localhost:8545');
 const { bufferToHex } = require('ethereumjs-util');
-// const { NextFunction, Request, Response } = require('express');
 const jwt = require('jsonwebtoken');
 
-const { config } = require('../../config');
+const { JWTconfig } = require('../../config');
 const User = require('../../models').user;
 
 module.exports.create = (req, res, next) => {
@@ -83,9 +81,9 @@ module.exports.create = (req, res, next) => {
 								publicAddress,
 							},
 						},
-						config.secret,
+						JWTconfig.secret,
 						{
-							algorithm: config.algorithms[0],
+							algorithm: JWTconfig.algorithms[0],
 						},
 						(err, token) => {
 							if (err) {

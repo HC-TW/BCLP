@@ -5,9 +5,8 @@ import Identicon from 'identicon.js';
 import LoginNavbar from './LoginNavbar';
 import Header from './Header';
 
-export const Login = ({ account, onLoggedIn }) => {
+export const Login = ({ account, role, onLoggedIn }) => {
 	const [loading, setLoading] = useState(false); // Loading button state
-
 	const handleAuthenticate = async ({ publicAddress, signature }) => {
 		console.log({ publicAddress, signature })
 		const response = await fetch(`http://localhost:8080/api/auth`, {
@@ -31,9 +30,10 @@ export const Login = ({ account, onLoggedIn }) => {
 
 			return { publicAddress, signature };
 		} catch (err) {
-			throw new Error(
+			/* throw new Error(
 				'You need to sign the message to be able to log in.'
-			);
+			); */
+			alert('You need to sign the message to be able to log in.', 'warning')
 		}
 	};
 
@@ -75,19 +75,29 @@ export const Login = ({ account, onLoggedIn }) => {
 			// Pass accessToken back to parent component (to save it in localStorage)
 			.then(onLoggedIn)
 			.catch((err) => {
-				window.alert(err);
+				// window.alert(err);
 				setLoading(false);
 			});
 	};
 
+	const alert = (message, type) => {
+		var wrapper = document.createElement('div')
+		wrapper.id = 'appAlert'
+		wrapper.innerHTML = '<div class="row"><div class="alert alert-' + type + ' d-flex align-items-center alert-dismissible col-md-4 offset-md-4" role="alert"><i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" style="font-size:24px;"></i>' + message + '</div></div>'
+
+		document.getElementById('appAlert').replaceWith(wrapper)
+	};
+
 	return (
 		<div>
-			<LoginNavbar/>
-			<Header/>
-			<p class="my-4 text-center font-monospace">
+			<LoginNavbar account={account}/>
+			<Header />
+			<div id="appAlert"></div>
+			<p className="my-4 text-center font-monospace">
 				Your Ethereum address: {account}
 				{account
 					? <img
+						alt="identicon"
 						className='ms-2'
 						width='30'
 						height='30'
@@ -95,7 +105,7 @@ export const Login = ({ account, onLoggedIn }) => {
 					/>
 					: <span></span>
 				}
-				<br/>
+				<br />
 				<button className="btn btn-outline-primary btn-lg Login-button" onClick={handleClick}>
 					{loading ? 'Loading...' : 'Login with MetaMask'}
 				</button>
