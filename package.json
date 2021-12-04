@@ -36,7 +36,7 @@
     "truffle": "^5.4.17",
     "web3": "^1.6.0"
   },
-  "homepage": "https://hc-tw.github.io/BCOIP-PRO/",
+  "homepage": "https://hc-tw.github.io/",
   "scripts": {
     "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",

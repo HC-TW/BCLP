@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Identicon from 'identicon.js';
 import LoginNavbar from './LoginNavbar';
 import Header from './Header';
+import $ from 'jquery';
 
 export const Login = ({ account, role, onLoggedIn }) => {
 	const [loading, setLoading] = useState(false); // Loading button state
@@ -81,11 +82,8 @@ export const Login = ({ account, role, onLoggedIn }) => {
 	};
 
 	const alert = (message, type) => {
-		var wrapper = document.createElement('div')
-		wrapper.id = 'appAlert'
-		wrapper.innerHTML = '<div class="row"><div class="alert alert-' + type + ' d-flex align-items-center alert-dismissible col-md-4 offset-md-4" role="alert"><i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" style="font-size:24px;"></i>' + message + '</div></div>'
-
-		document.getElementById('appAlert').replaceWith(wrapper)
+		$('<div id="appAlert"><div class="row"><div class="alert alert-' + type + ' d-flex align-items-center alert-dismissible col-md-4 offset-md-4" role="alert"><i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" style="font-size:24px;"></i>' + message + '</div>')
+		.replaceAll('#appAlert')
 	};
 
 	return (

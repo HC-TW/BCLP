@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
-import Navbar from './Navbar';
+import Navbar from './MyNavbar';
 import Header from './Header';
 import { Adminconfig } from '../config';
 

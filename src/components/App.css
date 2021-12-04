@@ -11287,3 +11287,23 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+
+.border-left-primary {
+  --bs-text-opacity: 1;
+  border-left: 0.25rem solid rgba(var(--bs-primary-rgb), var(--bs-text-opacity))!important;
+}
+
+.border-left-success {
+  --bs-text-opacity: 1;
+  border-left: 0.25rem solid rgba(var(--bs-success-rgb), var(--bs-text-opacity))!important;
+}
+
+.border-left-info {
+  --bs-text-opacity: 1;
+  border-left: 0.25rem solid rgba(var(--bs-info-rgb), var(--bs-text-opacity))!important;
+}
+
+.border-left-warning {
+  --bs-text-opacity: 1;
+  border-left: 0.25rem solid rgba(var(--bs-warning-rgb), var(--bs-text-opacity))!important;
+}

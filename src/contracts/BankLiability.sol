@@ -12,7 +12,17 @@ contract BankLiability is Context {
     int256 public _totalLiability;
 
     mapping(address => int256) public _liabilities;
-    mapping(address => mapping(address => uint256)) private _confirmRemittance;
+
+    struct Request {
+        uint256 amount;
+        uint transferKeysIdx;
+        uint confirmKeysIdx;
+    }
+
+    mapping(address => mapping(address => Request)) private _transferRequest;
+    mapping(address => address[]) private _transferRequestKeys;
+    // mapping(address => mapping(address => Request)) private _confirmRemittance;
+    mapping(address => address[]) private _confirmRemittanceKeys;
 
     event TransferRequest(
         address indexed sender,
@@ -50,17 +60,43 @@ contract BankLiability is Context {
     {
         require(_rp._banks(recipient), "Liability: You can only request to transfer liability to banks");
         require(amount != 0, "Liability: transfer zero amount");
-        require(_confirmRemittance[_msgSender()][recipient] == 0, "Liability: You cannot send multiple requests to the same bank");
-        _confirmRemittance[_msgSender()][recipient] = amount;
+        require(_transferRequest[_msgSender()][recipient].amount == 0, "Liability: You cannot send multiple requests to the same bank");
+        /* _transferRequest[_msgSender()][recipient] = amount;
+        _transferRequestKeys[_msgSender()].push(recipient);
+        _confirmRemittance[recipient][_msgSender()] = amount;
+        _confirmRemittanceKeys[recipient].push(_msgSender()); */
+
+        _transferRequestKeys[_msgSender()].push(recipient);
+        _confirmRemittanceKeys[recipient].push(_msgSender());
+        _transferRequest[_msgSender()][recipient] = Request(amount, _transferRequestKeys[_msgSender()].length - 1, _confirmRemittanceKeys[recipient].length - 1);
+        // _confirmRemittance[recipient][_msgSender()] = Request(amount, _confirmRemittanceKeys[recipient].length - 1);
 
         emit TransferRequest(_msgSender(), recipient, amount);
         return true;
     }
 
+    function deleteRequest(address sender, address recipient) internal {
+        address[] storage keys = _transferRequestKeys[sender];
+        uint rowToDelete = _transferRequest[sender][recipient].transferKeysIdx;
+        address keyToMove = keys[keys.length-1];
+        keys[rowToDelete] = keys[keys.length-1];
+        _transferRequest[sender][keyToMove].transferKeysIdx = rowToDelete;
+        keys.pop();
+
+        keys = _confirmRemittanceKeys[recipient];
+        rowToDelete = _transferRequest[sender][recipient].confirmKeysIdx;
+        keyToMove = keys[keys.length-1];
+        keys[rowToDelete] = keys[keys.length-1];
+        _transferRequest[keyToMove][recipient].confirmKeysIdx = rowToDelete;
+        keys.pop();
+        delete _transferRequest[sender][recipient];
+    }
+
     function revokeRequest(address recipient) public onlyBank returns (bool) {
         require(_rp._banks(recipient), "Liability: You can only revoke the request to banks");
-        require(_confirmRemittance[_msgSender()][recipient] > 0, "Liability: You cannot revoke the request before sending the request");
-        _confirmRemittance[_msgSender()][recipient] = 0;
+        require(_transferRequest[_msgSender()][recipient].amount > 0, "Liability: You cannot revoke the request before sending the request");
+
+        deleteRequest(_msgSender(), recipient);
 
         emit RevokeRequest(_msgSender(), recipient);
         return true;
@@ -68,16 +104,33 @@ contract BankLiability is Context {
 
     function accept(address sender) public onlyBank returns (bool) {
         require(_rp._banks(sender), "Liability: You can only accept the request from banks");
-        uint256 amount = _confirmRemittance[sender][_msgSender()];
+        uint256 amount = _transferRequest[sender][_msgSender()].amount;
         require(amount != 0, "Liability: The sender didn't send the transfer request");
         _liabilities[sender] += int256(amount);
         _liabilities[_msgSender()] -= int256(amount);
-        delete _confirmRemittance[sender][_msgSender()];
+        
+        deleteRequest(sender, _msgSender());
 
         // _credit.changeLoanLender(sender, _msgSender());
 
         emit Accept(_msgSender(), sender, amount);
         return true;
+    }
+
+    function getTransferRequest(address recipient) public view onlyBank returns (uint256) {
+        return _transferRequest[_msgSender()][recipient].amount;
+    }
+
+    function getTransferRequestKeys() public view onlyBank returns (address[] memory) {
+        return _transferRequestKeys[_msgSender()];
+    }
+
+    function getConfirmRemittance(address sender) public view onlyBank returns (uint256) {
+        return _transferRequest[sender][_msgSender()].amount;
+    }
+
+    function getConfirmRemittanceKeys() public view onlyBank returns (address[] memory) {
+        return _confirmRemittanceKeys[_msgSender()];
     }
 
     function increaseLiability(address addr, uint256 amount) public {

@@ -6,6 +6,7 @@
   height: 60px;
   margin: 20px auto;
   width: 300px;
+  @include button-outline-variant(rgb(255, 125, 0), rgb(255, 255, 255));
 }
 
 .Login-button:hover {
@@ -23,9 +24,3 @@
 .Login-mm {
   background-color: rgb(255, 125, 0);
 }
-
-.btn-outline-primary {
-  @include button-outline-variant(rgb(255, 125, 0), rgb(255, 255, 255));
-}
-
-

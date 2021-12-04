@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Header from './Header';
+import $ from 'jquery';
 
 class Admin extends Component {
 
@@ -8,7 +9,7 @@ class Admin extends Component {
 	}
 
 	addBank = () => {
-		const address = document.getElementById('addBankAddress').value
+		const address = $('#addBankAddress').val()
 		window.rpToken.methods.addBank(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -16,7 +17,7 @@ class Admin extends Component {
 	}
 
 	addIssuer = () => {
-		const address = document.getElementById('addIssuerAddress').value
+		const address = $('#addIssuerAddress').val()
 		window.rpToken.methods.addIssuer(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -24,7 +25,7 @@ class Admin extends Component {
 	}
 
 	addUser = () => {
-		const address = document.getElementById('addUserAddress').value
+		const address = $('#addUserAddress').val()
 		window.rpToken.methods.addUser(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -32,7 +33,7 @@ class Admin extends Component {
 	}
 
 	addMerchant = () => {
-		const address = document.getElementById('addMerchantAddress').value
+		const address = $('#addMerchantAddress').val()
 		window.rpToken.methods.addMerchant(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -40,7 +41,7 @@ class Admin extends Component {
 	}
 
 	removeBank = () => {
-		const address = document.getElementById('removeBankAddress').value
+		const address = $('#removeBankAddress').val()
 		window.rpToken.methods.removeBank(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -48,7 +49,7 @@ class Admin extends Component {
 	}
 
 	removeIssuer = () => {
-		const address = document.getElementById('removeIssuerAddress').value
+		const address = $('#removeIssuerAddress').val()
 		window.rpToken.methods.removeIssuer(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -56,7 +57,7 @@ class Admin extends Component {
 	}
 
 	removeUser = () => {
-		const address = document.getElementById('removeUserAddress').value
+		const address = $('#removeUserAddress').val()
 		window.rpToken.methods.removeUser(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -64,7 +65,7 @@ class Admin extends Component {
 	}
 
 	removeMerchant = () => {
-		const address = document.getElementById('removeMerchantAddress').value
+		const address = $('#removeMerchantAddress').val()
 		window.rpToken.methods.removeMerchant(address).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
@@ -72,10 +73,8 @@ class Admin extends Component {
 	}
 
 	alert = (message, type) => {
-		var wrapper = document.createElement('div')
-		wrapper.innerHTML = '<div class="row"><div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div></div>'
-
-		document.getElementById('logs').append(wrapper)
+		$('<div><div class="row"><div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>')
+		.appendTo('#logs')
 	};
 
 

@@ -4,12 +4,15 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Web3 from 'web3';
 import RPToken from '../abis/RPToken.json';
+import BankLiability from '../abis/BankLiability.json'
 import Main from './Main';
+import Bank from './Bank';
 import Admin from './Admin';
 import Footer from './Footer';
 import NotFound from './NotFound';
 import { Login } from './Login';
 import { Adminconfig } from '../config';
+import $ from 'jquery';
 
 const LS_KEY = 'login-with-metamask:auth';
 
@@ -41,9 +44,11 @@ class App extends Component {
     this.setState({ account: accounts[0] })
     // Network ID
     const networkId = await web3.eth.net.getId()
-    const networkData = RPToken.networks[networkId]
-    if (networkData) {
-      window.rpToken = new web3.eth.Contract(RPToken.abi, networkData.address)
+    const RPToken_networkData = RPToken.networks[networkId]
+    const BankLiability_networkData = BankLiability.networks[networkId]
+    if (RPToken_networkData && BankLiability_networkData) {
+      window.rpToken = new web3.eth.Contract(RPToken.abi, RPToken_networkData.address)
+      window.bankLiability = new web3.eth.Contract(BankLiability.abi, BankLiability_networkData.address)
       this.loadRole();
     } else {
       window.alert('RPToken contract not deployed to detected network.')
@@ -133,11 +138,8 @@ class App extends Component {
   }
 
   alert = (message, type) => {
-    var wrapper = document.createElement('div')
-    wrapper.id = 'appAlert'
-    wrapper.innerHTML = '<div class="row"><div class="alert alert-' + type + ' d-flex align-items-center alert-dismissible fade show col-md-4 offset-md-4" role="alert"><i class="bi bi-check-circle-fill flex-shrink-0 me-2" style="font-size:24px;"></i>' + message + '</div></div>'
-
-    document.getElementById('appAlert').replaceWith(wrapper)
+    $('<div id="appAlert"><div class="row"><div class="alert alert-' + type + ' d-flex align-items-center alert-dismissible fade show col-md-4 offset-md-4" role="alert"><i class="bi bi-check-circle-fill flex-shrink-0 me-2" style="font-size:24px;"></i>' + message + '</div>')
+		.replaceAll('#appAlert')
   }
 
   constructor(props) {
@@ -166,6 +168,7 @@ class App extends Component {
                   <Route path="/" element={
                     (() => {
                       switch (this.state.role) {
+                        case 'Bank': return <Bank account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                         case 'User': return <Main account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                         case 'Admin': return <Admin account={this.state.account} onLoggedOut={this.handleLoggedOut} />;
                         default: return <NotFound />;

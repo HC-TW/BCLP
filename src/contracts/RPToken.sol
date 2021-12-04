@@ -46,7 +46,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     
     mapping (address => mapping (address => uint256)) private _allowances;
     
-    uint256 private _totalSupply;
+    uint256 public _totalSupply;
 
     string private _name;
     string private _symbol;
