@@ -84,6 +84,15 @@ class Bank extends Component {
 		})
 	}
 
+	accept = (event) => {
+		window.bankLiability.methods.accept($(event.target).attr('name')).send({ from: this.props.account }).on('receipt', receipt => {
+			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+			this.alert(msg, 'success')
+			this.loadRequests()
+			this.loadInfo()
+		})
+	}
+
 	alert = (message, type) => {
 		$('<div><div class="row"><div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>')
 			.appendTo('#logs')
@@ -120,7 +129,7 @@ class Bank extends Component {
 			transferRequests: [],
 			confirmRemittances: [],
 			deliver_validated: false,
-			trasferRequest_validated: false
+			transferRequest_validated: false
 		}
 	}
 
@@ -230,36 +239,63 @@ class Bank extends Component {
 						<div className="col-lg-12 mb-4">
 
 							{/* <!-- Illustrations --> */}
-							<div className="card shadow mb-4">
-								<div className="card-header py-3">
-									<h6 className="m-0 font-weight-bold text-dark">Bank Liabilities Requests</h6>
+							<div className="card-group">
+								<div className="card shadow mb-4">
+									<div className="card-header py-3">
+										<h6 className="m-0 font-weight-bold text-danger">Bank Liability Transfer Requests</h6>
+									</div>
+									<div className="card-body">
+										<table className="table table-striped table-hover align-middle">
+											<thead>
+												<tr>
+													<th scope="col">#</th>
+													<th scope="col">Recipient</th>
+													<th scope="col">Amount</th>
+													<th scope="col">Button</th>
+												</tr>
+											</thead>
+											<tbody>
+												{this.state.transferRequests.map((request, idx) => {
+													return (
+														<tr key={request[0]}>
+															<th scope="row">{idx + 1}</th>
+															<td>{request[0]}</td>
+															<td>{request[1]}</td>
+															<td><button name={request[0]} type="button" className="btn btn-danger btn-sm" onClick={this.revokeRequest}>Revoke</button></td>
+														</tr>
+													)
+												})}
+											</tbody>
+										</table>
+									</div>
 								</div>
-								<div className="card-body">
-									<div className="row">
-										<div className="col-lg-6 mb-4">
-											<table className="table table-striped table-hover align-middle">
-												<thead>
-													<tr>
-														<th scope="col">#</th>
-														<th scope="col">Recipient</th>
-														<th scope="col">Amount</th>
-														<th scope="col">Button</th>
-													</tr>
-												</thead>
-												<tbody>
-													{this.state.transferRequests.map((request, idx) => {
-														return (
-															<tr key={request[0]}>
-																<th scope="row">{idx + 1}</th>
-																<td>{request[0]}</td>
-																<td>{request[1]}</td>
-																<td><button name={request[0]} type="button" className="btn btn-danger btn-sm" onClick={this.revokeRequest}>Revoke</button></td>
-															</tr>
-														)
-													})}
-												</tbody>
-											</table>
-										</div>
+								<div className="card shadow mb-4">
+									<div className="card-header py-3">
+										<h6 className="m-0 font-weight-bold text-primary">Bank Liability Remittance Confirmations</h6>
+									</div>
+									<div className="card-body">
+										<table className="table table-striped table-hover align-middle">
+											<thead>
+												<tr>
+													<th scope="col">#</th>
+													<th scope="col">Sender</th>
+													<th scope="col">Amount</th>
+													<th scope="col">Button</th>
+												</tr>
+											</thead>
+											<tbody>
+												{this.state.confirmRemittances.map((request, idx) => {
+													return (
+														<tr key={request[0]}>
+															<th scope="row">{idx + 1}</th>
+															<td>{request[0]}</td>
+															<td>{request[1]}</td>
+															<td><button name={request[0]} type="button" className="btn btn-primary btn-sm" onClick={this.accept}>Accept</button></td>
+														</tr>
+													)
+												})}
+											</tbody>
+										</table>
 									</div>
 								</div>
 							</div>
@@ -312,7 +348,7 @@ class Bank extends Component {
 									<h6 className="m-0 font-weight-bold text-danger">Bank Liability Related Functions</h6>
 								</div>
 								<div className="card-body">
-									<Form noValidate validated={this.state.trasferRequest_validated} onSubmit={this.transferRequest_handleSubmit}>
+									<Form noValidate validated={this.state.transferRequest_validated} onSubmit={this.transferRequest_handleSubmit}>
 										<Row className="mb-3">
 											<Form.Group as={Col} md="4">
 												<Form.Label>Bank's address </Form.Label>

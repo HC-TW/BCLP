@@ -21,7 +21,6 @@ contract BankLiability is Context {
 
     mapping(address => mapping(address => Request)) private _transferRequest;
     mapping(address => address[]) private _transferRequestKeys;
-    // mapping(address => mapping(address => Request)) private _confirmRemittance;
     mapping(address => address[]) private _confirmRemittanceKeys;
 
     event TransferRequest(
@@ -61,15 +60,10 @@ contract BankLiability is Context {
         require(_rp._banks(recipient), "Liability: You can only request to transfer liability to banks");
         require(amount != 0, "Liability: transfer zero amount");
         require(_transferRequest[_msgSender()][recipient].amount == 0, "Liability: You cannot send multiple requests to the same bank");
-        /* _transferRequest[_msgSender()][recipient] = amount;
-        _transferRequestKeys[_msgSender()].push(recipient);
-        _confirmRemittance[recipient][_msgSender()] = amount;
-        _confirmRemittanceKeys[recipient].push(_msgSender()); */
 
         _transferRequestKeys[_msgSender()].push(recipient);
         _confirmRemittanceKeys[recipient].push(_msgSender());
         _transferRequest[_msgSender()][recipient] = Request(amount, _transferRequestKeys[_msgSender()].length - 1, _confirmRemittanceKeys[recipient].length - 1);
-        // _confirmRemittance[recipient][_msgSender()] = Request(amount, _confirmRemittanceKeys[recipient].length - 1);
 
         emit TransferRequest(_msgSender(), recipient, amount);
         return true;
