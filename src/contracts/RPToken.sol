@@ -46,7 +46,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     
     mapping (address => mapping (address => uint256)) private _allowances;
     
-    uint256 public _totalSupply;
+    uint256 private _totalSupply;
 
     string private _name;
     string private _symbol;
@@ -400,7 +400,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     // Bank -> Issuer
     function deliver(address issuer, uint256 amount) public onlyBank returns (bool) {
         //require((_msgSender() == bank && _banks[_msgSender()]) || _msgSender() == _Credit);
-        require(_issuers[issuer], "You can only deliver RPs to the issuer");
+        require(_issuers[issuer], "ERC20: You can only deliver RPs to the issuer");
         require(address(_bl) != address(0), "BankLiability contract hasn't been loaded");
         _mint(issuer, amount);
         _bl.increaseLiability(_msgSender(), amount);
@@ -409,13 +409,13 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     }
     // Issuer -> User
     function issue(address user, uint256 amount) public onlyIssuer returns (bool) {
-        require(_users[user], "You can only issue RPs to the user");
+        require(_users[user], "ERC20: You can only issue RPs to the user");
         transfer(user, amount);
         return true;
     }
     // User -> Contract (-> Merchant)
     function redeem(address merchant, uint256 amount) public onlyUser returns (bool) {
-        require(_merchants[merchant], "You can only redeem goods from the merchant");
+        require(_merchants[merchant], "ERC20: You can only redeem goods from the merchant");
         transfer(address(this), amount);        
         _confirmArrivals[_msgSender()][merchant] += amount;
 
@@ -423,8 +423,8 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     }
     // (User ->) Contract -> Merchant
     function confirm(address merchant, uint256 amount) public onlyUser returns (bool) {
-        require(_merchants[merchant], "You can only confirm arrival to the merchant");
-        require(_confirmArrivals[_msgSender()][merchant] > amount, "You didn't redeem any commodity from this merchant");
+        require(_merchants[merchant], "ERC20: You can only confirm arrival to the merchant");
+        require(_confirmArrivals[_msgSender()][merchant] > amount, "ERC20: You didn't redeem any commodity from this merchant");
         _transfer(address(this), merchant, amount);        
         _confirmArrivals[_msgSender()][merchant] -= amount;
     
@@ -432,8 +432,8 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     }
     // Merchant -> Bank
     function realize(address bank, uint256 amount) public onlyMerchant returns (bool) {
-        require(_banks[bank], "You can only realize RPs to the bank");
-        require(address(_bl) != address(0), "BankLiability contract hasn't been loaded");
+        require(_banks[bank], "ERC20: You can only realize RPs to the bank");
+        require(address(_bl) != address(0), "ERC20: BankLiability contract hasn't been loaded");
         _burn(_msgSender(), amount);
         _bl.decreaseLiability(bank, amount);
 

@@ -11,8 +11,8 @@ class Bank extends Component {
 
 	async componentDidMount() {
 		await this.loadUser();
-		await this.loadInfo();
 		await this.loadRequests();
+		await this.loadInfo();
 	}
 
 	async loadUser() {
@@ -33,12 +33,13 @@ class Bank extends Component {
 
 	async loadInfo() {
 		const bankLiabilities = Number(await window.bankLiability.methods._liabilities(this.props.account).call({ from: this.props.account }))
-		const totalSupply = Number(await window.rpToken.methods._totalSupply().call({ from: this.props.account }))
+		const totalSupply = Number(await window.rpToken.methods.totalSupply().call({ from: this.props.account }))
 		const issuanceRatio = -bankLiabilities / (totalSupply ? totalSupply : 1) * 100
 		$('#bankLiabilities').text(bankLiabilities + ' NTD')
 		$('#totalSupply').text(totalSupply + ' RP')
 		$('#issuanceRatio').text(issuanceRatio + '%')
-		$('#issuanceRationProgress').css('width', issuanceRatio + '%')
+		$('#issuanceRatioProgress').css('width', issuanceRatio + '%')
+		$('#pendingRequest').text(this.state.transferRequests.length)
 	}
 
 	async loadRequests() {
@@ -59,21 +60,35 @@ class Bank extends Component {
 	deliver = () => {
 		const address = $('#issuerAddress').val()
 		const amount = $('#deliverAmount').val()
-		window.rpToken.methods.deliver(address, amount).send({ from: this.props.account }).on('receipt', receipt => {
-			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
-			this.alert(msg, 'success')
-			this.loadInfo()
-		})
+		window.rpToken.methods.deliver(address, amount).send({ from: this.props.account })
+			.on('receipt', receipt => {
+				const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+				this.alert(msg, 'success')
+				this.loadInfo()
+			})
+			.on('error', error => {
+				const msg = error.message
+				const startIdx = msg.indexOf('"reason":') + 10
+				const endIdx = msg.indexOf('"},"stack"')
+				this.error_alert(msg.substr(startIdx, endIdx - startIdx), 'danger')
+			})
 	}
 
 	transferRequest = () => {
 		const address = $('#bankAddress').val()
 		const amount = $('#transferRequestAmount').val()
-		window.bankLiability.methods.transferRequest(address, amount).send({ from: this.props.account }).on('receipt', receipt => {
-			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
-			this.alert(msg, 'success')
-			this.loadRequests()
-		})
+		window.bankLiability.methods.transferRequest(address, amount).send({ from: this.props.account })
+			.on('receipt', receipt => {
+				const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+				this.alert(msg, 'success')
+				this.loadRequests()
+			})
+			.on('error', error => {
+				const msg = error.message
+				const startIdx = msg.indexOf('"reason":') + 10
+				const endIdx = msg.indexOf('"},"stack"')
+				this.error_alert(msg.substr(startIdx, endIdx - startIdx), 'danger')
+			})
 	}
 
 	revokeRequest = (event) => {
@@ -97,6 +112,11 @@ class Bank extends Component {
 		$('<div><div class="row"><div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>')
 			.appendTo('#logs')
 	};
+
+	error_alert = (message, type) => {
+		$('<div><div class="row"><div class="alert alert-' + type + ' d-flex align-items-center alert-dismissible" role="alert"><i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" style="font-size:24px;"></i>' + message + '</div>')
+			.appendTo('#logs')
+	}
 
 	deliver_handleSubmit = (event) => {
 		const form = event.currentTarget;
@@ -158,7 +178,7 @@ class Bank extends Component {
 										<div className="col mr-2">
 											<div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
 												Bank Liabilities</div>
-											<div className="h5 mb-0 font-weight-bold text-gray-800" id="bankLiabilities">$40,000</div>
+											<div className="h5 mb-0 font-weight-bold text-gray-800" id="bankLiabilities"></div>
 										</div>
 										<div className="col-auto">
 											<i className="bi bi-cash-coin fa-2x text-gray-300"></i>
@@ -176,7 +196,7 @@ class Bank extends Component {
 										<div className="col mr-2">
 											<div className="text-xs font-weight-bold text-success text-uppercase mb-1">
 												Total supply</div>
-											<div className="h5 mb-0 font-weight-bold text-gray-800" id="totalSupply">$215,000</div>
+											<div className="h5 mb-0 font-weight-bold text-gray-800" id="totalSupply"></div>
 										</div>
 										<div className="col-auto">
 											<i className="bi bi-gem fa-2x text-gray-300"></i>
@@ -202,7 +222,7 @@ class Bank extends Component {
 													<div className="progress progress-sm mr-2">
 														<div className="progress-bar bg-info" role="progressbar"
 															style={{ width: '0%' }} aria-valuenow="0" aria-valuemin="0"
-															aria-valuemax="100" id="issuanceRationProgress"></div>
+															aria-valuemax="100" id="issuanceRatioProgress"></div>
 													</div>
 												</div>
 											</div>
@@ -223,10 +243,10 @@ class Bank extends Component {
 										<div className="col mr-2">
 											<div className="text-xs font-weight-bold text-warning text-uppercase mb-1">
 												Pending Requests</div>
-											<div className="h5 mb-0 font-weight-bold text-gray-800">18</div>
+											<div className="h5 mb-0 font-weight-bold text-gray-800" id="pendingRequest"></div>
 										</div>
 										<div className="col-auto">
-											<i className="fas fa-comments fa-2x text-gray-300"></i>
+											<i className="bi bi-chat-text fa-2x text-gray-300"></i>
 										</div>
 									</div>
 								</div>
@@ -242,7 +262,7 @@ class Bank extends Component {
 							<div className="card-group">
 								<div className="card shadow mb-4">
 									<div className="card-header py-3">
-										<h6 className="m-0 font-weight-bold text-danger">Bank Liability Transfer Requests</h6>
+										<h6 className="m-0 font-weight-bold text-danger">Bank Liabilities Transfer Requests</h6>
 									</div>
 									<div className="card-body">
 										<table className="table table-striped table-hover align-middle">
@@ -271,7 +291,7 @@ class Bank extends Component {
 								</div>
 								<div className="card shadow mb-4">
 									<div className="card-header py-3">
-										<h6 className="m-0 font-weight-bold text-primary">Bank Liability Remittance Confirmations</h6>
+										<h6 className="m-0 font-weight-bold text-primary">Bank Liabilities Remittance Confirmations</h6>
 									</div>
 									<div className="card-body">
 										<table className="table table-striped table-hover align-middle">
@@ -345,7 +365,7 @@ class Bank extends Component {
 
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
-									<h6 className="m-0 font-weight-bold text-danger">Bank Liability Related Functions</h6>
+									<h6 className="m-0 font-weight-bold text-danger">Bank Liabilities Related Functions</h6>
 								</div>
 								<div className="card-body">
 									<Form noValidate validated={this.state.transferRequest_validated} onSubmit={this.transferRequest_handleSubmit}>
@@ -375,7 +395,7 @@ class Bank extends Component {
 														id="transferRequestAmount"
 														required
 													/>
-													<InputGroup.Text>Liability</InputGroup.Text>
+													<InputGroup.Text>Liabilities</InputGroup.Text>
 													<Form.Control.Feedback type="invalid">
 														Please provide a valid number.
 													</Form.Control.Feedback>

@@ -7,6 +7,7 @@ import RPToken from '../abis/RPToken.json';
 import BankLiability from '../abis/BankLiability.json'
 import Main from './Main';
 import Bank from './Bank';
+import Issuer from './Issuer';
 import Admin from './Admin';
 import Footer from './Footer';
 import NotFound from './NotFound';
@@ -50,6 +51,7 @@ class App extends Component {
       window.rpToken = new web3.eth.Contract(RPToken.abi, RPToken_networkData.address)
       window.bankLiability = new web3.eth.Contract(BankLiability.abi, BankLiability_networkData.address)
       this.loadRole();
+      // console.log(RPToken_networkData.address)
     } else {
       window.alert('RPToken contract not deployed to detected network.')
     }
@@ -169,6 +171,7 @@ class App extends Component {
                     (() => {
                       switch (this.state.role) {
                         case 'Bank': return <Bank account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                        case 'Issuer': return <Issuer account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                         case 'User': return <Main account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                         case 'Admin': return <Admin account={this.state.account} onLoggedOut={this.handleLoggedOut} />;
                         default: return <NotFound />;
