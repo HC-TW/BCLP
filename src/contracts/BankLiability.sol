@@ -55,8 +55,7 @@ contract BankLiability is Context {
         _credit = BL_Credit(addr);
     } */
 
-    function transferRequest(address recipient, uint256 amount) public onlyBank returns (bool)
-    {
+    function transferRequest(address recipient, uint256 amount) public onlyBank returns (bool) {
         require(_rp._banks(recipient), "Liability: You can only request to transfer liability to banks");
         require(amount != 0, "Liability: transfer zero amount");
         require(_transferRequest[_msgSender()][recipient].amount == 0, "Liability: You cannot send multiple requests to the same bank");

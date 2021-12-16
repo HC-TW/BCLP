@@ -12,7 +12,6 @@ class Bank extends Component {
 	async componentDidMount() {
 		await this.loadUser();
 		await this.loadRequests();
-		await this.loadInfo();
 	}
 
 	async loadUser() {
@@ -39,7 +38,7 @@ class Bank extends Component {
 		$('#totalSupply').text(totalSupply + ' RP')
 		$('#issuanceRatio').text(issuanceRatio + '%')
 		$('#issuanceRatioProgress').css('width', issuanceRatio + '%')
-		$('#pendingRequest').text(this.state.transferRequests.length)
+		$('#pendingRequest').text(this.state.transferRequests.length+this.state.confirmRemittances.length)
 	}
 
 	async loadRequests() {
@@ -55,6 +54,7 @@ class Bank extends Component {
 		}
 		this.setState({ transferRequests })
 		this.setState({ confirmRemittances })
+		this.loadInfo()
 	}
 
 	deliver = () => {
@@ -104,7 +104,6 @@ class Bank extends Component {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
 			this.loadRequests()
-			this.loadInfo()
 		})
 	}
 

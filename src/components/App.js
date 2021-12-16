@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Web3 from 'web3';
 import RPToken from '../abis/RPToken.json';
 import BankLiability from '../abis/BankLiability.json'
-import Main from './Main';
+import User from './User';
 import Bank from './Bank';
 import Issuer from './Issuer';
 import Admin from './Admin';
@@ -172,7 +172,7 @@ class App extends Component {
                       switch (this.state.role) {
                         case 'Bank': return <Bank account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                         case 'Issuer': return <Issuer account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
-                        case 'User': return <Main account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                        case 'User': return <User account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                         case 'Admin': return <Admin account={this.state.account} onLoggedOut={this.handleLoggedOut} />;
                         default: return <NotFound />;
                       }

@@ -1,11 +1,14 @@
 const RPToken = artifacts.require("RPToken");
 const BankLiability = artifacts.require("BankLiability");
-const Credit = artifacts.require("Credit");
+const ProductManager = artifacts.require("ProductManager")
+// const Credit = artifacts.require("Credit");
 const PointsExchange = artifacts.require("PointsExchange");
 
 module.exports = function (deployer) {
   deployer.deploy(RPToken, "Rewarding Points", "RP").then(function () {
     return deployer.deploy(BankLiability, RPToken.address);
+  }).then(function () {
+    return deployer.deploy(ProductManager, RPToken.address);
   }).then(function () {
     return deployer.deploy(PointsExchange, RPToken.address);
   }).then(function () {

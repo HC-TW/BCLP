@@ -4,7 +4,7 @@ import Navbar from './MyNavbar';
 import Header from './Header';
 import { Adminconfig } from '../config';
 
-class Main extends Component {
+class User extends Component {
 
 	async componentDidMount() {
 		await this.loadUser();
@@ -260,4 +260,4 @@ class Main extends Component {
 	}
 }
 
-export default Main;
+export default User;

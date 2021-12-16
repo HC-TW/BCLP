@@ -34,7 +34,7 @@ class Issuer extends Component {
 		const balance = Number(await window.rpToken.methods.balanceOf(this.props.account).call({ from: this.props.account }))
 		const totalSupply = Number(await window.rpToken.methods.totalSupply().call({ from: this.props.account }))
 		const holdingRatio = balance / (totalSupply ? totalSupply : 1) * 100
-		$('#rpHeld').text(balance + ' RP')
+		$('#rpHoldings').text(balance + ' RP')
 		$('#totalSupply').text(totalSupply + ' RP')
 		$('#holdingRatio').text(holdingRatio + '%')
 		$('#holdingRatioProgress').css('width', holdingRatio + '%')
@@ -111,8 +111,8 @@ class Issuer extends Component {
 									<div className="row no-gutters align-items-center">
 										<div className="col mr-2">
 											<div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
-												RP held</div>
-											<div className="h5 mb-0 font-weight-bold text-gray-800" id="rpHeld"></div>
+												RP holdings</div>
+											<div className="h5 mb-0 font-weight-bold text-gray-800" id="rpHoldings"></div>
 										</div>
 										<div className="col-auto">
 											<i className="bi bi-cash-coin fa-2x text-gray-300"></i>

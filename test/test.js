@@ -1,61 +1,83 @@
-const { assert } = require('chai')
+const { assert, should } = require('chai')
 const { default: Web3 } = require('web3')
 
-const Decentragram = artifacts.require('./Decentragram.sol')
+const RPToken = artifacts.require('./RPToken.sol')
+const BankLiability = artifacts.require('./BankLiability.sol')
+const ProductManager = artifacts.require('./ProductManager.sol')
 
 require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-contract('Decentragram', ([deployer, author, tipper]) => {
-  let decentragram
+contract('RPToken', ([issuer, deployer, bank1, bank2, user, merchant]) => {
+  let rpToken
+  let bankLiability
+  let productManager
 
   before(async () => {
-    decentragram = await Decentragram.deployed()
+    rpToken = await RPToken.deployed()
+    bankLiability = await BankLiability.deployed()
+    productManager = await ProductManager.new(rpToken.address)
   })
 
   describe('deployment', async () => {
     it('deploys successfully', async () => {
-      const address = await decentragram.address
+      const address = await rpToken.address
       assert.notEqual(address, 0x0)
       assert.notEqual(address, '')
       assert.notEqual(address, null)
       assert.notEqual(address, undefined)
     })
 
-    it('has a name', async () => {
+    /* it('has a name', async () => {
       const name = await decentragram.name()
       assert.equal(name, 'Decentragram')
-    })
+    }) */
   })
 
-  describe('images', async () => {
-    let result, imageCount
+  describe('products', async () => {
+    let result, productCount
     const hash = 'abc123'
 
     before(async () => {
-      result = await decentragram.uploadImage(hash, 'Image description', { from: author })
-      imageCount = await decentragram.imageCount()
+      result = await productManager.uploadProduct(hash, 'Product name', 'Product description', 100, { from: merchant })
+      productCount = await productManager.productCount()
     })
 
-    it('creates images', async () => {
+    it('creates products', async () => {
       // SUCCESS
-      assert.equal(imageCount, 1)
+      assert.equal(productCount, 1)
       const event = result.logs[0].args
-      assert.equal(event.id.toNumber(), imageCount.toNumber(), 'id is correct')
-      assert.equal(event.hash, hash, 'Hash is correct')
-      assert.equal(event.description, 'Image description', 'description is correct')
-      assert.equal(event.tipAmount, '0', 'tip amount is correct')
-      assert.equal(event.author, author, 'author is correct')
+      assert.equal(event.id.toNumber(), productCount.toNumber(), 'id is correct')
+      assert.equal(event.imgHash, hash, 'image hash is correct')
+      assert.equal(event.name, 'Product name', 'name is correct')
+      assert.equal(event.description, 'Product description', 'description is correct')
+      assert.equal(event.price, 100, 'price is correct')
+      assert.equal(event.merchant, merchant, 'merchant is correct')
 
       // FAILURE: Image must have hash
-      await decentragram.uploadImage('', 'Image description', { from: author }).should.be.rejected;
+      await productManager.uploadProduct('', 'Product name', 'Product description', 100, { from: merchant }).should.be.rejected;
 
-      // FAILURE: Image must have description
-      await decentragram.uploadImage('Image hash', '', { from: author }).should.be.rejected;
+      // FAILURE: Product must have name
+      await productManager.uploadProduct('Image hash', '', 'Product description', 100, { from: merchant }).should.be.rejected;
     })
 
-    //check from Struct
+    it('removes products', async () => {
+      result = await productManager.removeProduct(1, { from: merchant })
+      // SUCCESS
+      const event = result.logs[0].args
+      assert.equal(event.id.toNumber(), productCount.toNumber(), 'id is correct')
+      assert.equal(event.imgHash, hash, 'image hash is correct')
+      assert.equal(event.name, 'Product name', 'name is correct')
+      assert.equal(event.description, 'Product description', 'description is correct')
+      assert.equal(event.price, 100, 'price is correct')
+      assert.equal(event.merchant, merchant, 'merchant is correct')
+
+      // FAILURE: No such product
+      await productManager.removeProduct(2, { from: merchant }).should.be.rejected;
+    })
+
+    /* //check from Struct
     it('lists images', async () => {
       const image = await decentragram.images(imageCount)
       assert.equal(image.id.toNumber(), imageCount.toNumber(), 'id is correct')
@@ -93,6 +115,6 @@ contract('Decentragram', ([deployer, author, tipper]) => {
 
       // FAILURE: Tries to tip a image that does not exist
       await decentragram.tipImageOwner(99, { from: tipper, value: web3.utils.toWei('1', 'ether') }).should.be.rejected
-    })
+    }) */
   })
 })
