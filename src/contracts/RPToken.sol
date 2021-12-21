@@ -34,13 +34,14 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     address public _owner;
     // address public _Credit;
     RP_BankLiability private _bl;
+    RP_ProductManager private _pm;
 
     mapping (address => bool) public _banks;
     mapping (address => bool) public _issuers;
     mapping (address => bool) public _users;
     mapping (address => bool) public _merchants;
     
-    mapping (address => mapping(address => uint256)) private _confirmArrivals;
+    // mapping (address => mapping(address => uint256)) private _confirmArrivals;
 
     mapping (address => uint256) private _balances;
     
@@ -346,6 +347,10 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         _bl = RP_BankLiability(addr);
     }
 
+    function loadProductManager(address addr) public onlyOwner {
+        _pm = RP_ProductManager(addr);
+    }
+
     /* function setCreditAddr(address addr) public onlyOwner {
         _Credit = addr;
     } */
@@ -414,19 +419,18 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         return true;
     }
     // User -> Contract (-> Merchant)
-    function redeem(address merchant, uint256 amount) public onlyUser returns (bool) {
+    function redeem(address merchant, string memory productName, uint256 quantity, uint256 amount) public onlyUser returns (bool) {
         require(_merchants[merchant], "ERC20: You can only redeem goods from the merchant");
         transfer(address(this), amount);        
-        _confirmArrivals[_msgSender()][merchant] += amount;
-
+        // _confirmArrivals[_msgSender()][merchant] += amount;
+        _pm.createOrder(_msgSender(), merchant, productName, quantity, amount);
         return true;
     }
     // (User ->) Contract -> Merchant
-    function confirm(address merchant, uint256 amount) public onlyUser returns (bool) {
+    function confirm(address merchant, uint amount, uint idx) public onlyUser returns (bool) {
         require(_merchants[merchant], "ERC20: You can only confirm arrival to the merchant");
-        require(_confirmArrivals[_msgSender()][merchant] > amount, "ERC20: You didn't redeem any commodity from this merchant");
+        _pm.finishOrder(_msgSender(), merchant, idx);
         _transfer(address(this), merchant, amount);        
-        _confirmArrivals[_msgSender()][merchant] -= amount;
     
         return true;
     }
@@ -444,4 +448,9 @@ contract RPToken is Context, IERC20, IERC20Metadata {
 contract RP_BankLiability {
     function increaseLiability(address, uint256) public { }
     function decreaseLiability(address, uint256) public { }
+}
+
+contract RP_ProductManager {
+    function createOrder(address, address, string memory, uint, uint) public {}
+    function finishOrder(address, address, uint) public {}
 }

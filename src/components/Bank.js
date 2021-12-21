@@ -38,22 +38,19 @@ class Bank extends Component {
 		$('#totalSupply').text(totalSupply + ' RP')
 		$('#issuanceRatio').text(issuanceRatio + '%')
 		$('#issuanceRatioProgress').css('width', issuanceRatio + '%')
-		$('#pendingRequest').text(this.state.transferRequests.length+this.state.confirmRemittances.length)
+		$('#pendingRequest').text(this.state.transferRequests.length + this.state.confirmRemittances.length)
 	}
 
 	async loadRequests() {
-		const transferRequests = []
-		const confirmRemittances = []
+
 		const transferRequestKeys = await window.bankLiability.methods.getTransferRequestKeys().call({ from: this.props.account })
 		const confirmRemittanceKeys = await window.bankLiability.methods.getConfirmRemittanceKeys().call({ from: this.props.account })
 		for (let i = 0; i < transferRequestKeys.length; i++) {
-			transferRequests.push([transferRequestKeys[i], await window.bankLiability.methods.getTransferRequest(transferRequestKeys[i]).call({ from: this.props.account })])
+			this.setState({ transferRequests: [...this.state.transferRequests, [transferRequestKeys[i], await window.bankLiability.methods.getTransferRequest(transferRequestKeys[i]).call({ from: this.props.account })]] })
 		}
 		for (let i = 0; i < confirmRemittanceKeys.length; i++) {
-			confirmRemittances.push([confirmRemittanceKeys[i], await window.bankLiability.methods.getConfirmRemittance(confirmRemittanceKeys[i]).call({ from: this.props.account })])
+			this.setState({ confirmRemittances: [...this.state.confirmRemittances, [confirmRemittanceKeys[i], await window.bankLiability.methods.getConfirmRemittance(confirmRemittanceKeys[i]).call({ from: this.props.account })]] })
 		}
-		this.setState({ transferRequests })
-		this.setState({ confirmRemittances })
 		this.loadInfo()
 	}
 
@@ -264,28 +261,30 @@ class Bank extends Component {
 										<h6 className="m-0 font-weight-bold text-danger">Bank Liabilities Transfer Requests</h6>
 									</div>
 									<div className="card-body">
-										<table className="table table-striped table-hover align-middle">
-											<thead>
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col">Recipient</th>
-													<th scope="col">Amount</th>
-													<th scope="col">Button</th>
-												</tr>
-											</thead>
-											<tbody>
-												{this.state.transferRequests.map((request, idx) => {
-													return (
-														<tr key={request[0]}>
-															<th scope="row">{idx + 1}</th>
-															<td>{request[0]}</td>
-															<td>{request[1]}</td>
-															<td><button name={request[0]} type="button" className="btn btn-danger btn-sm" onClick={this.revokeRequest}>Revoke</button></td>
-														</tr>
-													)
-												})}
-											</tbody>
-										</table>
+										<div class="table-responsive">
+											<table className="table table-striped table-hover align-middle">
+												<thead>
+													<tr>
+														<th scope="col">#</th>
+														<th scope="col">Recipient</th>
+														<th scope="col">Amount</th>
+														<th scope="col">Button</th>
+													</tr>
+												</thead>
+												<tbody>
+													{this.state.transferRequests.map((request, idx) => {
+														return (
+															<tr key={request[0]}>
+																<th scope="row">{idx + 1}</th>
+																<td>{request[0]}</td>
+																<td>{request[1]}</td>
+																<td><button name={request[0]} type="button" className="btn btn-danger btn-sm" onClick={this.revokeRequest}>Revoke</button></td>
+															</tr>
+														)
+													})}
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 								<div className="card shadow mb-4">
@@ -293,28 +292,30 @@ class Bank extends Component {
 										<h6 className="m-0 font-weight-bold text-primary">Bank Liabilities Remittance Confirmations</h6>
 									</div>
 									<div className="card-body">
-										<table className="table table-striped table-hover align-middle">
-											<thead>
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col">Sender</th>
-													<th scope="col">Amount</th>
-													<th scope="col">Button</th>
-												</tr>
-											</thead>
-											<tbody>
-												{this.state.confirmRemittances.map((request, idx) => {
-													return (
-														<tr key={request[0]}>
-															<th scope="row">{idx + 1}</th>
-															<td>{request[0]}</td>
-															<td>{request[1]}</td>
-															<td><button name={request[0]} type="button" className="btn btn-primary btn-sm" onClick={this.accept}>Accept</button></td>
-														</tr>
-													)
-												})}
-											</tbody>
-										</table>
+										<div class="table-responsive">
+											<table className="table table-striped table-hover align-middle">
+												<thead>
+													<tr>
+														<th scope="col">#</th>
+														<th scope="col">Sender</th>
+														<th scope="col">Amount</th>
+														<th scope="col">Button</th>
+													</tr>
+												</thead>
+												<tbody>
+													{this.state.confirmRemittances.map((request, idx) => {
+														return (
+															<tr key={request[0]}>
+																<th scope="row">{idx + 1}</th>
+																<td>{request[0]}</td>
+																<td>{request[1]}</td>
+																<td><button name={request[0]} type="button" className="btn btn-primary btn-sm" onClick={this.accept}>Accept</button></td>
+															</tr>
+														)
+													})}
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							</div>

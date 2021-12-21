@@ -9,7 +9,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-contract('RPToken', ([issuer, deployer, bank1, bank2, user, merchant]) => {
+contract('RPToken', ([admin, bank1, issuer, unused2, unused3, bank2, user, merchant, unused4, unused5]) => {
   let rpToken
   let bankLiability
   let productManager
@@ -17,7 +17,7 @@ contract('RPToken', ([issuer, deployer, bank1, bank2, user, merchant]) => {
   before(async () => {
     rpToken = await RPToken.deployed()
     bankLiability = await BankLiability.deployed()
-    productManager = await ProductManager.new(rpToken.address)
+    productManager = await ProductManager.deployed()
   })
 
   describe('deployment', async () => {
@@ -41,7 +41,8 @@ contract('RPToken', ([issuer, deployer, bank1, bank2, user, merchant]) => {
 
     before(async () => {
       result = await productManager.uploadProduct(hash, 'Product name', 'Product description', 100, { from: merchant })
-      productCount = await productManager.productCount()
+      console.log()
+      productCount = await productManager._productCount()
     })
 
     it('creates products', async () => {
@@ -75,6 +76,9 @@ contract('RPToken', ([issuer, deployer, bank1, bank2, user, merchant]) => {
 
       // FAILURE: No such product
       await productManager.removeProduct(2, { from: merchant }).should.be.rejected;
+    })
+    it('confirm', async () => {
+      result = await rpToken.confirm(merchant, 100, 0, { from: user }).should.be.rejected;
     })
 
     /* //check from Struct

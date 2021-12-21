@@ -2,8 +2,19 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Container, Nav, Navbar, NavDropdown, Modal, Button } from 'react-bootstrap';
 import Identicon from 'identicon.js';
+import $ from 'jquery';
 
 class MyNavbar extends Component {
+
+	async componentDidMount() {
+		this.loadRP();
+	}
+
+	async loadRP() {
+		if (this.props.role === 'User') {
+			$('#rp').text(await window.rpToken.methods.balanceOf(this.props.account).call({ from: this.props.account }))
+		}
+	}
 
 	handleClose = () => {
 		this.setState({ show: false })
@@ -34,17 +45,21 @@ class MyNavbar extends Component {
 								navbarScroll
 							>
 								<NavLink end to="/" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Home</NavLink>
-								<NavLink end to="/about" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>About</NavLink>
+								<NavLink end to={this.props.role === 'User' ? "/UserOrder" : "/MerchantOrder"} className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Order</NavLink>
 								<NavDropdown title="Shop" id="navbarScrollingDropdown">
 									<NavDropdown.Item href="/#">All Products</NavDropdown.Item>
 									<NavDropdown.Divider />
 									<NavDropdown.Item href="/#">Popular Items</NavDropdown.Item>
 									<NavDropdown.Item href="/#">New Arrivals</NavDropdown.Item>
 								</NavDropdown>
-								<Nav.Link href="/#" onClick={this.handleShow}>Logout</Nav.Link>
+								<Nav.Link href="#" onClick={this.handleShow}>Logout</Nav.Link>
 							</Nav>
 							<ul className="navbar-nav">
 								<li className="nav-item text-nowrap">
+									{this.props.role === 'User' ?
+										<button type="button" className="btn btn-light btn-sm">
+											<span className="badge bg-secondary" id="rp">4</span> RP
+										</button> : null}
 									<span className="me-2 badge bg-dark">{this.props.role}</span>
 									<small className="text-secondary">
 										<small id="account">{this.props.account}</small>

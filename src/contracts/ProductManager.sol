@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: UNLICENSED
+
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Context.sol";
@@ -6,10 +8,14 @@ contract ProductManager is Context{
 
 	address public _RPToken;
     PM_RPToken private _rp;
-	uint public productCount = 0;
-	mapping(uint => Product) public products;
+	uint public _productCount = 0;
+	mapping(uint => Product) public _products;
+	mapping (address => uint[]) private _merchantKeys;
 
-	// Store Images
+	mapping(address => mapping(address => Order[])) private _orders;
+    mapping(address => address[]) private _orderParites;
+
+	// Store Products
 	struct Product {
 		uint id;
 		string imgHash;
@@ -17,6 +23,14 @@ contract ProductManager is Context{
 		string description;
 		uint price;
 		address merchant;
+		uint keysIdx;
+	}
+
+	struct Order {
+		string name;
+		uint quantity;
+		uint amount;
+		bool isFinished;
 	}
 	
 	event ProductCreated(
@@ -38,7 +52,7 @@ contract ProductManager is Context{
 	);
 
 	modifier onlyMerchant() {
-        require(_rp._merchants(_msgSender()), "You are not a bank");
+        require(_rp._merchants(_msgSender()), "You are not a merchant");
         _;
     }
 	
@@ -52,16 +66,53 @@ contract ProductManager is Context{
 		require(bytes(imgHash).length > 0, "Product: Product image hash cannot be empty");
 		require(bytes(name).length > 0, "Product: Product name cannot be empty");
 		require(price > 0, "Product: Product price must be greater than zero");
-		products[++productCount] = Product(productCount, imgHash, name, description, price, _msgSender());
-		emit ProductCreated(productCount, imgHash, name, description, price, _msgSender());
+		_merchantKeys[_msgSender()].push(++_productCount);
+		_products[_productCount] = Product(_productCount, imgHash, name, description, price, _msgSender(), _merchantKeys[_msgSender()].length - 1);
+		
+		emit ProductCreated(_productCount, imgHash, name, description, price, _msgSender());
 	}
 	// Remove Products
 	function removeProduct(uint id) public onlyMerchant {
-		require(id <= productCount, "Product: No such product");
-		Product memory product = products[id];
+		require(id <= _productCount, "Product: No such product");
+		Product memory product = _products[id];
 		require(product.merchant == _msgSender(), "Product: You cannot remove other merchants' product");
-		delete products[id];
-		emit ProductRemoved(productCount, product.imgHash, product.name, product.description, product.price, product.merchant);
+		uint[] storage keys = _merchantKeys[_msgSender()];
+        uint rowToDelete = product.keysIdx;
+        uint keyToMove = keys[keys.length-1];
+        keys[rowToDelete] = keyToMove;
+        _products[keyToMove].keysIdx = rowToDelete;
+        keys.pop();
+		delete _products[id];
+
+		emit ProductRemoved(_productCount, product.imgHash, product.name, product.description, product.price, product.merchant);
+	}
+	// Create Orders
+	function createOrder(address user, address merchant, string memory name, uint quantity, uint amount) public {
+		require(_msgSender() == _RPToken);
+		_orders[user][merchant].push(Order(name, quantity, amount, false));
+		_orderParites[user].push(merchant);
+		_orderParites[merchant].push(user);
+	}
+	// Finish Orders
+	function finishOrder(address user, address merchant, uint idx) public {
+		require(_msgSender() == _RPToken);
+		Order[] storage orders = _orders[user][merchant];
+		require(idx < orders.length, "Product: No such order");
+		require(!orders[idx].isFinished, "Product: The order is finished");
+		orders[idx].isFinished = true;
+	}
+	// Get Merchant Keys
+	function getMerchantKeys() public view onlyMerchant returns (uint[] memory) {
+		return _merchantKeys[_msgSender()];
+	}
+	// Get Orders
+	function getOrders(address user, address merchant) public view returns (Order[] memory) {
+		require(_msgSender() == user || _msgSender() == merchant || _msgSender() == _RPToken);
+		return _orders[user][merchant];
+	}
+	// Get Order Parties
+	function getOrderParties() public view returns (address[] memory){
+		return _orderParites[_msgSender()];
 	}
 }
 

@@ -72,14 +72,14 @@ contract BankLiability is Context {
         address[] storage keys = _transferRequestKeys[sender];
         uint rowToDelete = _transferRequest[sender][recipient].transferKeysIdx;
         address keyToMove = keys[keys.length-1];
-        keys[rowToDelete] = keys[keys.length-1];
+        keys[rowToDelete] = keyToMove;
         _transferRequest[sender][keyToMove].transferKeysIdx = rowToDelete;
         keys.pop();
 
         keys = _confirmRemittanceKeys[recipient];
         rowToDelete = _transferRequest[sender][recipient].confirmKeysIdx;
         keyToMove = keys[keys.length-1];
-        keys[rowToDelete] = keys[keys.length-1];
+        keys[rowToDelete] = keyToMove;
         _transferRequest[keyToMove][recipient].confirmKeysIdx = rowToDelete;
         keys.pop();
         delete _transferRequest[sender][recipient];
