@@ -53,7 +53,7 @@ class Issuer extends Component {
 				const msg = error.message
 				const startIdx = msg.indexOf('"reason":') + 10
 				const endIdx = msg.indexOf('"},"stack"')
-				this.error_alert(msg.substr(startIdx, endIdx - startIdx), 'danger')
+				this.error_alert(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx), 'danger')
 			})
 	}
 
@@ -201,12 +201,12 @@ class Issuer extends Component {
 									<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
 										<Row className="mb-3">
 											<Form.Group as={Col} md="4">
-												<Form.Label>User's address </Form.Label>
+												<Form.Label>User address </Form.Label>
 												<InputGroup hasValidation>
 													<InputGroup.Text>To</InputGroup.Text>
 													<Form.Control
 														type="text"
-														placeholder="User's address"
+														placeholder="User address"
 														aria-describedby="inputGroupPrepend"
 														id="userAddress"
 														required
@@ -221,6 +221,7 @@ class Issuer extends Component {
 												<InputGroup hasValidation>
 													<Form.Control
 														type="number"
+														placeholder="Amount"
 														min="1"
 														id="issueAmount"
 														required
@@ -240,7 +241,7 @@ class Issuer extends Component {
 							{/* <!-- Logs --> */}
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
-									<h6 className="m-0 font-weight-bold text-primary">Logs</h6>
+									<h6 className="m-0 font-weight-bold text-secondary">Logs</h6>
 								</div>
 								<div className="card-body" id="logs">
 								</div>

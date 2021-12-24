@@ -42,7 +42,8 @@ class Bank extends Component {
 	}
 
 	async loadRequests() {
-
+		this.setState({ transferRequests: [] })
+		this.setState({ confirmRemittances: [] })
 		const transferRequestKeys = await window.bankLiability.methods.getTransferRequestKeys().call({ from: this.props.account })
 		const confirmRemittanceKeys = await window.bankLiability.methods.getConfirmRemittanceKeys().call({ from: this.props.account })
 		for (let i = 0; i < transferRequestKeys.length; i++) {
@@ -67,7 +68,7 @@ class Bank extends Component {
 				const msg = error.message
 				const startIdx = msg.indexOf('"reason":') + 10
 				const endIdx = msg.indexOf('"},"stack"')
-				this.error_alert(msg.substr(startIdx, endIdx - startIdx), 'danger')
+				this.error_alert(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx), 'danger')
 			})
 	}
 
@@ -84,20 +85,20 @@ class Bank extends Component {
 				const msg = error.message
 				const startIdx = msg.indexOf('"reason":') + 10
 				const endIdx = msg.indexOf('"},"stack"')
-				this.error_alert(msg.substr(startIdx, endIdx - startIdx), 'danger')
+				this.error_alert(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx), 'danger')
 			})
 	}
 
-	revokeRequest = (event) => {
-		window.bankLiability.methods.revokeRequest($(event.target).attr('name')).send({ from: this.props.account }).on('receipt', receipt => {
+	revokeRequest = (name) => {
+		window.bankLiability.methods.revokeRequest(name).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
 			this.loadRequests()
 		})
 	}
 
-	accept = (event) => {
-		window.bankLiability.methods.accept($(event.target).attr('name')).send({ from: this.props.account }).on('receipt', receipt => {
+	accept = (name) => {
+		window.bankLiability.methods.accept(name).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
 			this.loadRequests()
@@ -261,7 +262,7 @@ class Bank extends Component {
 										<h6 className="m-0 font-weight-bold text-danger">Bank Liabilities Transfer Requests</h6>
 									</div>
 									<div className="card-body">
-										<div class="table-responsive">
+										<div className="table-responsive">
 											<table className="table table-striped table-hover align-middle">
 												<thead>
 													<tr>
@@ -278,7 +279,7 @@ class Bank extends Component {
 																<th scope="row">{idx + 1}</th>
 																<td>{request[0]}</td>
 																<td>{request[1]}</td>
-																<td><button name={request[0]} type="button" className="btn btn-danger btn-sm" onClick={this.revokeRequest}>Revoke</button></td>
+																<td><button type="button" className="btn btn-danger btn-sm" onClick={() => {this.revokeRequest(request[0])}}>Revoke</button></td>
 															</tr>
 														)
 													})}
@@ -292,7 +293,7 @@ class Bank extends Component {
 										<h6 className="m-0 font-weight-bold text-primary">Bank Liabilities Remittance Confirmations</h6>
 									</div>
 									<div className="card-body">
-										<div class="table-responsive">
+										<div className="table-responsive">
 											<table className="table table-striped table-hover align-middle">
 												<thead>
 													<tr>
@@ -309,7 +310,7 @@ class Bank extends Component {
 																<th scope="row">{idx + 1}</th>
 																<td>{request[0]}</td>
 																<td>{request[1]}</td>
-																<td><button name={request[0]} type="button" className="btn btn-primary btn-sm" onClick={this.accept}>Accept</button></td>
+																<td><button name={request[0]} type="button" className="btn btn-primary btn-sm" onClick={() => {this.accept(request[0])}}>Accept</button></td>
 															</tr>
 														)
 													})}
@@ -327,12 +328,12 @@ class Bank extends Component {
 									<Form noValidate validated={this.state.deliver_validated} onSubmit={this.deliver_handleSubmit}>
 										<Row className="mb-3">
 											<Form.Group as={Col} md="4">
-												<Form.Label>Issuer's address </Form.Label>
+												<Form.Label>Issuer address </Form.Label>
 												<InputGroup hasValidation>
 													<InputGroup.Text>To</InputGroup.Text>
 													<Form.Control
 														type="text"
-														placeholder="Issuer's address"
+														placeholder="Issuer address"
 														aria-describedby="inputGroupPrepend"
 														id="issuerAddress"
 														required
@@ -347,6 +348,7 @@ class Bank extends Component {
 												<InputGroup hasValidation>
 													<Form.Control
 														type="number"
+														placeholder="Amount"
 														min="1"
 														id="deliverAmount"
 														required
@@ -371,12 +373,12 @@ class Bank extends Component {
 									<Form noValidate validated={this.state.transferRequest_validated} onSubmit={this.transferRequest_handleSubmit}>
 										<Row className="mb-3">
 											<Form.Group as={Col} md="4">
-												<Form.Label>Bank's address </Form.Label>
+												<Form.Label>Bank address </Form.Label>
 												<InputGroup hasValidation>
 													<InputGroup.Text>To</InputGroup.Text>
 													<Form.Control
 														type="text"
-														placeholder="Bank's address"
+														placeholder="Bank address"
 														aria-describedby="inputGroupPrepend"
 														id="bankAddress"
 														required
@@ -391,6 +393,7 @@ class Bank extends Component {
 												<InputGroup hasValidation>
 													<Form.Control
 														type="number"
+														placeholder="Amount"
 														min="1"
 														id="transferRequestAmount"
 														required
@@ -410,7 +413,7 @@ class Bank extends Component {
 							{/* <!-- Logs --> */}
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
-									<h6 className="m-0 font-weight-bold text-primary">Logs</h6>
+									<h6 className="m-0 font-weight-bold text-secondary">Logs</h6>
 								</div>
 								<div className="card-body" id="logs">
 								</div>

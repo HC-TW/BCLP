@@ -1,3 +1,4 @@
+import './Sub.css'
 import React, { Component } from 'react';
 import Header from './Header';
 import $ from 'jquery';
@@ -74,9 +75,8 @@ class Admin extends Component {
 
 	alert = (message, type) => {
 		$('<div><div class="row"><div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>')
-		.appendTo('#logs')
+			.appendTo('#logs')
 	};
-
 
 	constructor(props) {
 		super(props)
@@ -97,56 +97,64 @@ class Admin extends Component {
 					</div>
 				</nav>
 				<Header />
-				<div className="row justify-content-center">
-					<div className="col-md-4">
-						<div className="card">
-							<div className="card-header">
-								<h4 className="font-weight-bold" >Functions</h4>
-							</div>
-							<div className="card-body">
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="Bank's address" aria-label="Bank's address" id="addBankAddress"></input>
-									<button className="btn btn-outline-primary" type="button" onClick={this.addBank}>addBank</button>
-								</div>
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="Issuer's address" aria-label="Issuer's address" id="addIssuerAddress"></input>
-									<button className="btn btn-outline-secondary" type="button" onClick={this.addIssuer}>addIssuer</button>
-								</div>
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="User's address" aria-label="User's address" id="addUserAddress"></input>
-									<button className="btn btn-outline-success" type="button" onClick={this.addUser}>addUser</button>
-								</div>
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="Merchant's address" aria-label="Merchant's address" id="addMerchantAddress"></input>
-									<button className="btn btn-outline-danger" type="button" onClick={this.addMerchant}>addMerchant</button>
-								</div>
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="Bank's address" aria-label="Bank's address" id="removeBankAddress"></input>
-									<button className="btn btn-outline-primary" type="button" onClick={this.removeBank}>removeBank</button>
-								</div>
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="Issuer's address" aria-label="Issuer's address" id="removeIssuerAddress"></input>
-									<button className="btn btn-outline-secondary" type="button" onClick={this.removeIssuer}>removeIssuer</button>
-								</div>
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="User's address" aria-label="User's address" id="removeUserAddress"></input>
-									<button className="btn btn-outline-success" type="button" onClick={this.removeUser}>removeUser</button>
-								</div>
-								<div className="input-group mb-3">
-									<input type="text" className="form-control" placeholder="Merchant's address" aria-label="Merchant's address" id="removeMerchantAddress"></input>
-									<button className="btn btn-outline-danger" type="button" onClick={this.removeMerchant}>removeMerchant</button>
-								</div>
-							</div>
-						</div>
+				<div className="container px-4 px-lg-5">
+
+					{/* <!-- Page Heading --> */}
+					<div className="d-sm-flex align-items-center justify-content-between mb-4">
+						<h1 className="h3 mt-4 mb-0 text-gray-800">Admin</h1>
+						<a href="/#" className="mt-4 d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+							className="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
 					</div>
-				</div>
-				<div className="row justify-content-center mt-3">
-					<div className="col-md-7">
-						<div className="card">
-							<div className="card-header">
-								<h4 className="font-weight-bold" >Logs</h4>
+
+					<div className="row">
+						<div className="col-lg-12 mb-4">
+							<div className="card shadow mb-4">
+								<div className="card-header py-3">
+									<h6 className="m-0 font-weight-bold text-primary">Functions</h6>
+								</div>
+								<div className="card-body">
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="Bank's address" aria-label="Bank's address" id="addBankAddress"></input>
+										<button className="btn btn-outline-primary" type="button" onClick={this.addBank}>addBank</button>
+									</div>
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="Issuer's address" aria-label="Issuer's address" id="addIssuerAddress"></input>
+										<button className="btn btn-outline-secondary" type="button" onClick={this.addIssuer}>addIssuer</button>
+									</div>
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="User's address" aria-label="User's address" id="addUserAddress"></input>
+										<button className="btn btn-outline-success" type="button" onClick={this.addUser}>addUser</button>
+									</div>
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="Merchant's address" aria-label="Merchant's address" id="addMerchantAddress"></input>
+										<button className="btn btn-outline-danger" type="button" onClick={this.addMerchant}>addMerchant</button>
+									</div>
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="Bank's address" aria-label="Bank's address" id="removeBankAddress"></input>
+										<button className="btn btn-outline-primary" type="button" onClick={this.removeBank}>removeBank</button>
+									</div>
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="Issuer's address" aria-label="Issuer's address" id="removeIssuerAddress"></input>
+										<button className="btn btn-outline-secondary" type="button" onClick={this.removeIssuer}>removeIssuer</button>
+									</div>
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="User's address" aria-label="User's address" id="removeUserAddress"></input>
+										<button className="btn btn-outline-success" type="button" onClick={this.removeUser}>removeUser</button>
+									</div>
+									<div className="input-group mb-3">
+										<input type="text" className="form-control" placeholder="Merchant's address" aria-label="Merchant's address" id="removeMerchantAddress"></input>
+										<button className="btn btn-outline-danger" type="button" onClick={this.removeMerchant}>removeMerchant</button>
+									</div>
+								</div>
 							</div>
-							<div className="card-body" id="logs">
+							
+							{/* <!-- Logs --> */}
+							<div className="card shadow mb-4">
+								<div className="card-header py-3">
+									<h6 className="m-0 font-weight-bold text-secondary">Logs</h6>
+								</div>
+								<div className="card-body" id="logs">
+								</div>
 							</div>
 						</div>
 					</div>

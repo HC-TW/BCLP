@@ -49,7 +49,7 @@ class User extends Component {
 		const productCount = await window.productManager.methods._productCount().call()
 		for (let i = 1; i <= productCount; i++) {
 			const product = await window.productManager.methods._products(i).call()
-			if (product.id.toNumber() !== 0) {
+			if (Number(product.id) !== 0) {
 				this.setState({
 					products: [...this.state.products, product]
 				})
@@ -57,15 +57,17 @@ class User extends Component {
 		}
 	}
 
+	async loadRP() {
+		$('#rp').text(await window.rpToken.methods.balanceOf(this.props.account).call({ from: this.props.account }))
+	}
+
 	redeem = () => {
 		window.rpToken.methods.redeem(this.state.redeem_merchant, this.state.redeem_name, this.state.redeem_quantity, this.state.redeem_amount).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
-			this.alert(msg, 'success')
+			console.log(msg)
+			this.loadRP()
+			this.handleClose()
 		})
-	}
-
-	handleClose = () => {
-		this.setState({ show: false })
 	}
 
 	handleShow = (event, redeem_merchant, redeem_name, redeem_price) => {
@@ -78,6 +80,10 @@ class User extends Component {
 		this.setState({ redeem_quantity: input.val() })
 		this.setState({ redeem_amount: redeem_price * input.val() })
 		this.setState({ show: true })
+	}
+
+	handleClose = () => {
+		this.setState({ show: false })
 	}
 
 	constructor(props) {
@@ -100,9 +106,9 @@ class User extends Component {
 				<Header />
 				<div className="container px-4 px-lg-5 mt-5">
 					<div className="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-						{this.state.products.map(product => {
+						{this.state.products.map((product, idx) => {
 							return (
-								<div className="col mb-5">
+								<div className="col mb-5" key={product.id}>
 									<div className="card h-100">
 										{/* <!-- Product image--> */}
 										<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${product.imgHash}`} alt="..." />
@@ -116,7 +122,7 @@ class User extends Component {
 												{/* <!-- Product description--> */}
 												<h6>{product.description}</h6>
 												{/* <!-- Product price--> */}
-												{product.price}
+												{product.price} RP
 											</div>
 										</div>
 										{/* <!-- Product actions--> */}

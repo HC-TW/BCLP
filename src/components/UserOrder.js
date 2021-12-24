@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import './Sub.css';
+import React, { useCallback, useEffect, useState } from 'react';
 import Navbar from './MyNavbar';
 import Header from './Header';
 import $ from 'jquery';
@@ -6,40 +7,46 @@ import $ from 'jquery';
 export const UserOrder = ({ account, role, onLoggedOut }) => {
 	const [orders, setOrders] = useState([]); // Loading order state
 	const [finishedOrders, setFinishedOrders] = useState([]);
-	useEffect(() => {
-		loadOrders();
-	})
-	const loadOrders = async () => {
+
+	const loadOrders = useCallback(async () => {
+		setOrders([])
+		setFinishedOrders([])
 		let redemptionAmount = 0
-		const orderParties = await window.productManager.methods.getOrderParties().call()
+		const orderParties = await window.productManager.methods.getOrderParties().call({ from: account })
 		for (let i = 0; i < orderParties.length; i++) {
-			const orders = await window.productManager.methods.getOrders(account, orderParties[i]).call({ from: account })
-			for (let j = 0; j < orders.length; j++) {
-				const order = orders[j]
+			const Orders = await window.productManager.methods.getOrders(account, orderParties[i]).call({ from: account })
+			for (let j = 0; j < Orders.length; j++) {
+				const order = Orders[j]
 				if (!order.isFinished) {
-					setOrders(...orders, [orderParties[i], order, j])
+					setOrders(oldOrders => [...oldOrders, [orderParties[i], order, j]])
 				} else {
-					setFinishedOrders(...finishedOrders, [orderParties[i], order])
+					setFinishedOrders(oldFinishedOrders => [...oldFinishedOrders, [orderParties[i], order]])
 				}
-				redemptionAmount += order.amount
+				redemptionAmount += Number(order.amount)
 			}
 		}
-		loadInfo(redemptionAmount)
-	}
+		$('#redemptionAmount').text(redemptionAmount + ' RP')
+	}, [account])
 
-	const loadInfo = (redemptionAmount) => {
-		$('#redemptionAmount').text(redemptionAmount)
+	const loadInfo = useCallback(() => {
 		$('#orderQuantity').text(orders.length)
 		$('#finishedOrderQuantity').text(finishedOrders.length)
-	}
+	}, [orders.length, finishedOrders.length])
 
-	const confirm = (event) => {
-		const target = $(event.target)
-		window.rpToken.methods.confirm(target.attr('merchant'), target.attr('amount'), target.attr('orderIdx')).send({ from: this.props.account }).on('receipt', receipt => {
+	useEffect(() => {
+		loadOrders()
+	}, [loadOrders])
+
+	useEffect(() => {
+		loadInfo()
+	}, [loadInfo])
+
+	const confirm = (merchant, amount, orderIdx) => {
+		window.rpToken.methods.confirm(merchant, amount, orderIdx).send({ from: account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			alert(msg, 'success')
+			loadOrders()
 		})
-		loadOrders()
 	}
 
 	const alert = (message, type) => {
@@ -64,7 +71,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 				<div className="row">
 
 					{/* <!-- Earnings (Monthly) Card Example --> */}
-					<div className="col mb-4">
+					<div className="col-xl-4 col-md-6 mb-4">
 						<div className="card border-left-primary shadow h-100 py-3">
 							<div className="card-body">
 								<div className="row no-gutters align-items-center">
@@ -82,17 +89,17 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 					</div>
 
 					{/* <!-- Earnings (Monthly) Card Example --> */}
-					<div className="col mb-4">
+					<div className="col-xl-4 col-md-6 mb-4">
 						<div className="card border-left-success shadow h-100 py-3">
 							<div className="card-body">
 								<div className="row no-gutters align-items-center">
 									<div className="col mr-2">
 										<div className="text-xs font-weight-bold text-success text-uppercase mb-1">
-											Quantity of Order</div>
+											Quantity of Orders</div>
 										<div className="h5 mb-0 font-weight-bold text-gray-800" id="orderQuantity"></div>
 									</div>
 									<div className="col-auto">
-										<i className="bi bi-list fa-2x text-gray-300"></i>
+										<i className="bi bi-box fa-2x text-gray-300"></i>
 									</div>
 								</div>
 							</div>
@@ -100,17 +107,17 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 					</div>
 
 					{/* <!-- Earnings (Monthly) Card Example --> */}
-					<div className="col mb-4">
+					<div className="col-xl-4 col-md-6 mb-4">
 						<div className="card border-left-info shadow h-100 py-3">
 							<div className="card-body">
 								<div className="row no-gutters align-items-center">
 									<div className="col mr-2">
 										<div className="text-xs font-weight-bold text-info text-uppercase mb-1">
-											Quantity of Finished Order</div>
+											Quantity of Finished Orders</div>
 										<div className="h5 mb-0 font-weight-bold text-gray-800" id="finishedOrderQuantity"></div>
 									</div>
 									<div className="col-auto">
-										<i className="bi bi-list-check fa-2x text-gray-300"></i>
+										<i className="bi bi-box-seam fa-2x text-gray-300"></i>
 									</div>
 								</div>
 							</div>
@@ -143,13 +150,13 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 										<tbody>
 											{orders.map((order, idx) => {
 												return (
-													<tr>
+													<tr key={order[0] + idx}>
 														<th scope="row">{idx + 1}</th>
 														<td>{order[0]}</td>
 														<td>{order[1].name}</td>
 														<td>{order[1].quantity}</td>
-														<td>{order[1].amount}</td>
-														<td><button merchant={order[0]} amount={order[1].amount} orderIdx={order[2]} type="button" className="btn btn-danger btn-sm" onClick={confirm}>Confirm</button></td>
+														<td>{order[1].amount} RP</td>
+														<td><button type="button" className="btn btn-danger btn-sm" onClick={() => { confirm(order[0], order[1].amount, order[2]) }}>Confirm</button></td>
 													</tr>
 												)
 											})}
@@ -178,12 +185,12 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 										<tbody>
 											{finishedOrders.map((order, idx) => {
 												return (
-													<tr>
+													<tr key={order[0] + idx}>
 														<th scope="row">{idx + 1}</th>
 														<td>{order[0]}</td>
 														<td>{order[1].name}</td>
 														<td>{order[1].quantity}</td>
-														<td>{order[1].amount}</td>
+														<td>{order[1].amount} RP</td>
 													</tr>
 												)
 											})}
@@ -196,7 +203,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 						{/* <!-- Logs --> */}
 						<div className="card shadow mb-4">
 							<div className="card-header py-3">
-								<h6 className="m-0 font-weight-bold text-primary">Logs</h6>
+								<h6 className="m-0 font-weight-bold text-secondary">Logs</h6>
 							</div>
 							<div className="card-body" id="logs">
 							</div>

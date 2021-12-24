@@ -15,11 +15,9 @@ import { Login } from './Login';
 import { Adminconfig } from '../config';
 import $ from 'jquery';
 import { UserOrder } from './UserOrder';
+import Merchant from './Merchant';
 
 const LS_KEY = 'login-with-metamask:auth';
-
-const ipfsClient = require('ipfs-http-client')
-const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class App extends Component {
 
@@ -97,41 +95,6 @@ class App extends Component {
     }
   }
 
-  captureFile = event => {
-    event.preventDefault()
-    const file = event.target.files[0]
-    const reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
-
-    reader.onloadend = () => {
-      this.setState({ buffer: Buffer(reader.result) })
-      console.log('buffer', this.state.buffer)
-    }
-  }
-
-  uploadImage = description => {
-    console.log("Submitting file to ipfs...")
-
-    ipfs.add(this.state.buffer, (error, result) => {
-      console.log('Ipfs result', result)
-      if (error) {
-        console.error(error)
-        return
-      }
-      this.setState({ loading: true })
-      this.state.decentragram.methods.uploadImage(result[0].hash, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
-        this.setState({ loading: false })
-      })
-    })
-  }
-
-  tipImageOwner = (id, tipAmount) => {
-    this.setState({ loading: true })
-    this.state.decentragram.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
-      this.setState({ loading: false })
-    })
-  }
-
   handleLoggedIn = (auth) => {
     console.log(auth)
     localStorage.setItem(LS_KEY, JSON.stringify(auth))
@@ -155,8 +118,7 @@ class App extends Component {
       account: '',
       role: '',
       auth: undefined,
-      sequelize: null,
-      loading: false
+      sequelize: null
     }
   }
 
@@ -164,26 +126,24 @@ class App extends Component {
     return (
       <Router>
         <div>
-          {this.state.loading
-            ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
-            :
-            this.state.auth
-              ? <Routes>
-                <Route path="/" element={
-                  (() => {
-                    switch (this.state.role) {
-                      case 'Bank': return <Bank account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
-                      case 'Issuer': return <Issuer account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
-                      case 'User': return <User account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
-                      case 'Admin': return <Admin account={this.state.account} onLoggedOut={this.handleLoggedOut} />;
-                      default: return <NotFound />;
-                    }
-                  })()
-                } />
-                <Route path="/UserOrder" element={this.state.role === 'User' ? <UserOrder account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut}/> : <NotFound />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              : <Login account={this.state.account} onLoggedIn={this.handleLoggedIn} />
+          {this.state.auth
+            ? <Routes>
+              <Route path="/" element={
+                (() => {
+                  switch (this.state.role) {
+                    case 'Bank': return <Bank account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                    case 'Issuer': return <Issuer account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                    case 'User': return <User account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                    case 'Merchant': return <Merchant account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                    case 'Admin': return <Admin account={this.state.account} onLoggedOut={this.handleLoggedOut} />;
+                    default: return <NotFound />;
+                  }
+                })()
+              } />
+              <Route path="/UserOrder" element={this.state.role === 'User' ? <UserOrder account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} /> : <NotFound />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            : <Login account={this.state.account} onLoggedIn={this.handleLoggedIn} />
           }
           <Footer />
         </div>

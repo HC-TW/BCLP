@@ -1,6 +1,6 @@
 import './Login.scss';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Identicon from 'identicon.js';
 import LoginNavbar from './LoginNavbar';
 import Header from './Header';
@@ -8,6 +8,13 @@ import $ from 'jquery';
 
 export const Login = ({ account, role, onLoggedIn }) => {
 	const [loading, setLoading] = useState(false); // Loading button state
+
+	useEffect(() => {
+		return () => {
+		  setLoading(false); // This worked for me
+		};
+	}, []);
+
 	const handleAuthenticate = async ({ publicAddress, signature }) => {
 		console.log({ publicAddress, signature })
 		const response = await fetch(`http://localhost:8080/api/auth`, {

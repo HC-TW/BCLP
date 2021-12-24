@@ -89,9 +89,11 @@ contract ProductManager is Context{
 	// Create Orders
 	function createOrder(address user, address merchant, string memory name, uint quantity, uint amount) public {
 		require(_msgSender() == _RPToken);
+		if (_orders[user][merchant].length == 0) {
+			_orderParites[user].push(merchant);
+			_orderParites[merchant].push(user);
+		}
 		_orders[user][merchant].push(Order(name, quantity, amount, false));
-		_orderParites[user].push(merchant);
-		_orderParites[merchant].push(user);
 	}
 	// Finish Orders
 	function finishOrder(address user, address merchant, uint idx) public {
@@ -107,7 +109,7 @@ contract ProductManager is Context{
 	}
 	// Get Orders
 	function getOrders(address user, address merchant) public view returns (Order[] memory) {
-		require(_msgSender() == user || _msgSender() == merchant || _msgSender() == _RPToken);
+		require(_msgSender() == user || _msgSender() == merchant);
 		return _orders[user][merchant];
 	}
 	// Get Order Parties
