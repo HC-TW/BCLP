@@ -32,7 +32,6 @@ import "@openzeppelin/contracts/utils/Context.sol";
  */
 contract RPToken is Context, IERC20, IERC20Metadata {
     address public _owner;
-    // address public _Credit;
     RP_BankLiability private _bl;
     RP_ProductManager private _pm;
 
@@ -40,8 +39,6 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     mapping (address => bool) public _issuers;
     mapping (address => bool) public _users;
     mapping (address => bool) public _merchants;
-    
-    // mapping (address => mapping(address => uint256)) private _confirmArrivals;
 
     mapping (address => uint256) private _balances;
     
@@ -52,6 +49,9 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     string private _name;
     string private _symbol;
     
+    event Deliver(address indexed bank, address indexed issuer, uint amount);
+    event Realize(address indexed Merchnat, address indexed bank, uint amount);
+
     modifier onlyOwner() {
         require(_msgSender() == _owner, "You are not a contract owner");
         _;

@@ -31,6 +31,7 @@ contract ProductManager is Context{
 		uint quantity;
 		uint amount;
 		bool isFinished;
+		uint timestamp;
 	}
 	
 	event ProductCreated(
@@ -93,7 +94,7 @@ contract ProductManager is Context{
 			_orderParites[user].push(merchant);
 			_orderParites[merchant].push(user);
 		}
-		_orders[user][merchant].push(Order(name, quantity, amount, false));
+		_orders[user][merchant].push(Order(name, quantity, amount, false, block.timestamp));
 	}
 	// Finish Orders
 	function finishOrder(address user, address merchant, uint idx) public {

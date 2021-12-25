@@ -23,12 +23,12 @@ contract BankLiability is Context {
     mapping(address => address[]) private _transferRequestKeys;
     mapping(address => address[]) private _confirmRemittanceKeys;
 
-    event TransferRequest(
+    /* event TransferRequest(
         address indexed sender,
         address indexed recipient,
         uint256 amount
     );
-    event RevokeRequest(address indexed sender, address indexed recipient);
+    event RevokeRequest(address indexed sender, address indexed recipient); */
     event Accept(
         address indexed sender,
         address indexed recipient,
@@ -64,7 +64,7 @@ contract BankLiability is Context {
         _confirmRemittanceKeys[recipient].push(_msgSender());
         _transferRequest[_msgSender()][recipient] = Request(amount, _transferRequestKeys[_msgSender()].length - 1, _confirmRemittanceKeys[recipient].length - 1);
 
-        emit TransferRequest(_msgSender(), recipient, amount);
+        // emit TransferRequest(_msgSender(), recipient, amount);
         return true;
     }
 
@@ -91,7 +91,7 @@ contract BankLiability is Context {
 
         deleteRequest(_msgSender(), recipient);
 
-        emit RevokeRequest(_msgSender(), recipient);
+        // emit RevokeRequest(_msgSender(), recipient);
         return true;
     }
 

@@ -263,7 +263,7 @@ class Merchant extends Component {
 													<div className="card h-100">
 														{/* <!-- Remove button--> */}
 														<div className="col">
-															<button type="button" className="btn float-end" onClick={() => {this.handleShow(product.id)}}><i className="bi bi-x-circle-fill text-secondary"></i></button>
+															<button type="button" className="btn btn-sm float-end" onClick={() => {this.handleShow(product.id)}}><i className="bi bi-x-circle-fill text-secondary"></i></button>
 														</div>
 														{/* <!-- Product image--> */}
 														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${product.imgHash}`} alt="..." />
@@ -301,6 +301,7 @@ class Merchant extends Component {
 													<th scope="col">Product Name</th>
 													<th scope="col">Quantity</th>
 													<th scope="col">Amount</th>
+													<th scope="col">Timestamp</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -312,6 +313,7 @@ class Merchant extends Component {
 															<td>{order[1].name}</td>
 															<td>{order[1].quantity}</td>
 															<td>{order[1].amount} RP</td>
+															<td>{new Date(order[1].timestamp * 1000).toLocaleString()}</td>
 														</tr>
 													)
 												})}
@@ -335,6 +337,7 @@ class Merchant extends Component {
 													<th scope="col">Product Name</th>
 													<th scope="col">Quantity</th>
 													<th scope="col">Amount</th>
+													<th scope="col">Timestamp</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -346,6 +349,7 @@ class Merchant extends Component {
 															<td>{order[1].name}</td>
 															<td>{order[1].quantity}</td>
 															<td>{order[1].amount} RP</td>
+															<td>{new Date(order[1].timestamp * 1000).toLocaleString()}</td>
 														</tr>
 													)
 												})}

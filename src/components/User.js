@@ -1,3 +1,4 @@
+import './Sub.css'
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
 import { Modal, Button } from 'react-bootstrap';

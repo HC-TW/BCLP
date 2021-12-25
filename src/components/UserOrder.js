@@ -144,6 +144,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 												<th scope="col">Product Name</th>
 												<th scope="col">Quantity</th>
 												<th scope="col">Amount</th>
+												<th scope="col">Timestamp</th>
 												<th scope="col">Button</th>
 											</tr>
 										</thead>
@@ -156,6 +157,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 														<td>{order[1].name}</td>
 														<td>{order[1].quantity}</td>
 														<td>{order[1].amount} RP</td>
+														<td>{new Date(order[1].timestamp * 1000).toLocaleString()}</td>
 														<td><button type="button" className="btn btn-danger btn-sm" onClick={() => { confirm(order[0], order[1].amount, order[2]) }}>Confirm</button></td>
 													</tr>
 												)
@@ -180,6 +182,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 												<th scope="col">Product Name</th>
 												<th scope="col">Quantity</th>
 												<th scope="col">Amount</th>
+												<th scope="col">Timestamp</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -191,6 +194,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 														<td>{order[1].name}</td>
 														<td>{order[1].quantity}</td>
 														<td>{order[1].amount} RP</td>
+														<td>{new Date(order[1].timestamp * 1000).toLocaleString()}</td>
 													</tr>
 												)
 											})}
