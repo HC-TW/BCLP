@@ -1,7 +1,7 @@
 import './Sub.css'
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
-import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
+import { Form, Row, Col, InputGroup, Button, Nav, Tab, Collapse } from 'react-bootstrap';
 
 import Navbar from './MyNavbar';
 import Header from './Header';
@@ -12,6 +12,7 @@ class Bank extends Component {
 	async componentDidMount() {
 		await this.loadUser();
 		await this.loadRequests();
+		this.loadEvents();
 	}
 
 	async loadUser() {
@@ -53,6 +54,37 @@ class Bank extends Component {
 			this.setState({ confirmRemittances: [...this.state.confirmRemittances, [confirmRemittanceKeys[i], await window.bankLiability.methods.getConfirmRemittance(confirmRemittanceKeys[i]).call({ from: this.props.account })]] })
 		}
 		this.loadInfo()
+	}
+
+	loadEvents = () => {
+		window.rpToken.events.Deliver({
+			filter: { bank: this.props.account },
+			fromBlock: 0
+		}, (error, events) => {
+			const values = events.returnValues
+			this.setState({ deliverEvents: [...this.state.deliverEvents, [values.issuer, values.amount]] })
+		})
+		window.rpToken.events.Realize({
+			filter: { bank: this.props.account },
+			fromBlock: 0
+		}, (error, events) => {
+			const values = events.returnValues
+			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.merchant, values.amount]] })
+		})
+		window.bankLiability.events.Accept({
+			filter: { sender: this.props.account },
+			fromBlock: 0
+		}, (error, events) => {
+			const values = events.returnValues
+			this.setState({ realizeEvents: [...this.state.requestAcceptedEvents, [values.recipient, values.amount]] })
+		})
+		window.bankLiability.events.Accept({
+			filter: { recipient: this.props.account },
+			fromBlock: 0
+		}, (error, events) => {
+			const values = events.returnValues
+			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.sender, values.amount]] })
+		})
 	}
 
 	deliver = () => {
@@ -139,14 +171,23 @@ class Bank extends Component {
 		this.setState({ transferRequest_validated: true });
 	};
 
+	collapse = () => {
+		this.setState(prevState => ({ collapse: !prevState.collapse }))
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
 			user: undefined,
+			deliverEvents: [],
+			realizeEvents: [],
+			requestAcceptedEvents: [],
+			acceptRequestEvents: [],
 			transferRequests: [],
 			confirmRemittances: [],
 			deliver_validated: false,
-			transferRequest_validated: false
+			transferRequest_validated: false,
+			collapse: true
 		}
 	}
 
@@ -255,6 +296,129 @@ class Bank extends Component {
 					<div className="row">
 						<div className="col-lg-12 mb-4">
 
+							{/* <!-- Events --> */}
+							<div className="card shadow mb-4">
+								<Tab.Container defaultActiveKey="deliver">
+									<div className="card-header">
+										<h6 className="m-0 font-weight-bold text-secondary my-2">Events</h6>
+										<Nav variant="pills">
+											<Nav.Item>
+												<Nav.Link eventKey="deliver">Deliver</Nav.Link>
+											</Nav.Item>
+											<Nav.Item>
+												<Nav.Link eventKey="realize">Realize</Nav.Link>
+											</Nav.Item>
+											<Nav.Item>
+												<Nav.Link eventKey="requestAccepted">Requests Accepted</Nav.Link>
+											</Nav.Item>
+											<Nav.Item>
+												<Nav.Link eventKey="acceptRequest">Accept Others' Requests</Nav.Link>
+											</Nav.Item>
+											<button type="button" className="ms-auto btn btn-sm float-end" onClick={this.collapse} aria-expanded={this.state.collapse}><i className="bi bi-caret-down-fill text-secondary"></i></button>
+										</Nav>
+									</div>
+									<Collapse in={this.state.collapse}>
+										<div className="card-body tab-content">
+											<Tab.Pane eventKey="deliver">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">Issuer</th>
+																<th scope="col">Amount</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.deliverEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[1]} RP</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+											<Tab.Pane eventKey="realize">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">Merchant</th>
+																<th scope="col">Amount</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.realizeEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[1]} RP</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+											<Tab.Pane eventKey="requestAccepted">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">Recipient</th>
+																<th scope="col">Amount</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.requestAcceptedEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[1]} Liabilities</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane><Tab.Pane eventKey="acceptRequest">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">Sender</th>
+																<th scope="col">Amount</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.acceptRequestEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[1]} Liabilities</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+										</div>
+									</Collapse>
+								</Tab.Container>
+							</div>
+
 							{/* <!-- Illustrations --> */}
 							<div className="card-group">
 								<div className="card shadow mb-4">
@@ -279,7 +443,7 @@ class Bank extends Component {
 																<th scope="row">{idx + 1}</th>
 																<td>{request[0]}</td>
 																<td>{request[1]}</td>
-																<td><button type="button" className="btn btn-danger btn-sm" onClick={() => {this.revokeRequest(request[0])}}>Revoke</button></td>
+																<td><button type="button" className="btn btn-danger btn-sm" onClick={() => { this.revokeRequest(request[0]) }}>Revoke</button></td>
 															</tr>
 														)
 													})}
@@ -310,7 +474,7 @@ class Bank extends Component {
 																<th scope="row">{idx + 1}</th>
 																<td>{request[0]}</td>
 																<td>{request[1]}</td>
-																<td><button name={request[0]} type="button" className="btn btn-primary btn-sm" onClick={() => {this.accept(request[0])}}>Accept</button></td>
+																<td><button name={request[0]} type="button" className="btn btn-primary btn-sm" onClick={() => { this.accept(request[0]) }}>Accept</button></td>
 															</tr>
 														)
 													})}

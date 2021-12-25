@@ -34,7 +34,7 @@ contract ProductManager is Context{
 		uint timestamp;
 	}
 	
-	event ProductCreated(
+	/* event ProductCreated(
 		uint id,
 		string imgHash,
 		string name,
@@ -50,7 +50,7 @@ contract ProductManager is Context{
 		string description,
 		uint price,
 		address merchant
-	);
+	); */
 
 	modifier onlyMerchant() {
         require(_rp._merchants(_msgSender()), "You are not a merchant");
@@ -70,7 +70,7 @@ contract ProductManager is Context{
 		_merchantKeys[_msgSender()].push(++_productCount);
 		_products[_productCount] = Product(_productCount, imgHash, name, description, price, _msgSender(), _merchantKeys[_msgSender()].length - 1);
 		
-		emit ProductCreated(_productCount, imgHash, name, description, price, _msgSender());
+		// emit ProductCreated(_productCount, imgHash, name, description, price, _msgSender());
 	}
 	// Remove Products
 	function removeProduct(uint id) public onlyMerchant {
@@ -85,7 +85,7 @@ contract ProductManager is Context{
         keys.pop();
 		delete _products[id];
 
-		emit ProductRemoved(_productCount, product.imgHash, product.name, product.description, product.price, product.merchant);
+		// emit ProductRemoved(_productCount, product.imgHash, product.name, product.description, product.price, product.merchant);
 	}
 	// Create Orders
 	function createOrder(address user, address merchant, string memory name, uint quantity, uint amount) public {

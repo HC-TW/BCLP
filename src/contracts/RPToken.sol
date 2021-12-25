@@ -409,7 +409,8 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         require(address(_bl) != address(0), "BankLiability contract hasn't been loaded");
         _mint(issuer, amount);
         _bl.increaseLiability(_msgSender(), amount);
-        
+
+        emit Deliver(_msgSender(), issuer, amount);
         return true;
     }
     // Issuer -> User
@@ -443,6 +444,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         _burn(_msgSender(), amount);
         _bl.decreaseLiability(bank, amount);
 
+        emit Realize(_msgSender(), bank, amount);
         return true;
     }
 }
