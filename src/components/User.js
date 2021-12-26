@@ -139,32 +139,6 @@ class User extends Component {
 						})}
 						<div className="col mb-5">
 							<div className="card h-100">
-								{/* <!-- Product image--> */}
-								<img className="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
-								{/* <!-- Product details--> */}
-								<div className="card-body p-4">
-									<div className="text-center">
-										{/* <!-- Product merchant--> */}
-										<h4 className="fw-bolder">Merchant</h4>
-										{/* <!-- Product name--> */}
-										<h5 className="fw-bolder">Fancy Product</h5>
-										{/* <!-- Product name--> */}
-										<h6>Description</h6>
-										{/* <!-- Product price--> */}
-										$40.00 - $80.00
-									</div>
-								</div>
-								{/* <!-- Product actions--> */}
-								<div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
-									<div className="input-group text-center">
-										<input type="number" className="form-control" min="1" max="100" />
-										<button type="button" className="btn btn-outline-dark" onClick={this.handleShow}>Redeem</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="col mb-5">
-							<div className="card h-100">
 								{/* <!-- Sale badge--> */}
 								<div className="badge bg-dark text-white position-absolute" style={{ top: 0.5 + 'rem', right: 0.5 + 'rem' }}>Sale</div>
 								{/* <!-- Product image--> */}

@@ -49,8 +49,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     string private _name;
     string private _symbol;
     
-    event Deliver(address indexed bank, address indexed issuer, uint amount);
-    event Realize(address indexed Merchnat, address indexed bank, uint amount);
+    event Realize(address indexed merchant, address indexed bank, uint amount);
 
     modifier onlyOwner() {
         require(_msgSender() == _owner, "You are not a contract owner");
@@ -410,7 +409,6 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         _mint(issuer, amount);
         _bl.increaseLiability(_msgSender(), amount);
 
-        emit Deliver(_msgSender(), issuer, amount);
         return true;
     }
     // Issuer -> User

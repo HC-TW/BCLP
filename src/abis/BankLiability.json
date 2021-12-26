@@ -22888,10 +22888,16 @@
       "links": {},
       "address": "0xA586074FA4Fe3E546A132a16238abe37951D41fE",
       "transactionHash": "0xf8114084a902e40c1c21ed10aabda2ebe22c9e464b0d73dfe218768e17620b1d"
+    },
+    "1640505919395": {
+      "events": {},
+      "links": {},
+      "address": "0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B",
+      "transactionHash": "0xf7b3ec3df6501b59232d61733ebe0783bf9f3db4ea933cdc4c71f7a2b805810d"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-25T06:35:15.242Z",
+  "updatedAt": "2021-12-26T08:06:25.450Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

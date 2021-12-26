@@ -1,7 +1,7 @@
 import './Sub.css'
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
-import { Form, Row, Col, InputGroup, Button } from 'react-bootstrap';
+import { Form, Row, Col, InputGroup, Button, Tab, Nav, Collapse } from 'react-bootstrap';
 
 import Navbar from './MyNavbar';
 import Header from './Header';
@@ -12,6 +12,12 @@ class Issuer extends Component {
 	async componentDidMount() {
 		await this.loadUser();
 		await this.loadInfo();
+		await this.loadEvents();
+	}
+
+	componentWillUnmount() {
+		this.setState({ deliverEvents: [] })
+		this.setState({ issueEvents: [] })
 	}
 
 	async loadUser() {
@@ -38,6 +44,25 @@ class Issuer extends Component {
 		$('#totalSupply').text(totalSupply + ' RP')
 		$('#holdingRatio').text(holdingRatio + '%')
 		$('#holdingRatioProgress').css('width', holdingRatio + '%')
+	}
+
+	loadEvents = () => {
+		window.rpToken.events.Transfer({
+			filter: { to: this.props.account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ deliverEvents: [...this.state.deliverEvents, [values.from, values.value, new Date(block.timestamp * 1000).toLocaleString()]] })
+		})
+		window.rpToken.events.Transfer({
+			filter: { from: this.props.account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ issueEvents: [...this.state.issueEvents, [values.to, values.value, new Date(block.timestamp * 1000).toLocaleString()]] })
+		})
 	}
 
 	issue = () => {
@@ -67,6 +92,10 @@ class Issuer extends Component {
 			.appendTo('#logs')
 	}
 
+	collapse = () => {
+		this.setState(prevState => ({ collapse: !prevState.collapse }))
+	}
+
 	handleSubmit = (event) => {
 		const form = event.currentTarget;
 		event.preventDefault();
@@ -84,6 +113,9 @@ class Issuer extends Component {
 		this.state = {
 			user: undefined,
 			validated: false,
+			deliverEvents: [],
+			issueEvents: [],
+			collapse: true
 		}
 	}
 
@@ -191,6 +223,80 @@ class Issuer extends Component {
 					{/* <!-- Content Row --> */}
 					<div className="row">
 						<div className="col-lg-12 mb-4">
+
+							{/* <!-- Events --> */}
+							<div className="card shadow mb-4">
+								<Tab.Container defaultActiveKey="deliver">
+									<div className="card-header">
+										<h6 className="m-0 font-weight-bold text-secondary my-2">Events</h6>
+										<Nav variant="pills">
+											<Nav.Item>
+												<Nav.Link eventKey="deliver">Deliver</Nav.Link>
+											</Nav.Item>
+											<Nav.Item>
+												<Nav.Link eventKey="issue">Issue</Nav.Link>
+											</Nav.Item>
+											<button type="button" className="ms-auto btn btn-sm float-end" onClick={this.collapse} aria-expanded={this.state.collapse}><i className="bi bi-caret-down-fill text-secondary"></i></button>
+										</Nav>
+									</div>
+									<Collapse in={this.state.collapse}>
+										<div className="card-body tab-content">
+											<Tab.Pane eventKey="deliver">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">Bank</th>
+																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.deliverEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[1]} RP</td>
+																		<td>{event[2]}</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+											<Tab.Pane eventKey="issue">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">User</th>
+																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.issueEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[1]} RP</td>
+																		<td>{event[2]}</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+										</div>
+									</Collapse>
+								</Tab.Container>
+							</div>
 
 							{/* <!-- Illustrations --> */}
 							<div className="card shadow mb-4">

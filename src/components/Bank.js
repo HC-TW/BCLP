@@ -12,7 +12,7 @@ class Bank extends Component {
 	async componentDidMount() {
 		await this.loadUser();
 		await this.loadRequests();
-		this.loadEvents();
+		await this.loadEvents();
 	}
 
 	async loadUser() {
@@ -57,33 +57,37 @@ class Bank extends Component {
 	}
 
 	loadEvents = () => {
-		window.rpToken.events.Deliver({
-			filter: { bank: this.props.account },
+		window.rpToken.events.Transfer({
+			filter: { from: this.props.account },
 			fromBlock: 0
-		}, (error, events) => {
+		}, async (error, events) => {
 			const values = events.returnValues
-			this.setState({ deliverEvents: [...this.state.deliverEvents, [values.issuer, values.amount]] })
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ deliverEvents: [...this.state.deliverEvents, [values.to, values.value, new Date(block.timestamp * 1000).toLocaleString()]] })
 		})
 		window.rpToken.events.Realize({
 			filter: { bank: this.props.account },
 			fromBlock: 0
-		}, (error, events) => {
+		}, async (error, events) => {
 			const values = events.returnValues
-			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.merchant, values.amount]] })
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.merchant, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 		})
 		window.bankLiability.events.Accept({
 			filter: { sender: this.props.account },
 			fromBlock: 0
-		}, (error, events) => {
+		}, async (error, events) => {
 			const values = events.returnValues
-			this.setState({ realizeEvents: [...this.state.requestAcceptedEvents, [values.recipient, values.amount]] })
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ realizeEvents: [...this.state.requestAcceptedEvents, [values.recipient, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 		})
 		window.bankLiability.events.Accept({
 			filter: { recipient: this.props.account },
 			fromBlock: 0
-		}, (error, events) => {
+		}, async (error, events) => {
 			const values = events.returnValues
-			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.sender, values.amount]] })
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.sender, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 		})
 	}
 
@@ -147,6 +151,10 @@ class Bank extends Component {
 			.appendTo('#logs')
 	}
 
+	collapse = () => {
+		this.setState(prevState => ({ collapse: !prevState.collapse }))
+	}
+
 	deliver_handleSubmit = (event) => {
 		const form = event.currentTarget;
 		event.preventDefault();
@@ -170,10 +178,6 @@ class Bank extends Component {
 		}
 		this.setState({ transferRequest_validated: true });
 	};
-
-	collapse = () => {
-		this.setState(prevState => ({ collapse: !prevState.collapse }))
-	}
 
 	constructor(props) {
 		super(props)
@@ -327,6 +331,7 @@ class Bank extends Component {
 																<th scope="col">#</th>
 																<th scope="col">Issuer</th>
 																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -336,6 +341,7 @@ class Bank extends Component {
 																		<th scope="row">{idx + 1}</th>
 																		<td>{event[0]}</td>
 																		<td>{event[1]} RP</td>
+																		<td>{event[2]}</td>
 																	</tr>
 																)
 															})}
@@ -351,6 +357,7 @@ class Bank extends Component {
 																<th scope="col">#</th>
 																<th scope="col">Merchant</th>
 																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -360,6 +367,7 @@ class Bank extends Component {
 																		<th scope="row">{idx + 1}</th>
 																		<td>{event[0]}</td>
 																		<td>{event[1]} RP</td>
+																		<td>{event[2]}</td>
 																	</tr>
 																)
 															})}
@@ -375,6 +383,7 @@ class Bank extends Component {
 																<th scope="col">#</th>
 																<th scope="col">Recipient</th>
 																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -384,6 +393,7 @@ class Bank extends Component {
 																		<th scope="row">{idx + 1}</th>
 																		<td>{event[0]}</td>
 																		<td>{event[1]} Liabilities</td>
+																		<td>{event[2]}</td>
 																	</tr>
 																)
 															})}
@@ -398,6 +408,7 @@ class Bank extends Component {
 																<th scope="col">#</th>
 																<th scope="col">Sender</th>
 																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
 															</tr>
 														</thead>
 														<tbody>
@@ -407,6 +418,7 @@ class Bank extends Component {
 																		<th scope="row">{idx + 1}</th>
 																		<td>{event[0]}</td>
 																		<td>{event[1]} Liabilities</td>
+																		<td>{event[2]}</td>
 																	</tr>
 																)
 															})}

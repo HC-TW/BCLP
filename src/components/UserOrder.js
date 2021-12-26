@@ -1,12 +1,15 @@
 import './Sub.css';
 import React, { useCallback, useEffect, useState } from 'react';
+import { Tab, Nav, Collapse } from 'react-bootstrap';
 import Navbar from './MyNavbar';
 import Header from './Header';
 import $ from 'jquery';
 
 export const UserOrder = ({ account, role, onLoggedOut }) => {
-	const [orders, setOrders] = useState([]); // Loading order state
+	const [orders, setOrders] = useState([]); 
 	const [finishedOrders, setFinishedOrders] = useState([]);
+	const [issueEvents, setIssueEvents] = useState([]);
+	const [collapse, setCollapse] = useState(true);
 
 	const loadOrders = useCallback(async () => {
 		setOrders([])
@@ -33,6 +36,17 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 		$('#finishedOrderQuantity').text(finishedOrders.length)
 	}, [orders.length, finishedOrders.length])
 
+	const loadEvents = useCallback(() => {
+		window.rpToken.events.Transfer({
+			filter: { to: account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			setIssueEvents(oldIssueEvents => [...oldIssueEvents, [values.from, values.value, new Date(block.timestamp * 1000).toLocaleString()]])
+		})
+	}, [account])
+
 	useEffect(() => {
 		loadOrders()
 	}, [loadOrders])
@@ -40,6 +54,10 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 	useEffect(() => {
 		loadInfo()
 	}, [loadInfo])
+
+	useEffect(() => {
+		loadEvents()
+	}, [loadEvents])
 
 	const confirm = (merchant, amount, orderIdx) => {
 		window.rpToken.methods.confirm(merchant, amount, orderIdx).send({ from: account }).on('receipt', receipt => {
@@ -53,6 +71,10 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 		$('<div><div class="row"><div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>')
 			.appendTo('#logs')
 	};
+
+	const changeCollapse = () => {
+		setCollapse(prevCollapse => !prevCollapse)
+	}
 
 	return (
 		<div>
@@ -128,6 +150,51 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 				{/* <!-- Content Row --> */}
 				<div className="row">
 					<div className="col-lg-12 mb-4">
+
+						{/* <!-- Events --> */}
+						<div className="card shadow mb-4">
+							<Tab.Container defaultActiveKey="issue">
+								<div className="card-header">
+									<h6 className="m-0 font-weight-bold text-secondary my-2">Events</h6>
+									<Nav variant="pills">
+										<Nav.Item>
+											<Nav.Link eventKey="issue">Issue</Nav.Link>
+										</Nav.Item>
+										<button type="button" className="ms-auto btn btn-sm float-end" onClick={changeCollapse} aria-expanded={collapse}><i className="bi bi-caret-down-fill text-secondary"></i></button>
+									</Nav>
+								</div>
+								<Collapse in={collapse}>
+									<div className="card-body tab-content">
+										<Tab.Pane eventKey="issue">
+											<div className="table-responsive">
+												<table className="table table-striped table-hover align-middle">
+													<thead>
+														<tr>
+															<th scope="col">#</th>
+															<th scope="col">Issuer</th>
+															<th scope="col">Amount</th>
+															<th scope="col">Timestamp</th>
+														</tr>
+													</thead>
+													<tbody>
+														{issueEvents.map((event, idx) => {
+															return (
+																<tr key={event[0] + idx}>
+																	<th scope="row">{idx + 1}</th>
+																	<td>{event[0]}</td>
+																	<td>{event[1]} RP</td>
+																	<td>{event[2]}</td>
+																</tr>
+															)
+														})}
+													</tbody>
+												</table>
+											</div>
+										</Tab.Pane>
+									</div>
+								</Collapse>
+							</Tab.Container>
+						</div>
 
 						{/* <!-- Illustrations --> */}
 						<div className="card shadow mb-4">

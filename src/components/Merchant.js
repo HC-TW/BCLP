@@ -1,7 +1,7 @@
 import './Sub.css'
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
-import { Form, Row, Col, InputGroup, Button, Modal } from 'react-bootstrap';
+import { Form, Row, Col, InputGroup, Button, Modal, Tab, Nav, Collapse } from 'react-bootstrap';
 
 import Navbar from './MyNavbar';
 import Header from './Header';
@@ -16,6 +16,7 @@ class Merchant extends Component {
 		await this.loadUser();
 		await this.loadOrders();
 		await this.loadProducts();
+		await this.loadEvents();
 	}
 
 	async loadUser() {
@@ -66,6 +67,17 @@ class Merchant extends Component {
 		$('#productQuantity').text(this.state.products.length)
 		$('#orderQuantity').text(this.state.orders.length)
 		$('#finishedOrderQuantity').text(this.state.finishedOrders.length)
+	}
+
+	loadEvents = () => {
+		window.rpToken.events.Realize({
+			filter: { merchant: this.props.account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.bank, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
+		})
 	}
 
 	captureFile = event => {
@@ -123,6 +135,10 @@ class Merchant extends Component {
 			.appendTo('#logs')
 	}
 
+	collapse = () => {
+		this.setState(prevState => ({ collapse: !prevState.collapse }))
+	}
+
 	handleSubmit = (event) => {
 		const form = event.currentTarget;
 		event.preventDefault();
@@ -152,7 +168,9 @@ class Merchant extends Component {
 			show: false,
 			products: [],
 			orders: [],
-			finishedOrders: []
+			finishedOrders: [],
+			realizeEvents: [],
+			collapse: true
 		}
 	}
 
@@ -250,6 +268,51 @@ class Merchant extends Component {
 					<div className="row">
 						<div className="col-lg-12 mb-4">
 
+							{/* <!-- Events --> */}
+							<div className="card shadow mb-4">
+								<Tab.Container defaultActiveKey="realize">
+									<div className="card-header">
+										<h6 className="m-0 font-weight-bold text-secondary my-2">Events</h6>
+										<Nav variant="pills">
+											<Nav.Item>
+												<Nav.Link eventKey="realize">Realize</Nav.Link>
+											</Nav.Item>
+											<button type="button" className="ms-auto btn btn-sm float-end" onClick={this.collapse} aria-expanded={this.state.collapse}><i className="bi bi-caret-down-fill text-secondary"></i></button>
+										</Nav>
+									</div>
+									<Collapse in={this.state.collapse}>
+										<div className="card-body tab-content">
+											<Tab.Pane eventKey="realize">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">Bank</th>
+																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.realizeEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[1]} RP</td>
+																		<td>{event[2]}</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+										</div>
+									</Collapse>
+								</Tab.Container>
+							</div>
+
 							{/* <!-- Illustrations --> */}
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
@@ -263,7 +326,7 @@ class Merchant extends Component {
 													<div className="card h-100">
 														{/* <!-- Remove button--> */}
 														<div className="col">
-															<button type="button" className="btn btn-sm float-end" onClick={() => {this.handleShow(product.id)}}><i className="bi bi-x-circle-fill text-secondary"></i></button>
+															<button type="button" className="btn btn-sm float-end" onClick={() => { this.handleShow(product.id) }}><i className="bi bi-x-circle-fill text-secondary"></i></button>
 														</div>
 														{/* <!-- Product image--> */}
 														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${product.imgHash}`} alt="..." />
@@ -286,6 +349,7 @@ class Merchant extends Component {
 									</div>
 								</div>
 							</div>
+
 							{/* <!-- Illustrations --> */}
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
