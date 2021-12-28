@@ -182,7 +182,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 																<tr key={event[0] + idx}>
 																	<th scope="row">{idx + 1}</th>
 																	<td>{event[0]}</td>
-																	<td>{event[1]} RP</td>
+																	<td>+ {event[1]} RP</td>
 																	<td>{event[2]}</td>
 																</tr>
 															)

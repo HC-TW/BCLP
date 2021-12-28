@@ -80,6 +80,23 @@ class Merchant extends Component {
 		})
 	}
 
+	realize = () => {
+		const address = $('#bankAddress').val()
+		const amount = $('#realizeAmount').val()
+		window.rpToken.methods.realize(address, amount).send({ from: this.props.account })
+			.on('receipt', receipt => {
+				const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+				this.alert(msg, 'success')
+				this.loadInfo()
+			})
+			.on('error', error => {
+				const msg = error.message
+				const startIdx = msg.indexOf('"reason":') + 10
+				const endIdx = msg.indexOf('"},"stack"')
+				this.error_alert(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx), 'danger')
+			})
+	}
+
 	captureFile = event => {
 		event.preventDefault()
 		const file = event.target.files[0]
@@ -139,7 +156,19 @@ class Merchant extends Component {
 		this.setState(prevState => ({ collapse: !prevState.collapse }))
 	}
 
-	handleSubmit = (event) => {
+	realize_handleSubmit = (event) => {
+		const form = event.currentTarget;
+		event.preventDefault();
+		if (form.checkValidity() === false) {
+			event.stopPropagation();
+		}
+		else {
+			this.realize();
+		}
+		this.setState({ realize_validated: true });
+	}
+
+	upload_handleSubmit = (event) => {
 		const form = event.currentTarget;
 		event.preventDefault();
 		if (form.checkValidity() === false) {
@@ -148,7 +177,7 @@ class Merchant extends Component {
 		else {
 			this.uploadProduct();
 		}
-		this.setState({ validated: true });
+		this.setState({ upload_validated: true });
 	}
 
 	handleShow = (removeProductId) => {
@@ -164,7 +193,8 @@ class Merchant extends Component {
 		super(props)
 		this.state = {
 			user: undefined,
-			validated: false,
+			realize_validated: false,
+			upload_validated: false,
 			show: false,
 			products: [],
 			orders: [],
@@ -299,7 +329,7 @@ class Merchant extends Component {
 																	<tr key={event[0] + idx}>
 																		<th scope="row">{idx + 1}</th>
 																		<td>{event[0]}</td>
-																		<td>{event[1]} RP</td>
+																		<td>- {event[1]} RP</td>
 																		<td>{event[2]}</td>
 																	</tr>
 																)
@@ -422,13 +452,60 @@ class Merchant extends Component {
 									</div>
 								</div>
 							</div>
+
 							{/* <!-- Illustrations --> */}
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
-									<h6 className="m-0 font-weight-bold text-primary">Products Related Functions</h6>
+									<h6 className="m-0 font-weight-bold text-primary">RP Related Functions</h6>
 								</div>
 								<div className="card-body">
-									<Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
+									<Form noValidate validated={this.state.realize_validated} onSubmit={this.realize_handleSubmit}>
+										<Row className="mb-3">
+											<Form.Group as={Col} md="4">
+												<Form.Label>Bank address </Form.Label>
+												<InputGroup hasValidation>
+													<InputGroup.Text>To</InputGroup.Text>
+													<Form.Control
+														type="text"
+														placeholder="Bank address"
+														aria-describedby="inputGroupPrepend"
+														id="bankAddress"
+														required
+													/>
+													<Form.Control.Feedback type="invalid">
+														Please provide a valid address.
+													</Form.Control.Feedback>
+												</InputGroup>
+											</Form.Group>
+											<Form.Group as={Col} md="4">
+												<Form.Label>Amount</Form.Label>
+												<InputGroup hasValidation>
+													<Form.Control
+														type="number"
+														placeholder="Amount"
+														min="1"
+														id="realizeAmount"
+														required
+													/>
+													<InputGroup.Text>RP</InputGroup.Text>
+													<Form.Control.Feedback type="invalid">
+														Please provide a valid number.
+													</Form.Control.Feedback>
+												</InputGroup>
+											</Form.Group>
+										</Row>
+										<Button type="submit">Realize</Button>
+									</Form>
+								</div>
+							</div>
+
+							{/* <!-- Illustrations --> */}
+							<div className="card shadow mb-4">
+								<div className="card-header py-3">
+									<h6 className="m-0 font-weight-bold text-danger">Products Related Functions</h6>
+								</div>
+								<div className="card-body">
+									<Form noValidate validated={this.state.upload_validated} onSubmit={this.upload_handleSubmit}>
 										<Row className="mb-3">
 											<Form.Group as={Col} md="4">
 												<Form.Label>Product name</Form.Label>
@@ -477,7 +554,7 @@ class Merchant extends Component {
 												</Form.Control.Feedback>
 											</Form.Group>
 										</Row>
-										<Form.Group className="position-relative mb-3">
+										<Form.Group as={Col} md="8" className="position-relative mb-3">
 											<Form.Label>Image</Form.Label>
 											<Form.Control
 												type="file"
@@ -490,7 +567,7 @@ class Merchant extends Component {
 												Please provide a valid image.
 											</Form.Control.Feedback>
 										</Form.Group>
-										<Button type="submit">Upload Product</Button>
+										<Button className="btn-danger" type="submit">Upload Product</Button>
 									</Form>
 								</div>
 							</div>

@@ -110,6 +110,20 @@ contract BankLiability is Context {
         return true;
     }
 
+    function increaseLiability(address addr, uint256 amount) public {
+        require(_msgSender() == _owner || _msgSender() == _RPToken);
+        require(amount != 0, "Liability: increase zero amount");
+        _liabilities[addr] -= int256(amount);
+        _totalLiability -= int256(amount);
+    }
+
+    function decreaseLiability(address addr, uint256 amount) public {
+        require(_msgSender() == _owner || _msgSender() == _RPToken);
+        require(amount != 0, "Liability: decrease zero amount");
+        _liabilities[addr] += int256(amount);
+        _totalLiability += int256(amount);
+    }
+
     function getTransferRequest(address recipient) public view onlyBank returns (uint256) {
         return _transferRequest[_msgSender()][recipient].amount;
     }
@@ -124,21 +138,7 @@ contract BankLiability is Context {
 
     function getConfirmRemittanceKeys() public view onlyBank returns (address[] memory) {
         return _confirmRemittanceKeys[_msgSender()];
-    }
-
-    function increaseLiability(address addr, uint256 amount) public {
-        require(_msgSender() == _owner || _msgSender() == _RPToken);
-        require(amount != 0, "Liability: increase zero amount");
-        _liabilities[addr] -= int256(amount);
-        _totalLiability -= int256(amount);
-    }
-
-    function decreaseLiability(address addr, uint256 amount) public {
-        require(_msgSender() == _owner || _msgSender() == _RPToken);
-        require(amount != 0, "Liability: decrease zero amount");
-        _liabilities[addr] += int256(amount);
-        _totalLiability += int256(amount);
-    }
+    }    
 }
 
 contract BL_RPToken {

@@ -340,7 +340,7 @@ class Bank extends Component {
 																	<tr key={event[0] + idx}>
 																		<th scope="row">{idx + 1}</th>
 																		<td>{event[0]}</td>
-																		<td>{event[1]} RP</td>
+																		<td>+ {event[1]} Liabilities</td>
 																		<td>{event[2]}</td>
 																	</tr>
 																)
@@ -366,7 +366,7 @@ class Bank extends Component {
 																	<tr key={event[0] + idx}>
 																		<th scope="row">{idx + 1}</th>
 																		<td>{event[0]}</td>
-																		<td>{event[1]} RP</td>
+																		<td>- {event[1]} Liabilities</td>
 																		<td>{event[2]}</td>
 																	</tr>
 																)
@@ -596,9 +596,7 @@ class Bank extends Component {
 							</div>
 						</div>
 					</div>
-
 				</div>
-
 			</div>
 		);
 	}
