@@ -1,4 +1,3 @@
-import './Sub.css'
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
 import { Form, Row, Col, InputGroup, Button, Modal, Tab, Nav, Collapse } from 'react-bootstrap';

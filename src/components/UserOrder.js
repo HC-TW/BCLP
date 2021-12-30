@@ -1,4 +1,3 @@
-import './Sub.css';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Tab, Nav, Collapse } from 'react-bootstrap';
 import Navbar from './MyNavbar';

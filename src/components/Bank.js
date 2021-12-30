@@ -1,4 +1,3 @@
-import './Sub.css'
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
 import { Form, Row, Col, InputGroup, Button, Nav, Tab, Collapse } from 'react-bootstrap';
@@ -400,7 +399,8 @@ class Bank extends Component {
 														</tbody>
 													</table>
 												</div>
-											</Tab.Pane><Tab.Pane eventKey="acceptRequest">
+											</Tab.Pane>
+											<Tab.Pane eventKey="acceptRequest">
 												<div className="table-responsive">
 													<table className="table table-striped table-hover align-middle">
 														<thead>

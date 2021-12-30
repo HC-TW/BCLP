@@ -1,5 +1,3 @@
-import './Login.scss';
-
 import React, { useState, useEffect } from 'react';
 import Identicon from 'identicon.js';
 import LoginNavbar from './LoginNavbar';

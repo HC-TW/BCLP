@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Web3 from 'web3';
@@ -16,6 +16,7 @@ import { Adminconfig } from '../config';
 import $ from 'jquery';
 import { UserOrder } from './UserOrder';
 import Merchant from './Merchant';
+import { UserPointsExchange } from './UserPointsExchange';
 
 const LS_KEY = 'login-with-metamask:auth';
 
@@ -140,7 +141,8 @@ class App extends Component {
                   }
                 })()
               } />
-              <Route path="/UserOrder" element={this.state.role === 'User' ? <UserOrder account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} /> : <NotFound />} />
+              <Route path="/UserOrder" element={this.state.role === 'User' ? <UserOrder account={this.state.account} role={this.state.role} onLoggedOut={this.handleLoggedOut} /> : <NotFound />} />
+              <Route path="/UserPointsExchange" element={this.state.role === 'User' ? <UserPointsExchange account={this.state.account} role={this.state.role} onLoggedOut={this.handleLoggedOut} /> : <NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             : <Login account={this.state.account} onLoggedIn={this.handleLoggedIn} />

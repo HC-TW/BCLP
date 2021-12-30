@@ -6,8 +6,13 @@ import "@openzeppelin/contracts/utils/Context.sol";
 
 contract PointsExchange is Context {
     PE_RPToken private _rp;
-    mapping (address => string) _exchangeRates; // Existing points issuer's address => 100 
-                                               // means 100 xx points -> 1 RP 
+
+    // Existing points issuer's address => 100
+    // means 100 xx points -> 1 RP
+    mapping(address => string) _other2rp; 
+    // Existing points issuer's address => 100
+    // means 1 RP -> 100 xx points
+    mapping(address => string) _rp2other; 
 
     struct Proposal {
         address proposer;
@@ -17,9 +22,9 @@ contract PointsExchange is Context {
         uint256 giveAmount;
     }
     uint256 public proposalId = 0;
-    mapping (uint256 => Proposal) public proposals;
-    mapping (address => uint256[]) public proposalIds;
-    mapping (uint256 => uint256) proposalIdToIndexes;
+    mapping(uint256 => Proposal) public proposals;
+    mapping(address => uint256[]) public proposalIds;
+    mapping(uint256 => uint256) proposalIdToIndexes;
     event ChangeExchangeRate(address bank, string rate);
 
     modifier onlyBank() {
@@ -32,23 +37,37 @@ contract PointsExchange is Context {
     }
 
     function changeExchangeRate(string memory rate) public onlyBank {
-        _exchangeRates[_msgSender()] = rate;
+        _other2rp[_msgSender()] = rate;
         emit ChangeExchangeRate(_msgSender(), rate);
     }
 
-    function propose(string memory wantPoint, string memory givePoint, uint256 wantAmount, uint256 giveAmount) public {
-        proposals[++proposalId] = Proposal(_msgSender(), wantPoint, givePoint, wantAmount, giveAmount);
+    function propose(
+        string memory wantPoint,
+        string memory givePoint,
+        uint256 wantAmount,
+        uint256 giveAmount
+    ) public {
+        proposals[++proposalId] = Proposal(
+            _msgSender(),
+            wantPoint,
+            givePoint,
+            wantAmount,
+            giveAmount
+        );
         proposalIds[_msgSender()].push(proposalId);
-        proposalIdToIndexes[proposalId] = proposalIds[_msgSender()].length-1;
+        proposalIdToIndexes[proposalId] = proposalIds[_msgSender()].length - 1;
     }
 
     function accept(uint256 id) public {
-        uint256[] storage proposerProposalIds = proposalIds[proposals[id].proposer];
-        proposerProposalIds[proposalIdToIndexes[id]] = proposerProposalIds[proposerProposalIds.length-1];
+        uint256[] storage proposerProposalIds = proposalIds[
+            proposals[id].proposer
+        ];
+        proposerProposalIds[proposalIdToIndexes[id]] = proposerProposalIds[
+            proposerProposalIds.length - 1
+        ];
         proposerProposalIds.pop();
         delete proposalIdToIndexes[id];
     }
-
 }
 
 contract PE_RPToken {

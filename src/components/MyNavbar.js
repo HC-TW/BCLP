@@ -46,6 +46,7 @@ class MyNavbar extends Component {
 							>
 								<NavLink end to="/" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Home</NavLink>
 								{this.props.role === 'User' ? <NavLink end to="/UserOrder" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Order</NavLink> : null}
+								{this.props.role === 'User' ? <NavLink end to="/UserPointsExchange" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Points Exchange</NavLink> : null}
 								{/* <NavDropdown title="Shop" id="navbarScrollingDropdown">
 									<NavDropdown.Item href="/#">All Products</NavDropdown.Item>
 									<NavDropdown.Divider />

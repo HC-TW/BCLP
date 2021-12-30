@@ -1,4 +1,3 @@
-import './Sub.css'
 import React, { Component } from 'react';
 import Header from './Header';
 import $ from 'jquery';

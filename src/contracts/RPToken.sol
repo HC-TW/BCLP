@@ -146,6 +146,10 @@ contract RPToken is Context, IERC20, IERC20Metadata {
      * - the caller must have a balance of at least `amount`.
      */
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+        require((isBank(_msgSender()) && isIssuer(recipient)) 
+        || (isIssuer(_msgSender()) && isUser(recipient)) 
+        || (isUser(_msgSender()) && isMerchant(recipient)) 
+        || (isMerchant(_msgSender()) && isBank(recipient)));
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
