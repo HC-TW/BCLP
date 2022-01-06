@@ -418,7 +418,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     // Issuer -> User
     function issue(address user, uint256 amount) public onlyIssuer returns (bool) {
         require(_users[user], "ERC20: You can only issue RPs to the user");
-        transfer(user, amount);
+        _transfer(_msgSender(), user, amount);
         
         return true;
     }
@@ -426,7 +426,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     function redeem(address merchant, string memory productName, uint256 quantity, uint256 amount) public onlyUser returns (bool) {
         require(_merchants[merchant], "ERC20: You can only redeem goods from the merchant");
         require(address(_pm) != address(0), "ProductManager contract hasn't been loaded");
-        transfer(address(this), amount);        
+        _transfer(_msgSender(), address(this), amount);        
         _pm.createOrder(_msgSender(), merchant, productName, quantity, amount);
 
         return true;

@@ -109,7 +109,7 @@ class User extends Component {
 						{this.state.products.map((product, idx) => {
 							return (
 								<div className="col mb-5" key={product.id}>
-									<div className="card h-100">
+									<div className="card shadow h-100">
 										{/* <!-- Product image--> */}
 										<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${product.imgHash}`} alt="..." />
 										{/* <!-- Product details--> */}
@@ -122,7 +122,7 @@ class User extends Component {
 												{/* <!-- Product description--> */}
 												<h6>{product.description}</h6>
 												{/* <!-- Product price--> */}
-												{product.price} RP
+												<h6>{product.price} RP</h6>
 											</div>
 										</div>
 										{/* <!-- Product actions--> */}

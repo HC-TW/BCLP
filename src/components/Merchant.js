@@ -352,7 +352,7 @@ class Merchant extends Component {
 										{this.state.products.map((product, idx) => {
 											return (
 												<div className="col mb-2" key={product.id}>
-													<div className="card h-100">
+													<div className="card shadow h-100">
 														{/* <!-- Remove button--> */}
 														<div className="col">
 															<button type="button" className="btn btn-sm float-end" onClick={() => { this.handleShow(product.id) }}><i className="bi bi-x-circle-fill text-secondary"></i></button>
@@ -367,7 +367,7 @@ class Merchant extends Component {
 																{/* <!-- Product description--> */}
 																<h6>{product.description}</h6>
 																{/* <!-- Product price--> */}
-																{product.price} RP
+																<h6>{product.price} RP</h6>
 															</div>
 														</div>
 

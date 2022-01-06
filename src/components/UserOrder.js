@@ -5,9 +5,10 @@ import Header from './Header';
 import $ from 'jquery';
 
 export const UserOrder = ({ account, role, onLoggedOut }) => {
-	const [orders, setOrders] = useState([]); 
+	const [orders, setOrders] = useState([]);
 	const [finishedOrders, setFinishedOrders] = useState([]);
 	const [issueEvents, setIssueEvents] = useState([]);
+	const [exchangeRPEvents, setExchangeRPEvents] = useState([]);
 	const [collapse, setCollapse] = useState(true);
 
 	const loadOrders = useCallback(async () => {
@@ -41,9 +42,20 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 			fromBlock: 0
 		}, async (error, events) => {
 			const values = events.returnValues
-			const block = await window.web3.eth.getBlock(events.blockNumber)
-			setIssueEvents(oldIssueEvents => [...oldIssueEvents, [values.from, values.value, new Date(block.timestamp * 1000).toLocaleString()]])
+			if (values.from !== window.pointsExchange._address) {
+				const block = await window.web3.eth.getBlock(events.blockNumber)
+				setIssueEvents(oldIssueEvents => [...oldIssueEvents, [values.from, values.value, new Date(block.timestamp * 1000).toLocaleString()]])
+			}
 		})
+		window.pointsExchange.events.ExchangeRP({
+			filter: { user: account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			setExchangeRPEvents(oldExchangeRPEvents => [...oldExchangeRPEvents, { issuer: values.issuer, name: values.name, oldAmount: values.oldAmount, amount: values.amount, timestamp: new Date(block.timestamp * 1000).toLocaleString() }])
+		})
+
 	}, [account])
 
 	useEffect(() => {
@@ -159,6 +171,9 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 										<Nav.Item>
 											<Nav.Link eventKey="issue">Issue</Nav.Link>
 										</Nav.Item>
+										<Nav.Item>
+											<Nav.Link eventKey="other2rp">Other points {<i className="bi bi-arrow-right-circle-fill"></i>} RP</Nav.Link>
+										</Nav.Item>
 										<button type="button" className="ms-auto btn btn-sm float-end" onClick={changeCollapse} aria-expanded={collapse}><i className="bi bi-caret-down-fill text-secondary"></i></button>
 									</Nav>
 								</div>
@@ -183,6 +198,34 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 																	<td>{event[0]}</td>
 																	<td>+ {event[1]} RP</td>
 																	<td>{event[2]}</td>
+																</tr>
+															)
+														})}
+													</tbody>
+												</table>
+											</div>
+										</Tab.Pane>
+										<Tab.Pane eventKey="other2rp">
+											<div className="table-responsive">
+												<table className="table table-striped table-hover align-middle">
+													<thead>
+														<tr>
+															<th scope="col">#</th>
+															<th scope="col">Issuer</th>
+															<th scope="col">Other Points</th>
+															<th scope="col">Amount</th>
+															<th scope="col">Timestamp</th>
+														</tr>
+													</thead>
+													<tbody>
+														{exchangeRPEvents.map((event, idx) => {
+															return (
+																<tr key={event.name + idx}>
+																	<th scope="row">{idx + 1}</th>
+																	<td>{event.issuer}</td>
+																	<td>- {event.oldAmount} {event.name}</td>
+																	<td>+ {event.amount} RP</td>
+																	<td>{event.timestamp}</td>
 																</tr>
 															)
 														})}

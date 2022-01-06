@@ -13,6 +13,8 @@ class MyNavbar extends Component {
 	async loadRP() {
 		if (this.props.role === 'User') {
 			$('#rp').text(await window.rpToken.methods.balanceOf(this.props.account).call({ from: this.props.account }))
+		} else if (this.props.role === 'Admin') {
+			$('#rp').text(await window.rpToken.methods.balanceOf(window.pointsExchange._address).call({ from: this.props.account }))
 		}
 	}
 
@@ -57,9 +59,9 @@ class MyNavbar extends Component {
 							</Nav>
 							<ul className="navbar-nav">
 								<li className="nav-item text-nowrap">
-									{this.props.role === 'User' ?
+									{(this.props.role === 'User' || this.props.role === 'Admin') ?
 										<button type="button" className="btn btn-light btn-sm">
-											<span className="badge bg-secondary" id="rp">4</span> RP
+											<span className="badge bg-secondary" id="rp">0</span> RP
 										</button> : null}
 									<span className="me-2 badge bg-dark">{this.props.role}</span>
 									<small className="text-secondary">

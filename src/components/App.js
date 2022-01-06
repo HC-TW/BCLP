@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import RPToken from '../abis/RPToken.json';
 import BankLiability from '../abis/BankLiability.json'
 import ProductManager from '../abis/ProductManager.json'
+import PointsExchange from '../abis/PointsExchange.json'
 import User from './User';
 import Bank from './Bank';
 import Issuer from './Issuer';
@@ -48,10 +49,12 @@ class App extends Component {
     const RPToken_networkData = RPToken.networks[networkId]
     const BankLiability_networkData = BankLiability.networks[networkId]
     const ProductManager_networkData = ProductManager.networks[networkId]
-    if (RPToken_networkData && BankLiability_networkData && ProductManager_networkData) {
+    const PointsExchange_networkData = PointsExchange.networks[networkId]
+    if (RPToken_networkData && BankLiability_networkData && ProductManager_networkData && PointsExchange_networkData) {
       window.rpToken = new web3.eth.Contract(RPToken.abi, RPToken_networkData.address)
       window.bankLiability = new web3.eth.Contract(BankLiability.abi, BankLiability_networkData.address)
       window.productManager = new web3.eth.Contract(ProductManager.abi, ProductManager_networkData.address)
+      window.pointsExchange = new web3.eth.Contract(PointsExchange.abi, PointsExchange_networkData.address)
       this.loadRole();
       // console.log(RPToken_networkData.address)
     } else {
@@ -136,7 +139,7 @@ class App extends Component {
                     case 'Issuer': return <Issuer account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                     case 'User': return <User account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                     case 'Merchant': return <Merchant account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
-                    case 'Admin': return <Admin account={this.state.account} onLoggedOut={this.handleLoggedOut} />;
+                    case 'Admin': return <Admin account={this.state.account} role={this.state.role} onLoggedOut={this.handleLoggedOut} />;
                     default: return <NotFound />;
                   }
                 })()

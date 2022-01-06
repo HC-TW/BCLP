@@ -1,10 +1,13 @@
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
-import { Form, Row, Col, InputGroup, Button, Nav, Tab, Collapse } from 'react-bootstrap';
+import { Form, Row, Col, InputGroup, Button, Nav, Tab, Collapse, Modal } from 'react-bootstrap';
 
 import Navbar from './MyNavbar';
 import Header from './Header';
 import $ from 'jquery';
+
+const ipfsClient = require('ipfs-http-client')
+const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class Bank extends Component {
 
@@ -12,6 +15,16 @@ class Bank extends Component {
 		await this.loadUser();
 		await this.loadRequests();
 		await this.loadEvents();
+		await this.loadRates();
+	}
+
+	componentWillUnmount() {
+		this.setState({ deliverEvents: [] })
+		this.setState({ realizeEvents: [] })
+		this.setState({ requestAcceptedEvents: [] })
+		this.setState({ acceptRequestEvents: [] })
+		this.setState({ transferRequests: [] })
+		this.setState({ confirmRemittances: [] })
 	}
 
 	async loadUser() {
@@ -53,6 +66,16 @@ class Bank extends Component {
 			this.setState({ confirmRemittances: [...this.state.confirmRemittances, [confirmRemittanceKeys[i], await window.bankLiability.methods.getConfirmRemittance(confirmRemittanceKeys[i]).call({ from: this.props.account })]] })
 		}
 		this.loadInfo()
+	}
+
+	async loadRates() {
+		this.setState({ rpRates: [] })
+		const rate = await window.pointsExchange.methods._rpRates(this.props.account).call()
+		if (rate.name !== '') {
+			this.setState({
+				rpRates: [...this.state.rpRates, rate]
+			})
+		}
 	}
 
 	loadEvents = () => {
@@ -140,6 +163,53 @@ class Bank extends Component {
 		})
 	}
 
+	captureFile = event => {
+		event.preventDefault()
+		const file = event.target.files[0]
+		const reader = new window.FileReader()
+		reader.readAsArrayBuffer(file)
+
+		reader.onloadend = () => {
+			this.setState({ buffer: Buffer(reader.result) })
+			console.log('buffer', this.state.buffer)
+		}
+	}
+
+	addRPRate = () => {
+		console.log("Submitting file to ipfs...")
+
+		ipfs.add(this.state.buffer, (error, result) => {
+			console.log('Ipfs result', result)
+			if (error) {
+				console.error(error)
+				return
+			}
+			window.pointsExchange.methods.addRPRate(result[0].hash, $('#pointsName').val(), $('#addRPRateAmount1').val(), $('#addRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
+				const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+				this.alert(msg, 'success')
+				this.loadRates()
+			})
+		})
+	}
+
+	removeRPRate = () => {
+		window.pointsExchange.methods.removeRPRate().send({ from: this.props.account }).on('receipt', receipt => {
+			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+			this.alert(msg, 'success')
+			this.loadRates()
+			this.removeRPRate_handleClose()
+		})
+	}
+
+	updateRPRate = () => {
+		window.pointsExchange.methods.updateRPRate($('#updateRPRateAmount1').val(), $('#updateRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
+			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+			this.alert(msg, 'success')
+			this.loadRates()
+			this.updateRPRate_handleClose()
+		})
+	}
+
 	alert = (message, type) => {
 		$('<div><div class="row"><div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>')
 			.appendTo('#logs')
@@ -178,10 +248,51 @@ class Bank extends Component {
 		this.setState({ transferRequest_validated: true });
 	};
 
+	addRPRate_handleSubmit = (event) => {
+		const form = event.currentTarget;
+		event.preventDefault();
+		if (form.checkValidity() === false) {
+			event.stopPropagation();
+		}
+		else {
+			this.addRPRate();
+		}
+		this.setState({ addRPRate_validated: true });
+	};
+
+	updateRPRate_handleSubmit = (event) => {
+		const form = event.currentTarget;
+		event.preventDefault();
+		if (form.checkValidity() === false) {
+			event.stopPropagation();
+		}
+		else {
+			this.updateRPRate();
+		}
+		this.setState({ updateRPRate_validated: true });
+	};
+
+	removeRPRate_handleShow = () => {
+		this.setState({ removeRPRate_show: true })
+	}
+
+	removeRPRate_handleClose = () => {
+		this.setState({ removeRPRate_show: false })
+	}
+
+	updateRPRate_handleShow = () => {
+		this.setState({ updateRPRate_show: true })
+	}
+
+	updateRPRate_handleClose = () => {
+		this.setState({ updateRPRate_show: false })
+	}
+
 	constructor(props) {
 		super(props)
 		this.state = {
 			user: undefined,
+			rpRates: [],
 			deliverEvents: [],
 			realizeEvents: [],
 			requestAcceptedEvents: [],
@@ -190,6 +301,10 @@ class Bank extends Component {
 			confirmRemittances: [],
 			deliver_validated: false,
 			transferRequest_validated: false,
+			addRPRate_validated: false,
+			updateRPRate_validated: false,
+			removeRPRate_show: false,
+			updateRPRate_show: false,
 			collapse: true
 		}
 	}
@@ -257,7 +372,7 @@ class Bank extends Component {
 											</div>
 											<div className="row no-gutters align-items-center">
 												<div className="col-auto">
-													<div className="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="issuanceRatio">50%</div>
+													<div className="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="issuanceRatio">0%</div>
 												</div>
 												<div className="col">
 													<div className="progress progress-sm mr-2">
@@ -431,6 +546,41 @@ class Bank extends Component {
 								</Tab.Container>
 							</div>
 
+							<div className="card shadow mb-4">
+								<div className="card-header py-3">
+									<h6 className="m-0 font-weight-bold text-danger">Rates</h6>
+								</div>
+								<div className="card-body">
+									<div className="row gx-4 gx-lg-5 row-cols-3 row-cols-md-4 row-cols-xl-5">
+										{this.state.rpRates.map((rpRate, idx) => {
+											return (
+												<div className="col mb-2" key={rpRate.name + idx}>
+													<div className="card shadow h-100">
+														{/* <!-- Remove button--> */}
+														<div className="col">
+															<button type="button" className="btn btn-sm float-end" onClick={this.removeRPRate_handleShow}><i className="bi bi-x-circle-fill text-secondary"></i></button>
+														</div>
+														{/* <!-- Points image--> */}
+														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${rpRate.imgHash}`} alt="..." />
+														{/* <!-- Points details--> */}
+														<div className="card-body p-4">
+															<div className="text-center">
+																{/* <!-- Points name--> */}
+																<h5 className="fw-bolder">{rpRate.name}</h5>
+																{/* <!-- Points rate--> */}
+																<h6>{rpRate.oldAsset} {rpRate.name} <i className="bi bi-arrow-right-circle-fill"></i> {rpRate.newAsset} RP</h6>
+																<button type="button" className="btn btn-outline-dark" onClick={this.updateRPRate_handleShow}>Update RP Rate</button>
+															</div>
+														</div>
+
+													</div>
+												</div>
+											)
+										})}
+									</div>
+								</div>
+							</div>
+
 							{/* <!-- Illustrations --> */}
 							<div className="card-group">
 								<div className="card shadow mb-4">
@@ -497,14 +647,15 @@ class Bank extends Component {
 								</div>
 							</div>
 							<div className="card shadow mb-4">
-								<div className="card-header py-3">
+								<div className="d-flex justify-content-between card-header py-3">
 									<h6 className="m-0 font-weight-bold text-primary">RP Related Functions</h6>
+									<h6 className="m-0 text-secondary">Points Exchange Contract: {window.pointsExchange._address}</h6>
 								</div>
 								<div className="card-body">
 									<Form noValidate validated={this.state.deliver_validated} onSubmit={this.deliver_handleSubmit}>
 										<Row className="mb-3">
 											<Form.Group as={Col} md="4">
-												<Form.Label>Issuer address </Form.Label>
+												<Form.Label>Issuer address</Form.Label>
 												<InputGroup hasValidation>
 													<InputGroup.Text>To</InputGroup.Text>
 													<Form.Control
@@ -586,6 +737,73 @@ class Bank extends Component {
 								</div>
 							</div>
 
+							<div className="card shadow mb-4">
+								<div className="card-header py-3">
+									<h6 className="m-0 font-weight-bold text-primary">Points Exchange Related Functions</h6>
+								</div>
+								<div className="card-body">
+									<Form noValidate validated={this.state.addRPRate_validated} onSubmit={this.addRPRate_handleSubmit}>
+										<Row className="mb-3">
+											<Form.Group as={Col} md="4">
+												<Form.Label>Points name</Form.Label>
+												<InputGroup hasValidation>
+													<Form.Control
+														type="text"
+														placeholder="Points name"
+														aria-describedby="inputGroupPrepend"
+														id="pointsName"
+														required
+													/>
+													<Form.Control.Feedback type="invalid">
+														Please provide a valid name.
+													</Form.Control.Feedback>
+												</InputGroup>
+											</Form.Group>
+										</Row>
+										<Row className="mb-3">
+											<Form.Group as={Col} md="8">
+												<Form.Label>Rate</Form.Label>
+												<InputGroup hasValidation>
+													<Form.Control
+														type="number"
+														placeholder="Amount"
+														min="1"
+														id="addRPRateAmount1"
+														required
+													/>
+													<InputGroup.Text>Points</InputGroup.Text>
+													<InputGroup.Text>{<i className="bi bi-arrow-right-circle-fill"></i>}</InputGroup.Text>
+													<Form.Control
+														type="number"
+														placeholder="Amount"
+														min="1"
+														id="addRPRateAmount2"
+														required
+													/>
+													<InputGroup.Text>RP</InputGroup.Text>
+													<Form.Control.Feedback type="invalid">
+														Please provide a valid number.
+													</Form.Control.Feedback>
+												</InputGroup>
+											</Form.Group>
+										</Row>
+										<Form.Group as={Col} md="8" className="position-relative mb-3">
+											<Form.Label>Image</Form.Label>
+											<Form.Control
+												type="file"
+												accept=".jpg, .jpeg, .png, .bmp, .gif"
+												onChange={this.captureFile}
+												required
+											/>
+											<Form.Control.Feedback type="invalid">
+												Please provide a valid image.
+											</Form.Control.Feedback>
+										</Form.Group>
+										<Button className="btn-primary" type="submit">Add RP Rate</Button>
+									</Form>
+								</div>
+							</div>
+
 							{/* <!-- Logs --> */}
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
@@ -597,6 +815,61 @@ class Bank extends Component {
 						</div>
 					</div>
 				</div>
+
+				{/* Modal */}
+				<Modal show={this.state.removeRPRate_show} onHide={this.removeRPRate_handleClose} centered>
+					<Modal.Header closeButton>
+						<Modal.Title>Remove RP Rate</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>Are you sure you want to remove this rate?</Modal.Body>
+					<Modal.Footer>
+						<Button variant="secondary" onClick={this.removeRPRate_handleClose}>
+							No
+						</Button>
+						<Button variant="primary" onClick={this.removeRPRate}>
+							Yes
+						</Button>
+					</Modal.Footer>
+				</Modal>
+
+				{/* Modal */}
+				<Modal show={this.state.updateRPRate_show} onHide={this.updateRPRate_handleClose}  centered>
+					<Modal.Header closeButton>
+						<Modal.Title>Update RP Rate</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Form noValidate validated={this.state.updateRPRate_validated} onSubmit={this.updateRPRate_handleSubmit}>
+							<Row className="mb-3">
+								<Form.Group as={Col} md="8">
+									<Form.Label>Rate</Form.Label>
+									<InputGroup hasValidation>
+										<Form.Control
+											type="number"
+											placeholder="Amount"
+											min="1"
+											id="updateRPRateAmount1"
+											required
+										/>
+										<InputGroup.Text>Points</InputGroup.Text>
+										<InputGroup.Text>{<i className="bi bi-arrow-right-circle-fill"></i>}</InputGroup.Text>
+										<Form.Control
+											type="number"
+											placeholder="Amount"
+											min="1"
+											id="updateRPRateAmount2"
+											required
+										/>
+										<InputGroup.Text>RP</InputGroup.Text>
+										<Form.Control.Feedback type="invalid">
+											Please provide a valid number.
+										</Form.Control.Feedback>
+									</InputGroup>
+								</Form.Group>
+							</Row>
+							<Button className="btn-dark" type="submit">Update RP Rate</Button>
+						</Form>
+					</Modal.Body>
+				</Modal>
 			</div>
 		);
 	}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Header from './Header';
 import $ from 'jquery';
+import MyNavbar from './MyNavbar';
 
 class Admin extends Component {
 
@@ -87,14 +88,7 @@ class Admin extends Component {
 	render() {
 		return (
 			<div>
-				<nav className="navbar navbar-expand-lg navbar-light bg-light">
-					<div className="container px-4 px-lg-5">
-						<a className="navbar-brand font-monospace" href="/#">BCOIP PRO</a>
-						<div className="navbar-nav">
-							<a className="nav-link" href="/#" onClick={this.props.onLoggedOut}>Logout</a>
-						</div>
-					</div>
-				</nav>
+				<MyNavbar account={this.props.account} role={this.props.role} onLoggedOut={this.props.onLoggedOut}/>
 				<Header />
 				<div className="container px-4 px-lg-5">
 
