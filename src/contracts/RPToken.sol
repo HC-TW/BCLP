@@ -49,6 +49,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     string private _name;
     string private _symbol;
     
+    event Redeem(address indexed user, address indexed merchant, uint amount);
     event Realize(address indexed merchant, address indexed bank, uint amount);
 
     modifier onlyOwner() {
@@ -428,7 +429,8 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         require(address(_pm) != address(0), "ProductManager contract hasn't been loaded");
         _transfer(_msgSender(), address(this), amount);        
         _pm.createOrder(_msgSender(), merchant, productName, quantity, amount);
-
+        
+        emit Redeem(_msgSender(), merchant, amount);
         return true;
     }
     // (User ->) Contract -> Merchant

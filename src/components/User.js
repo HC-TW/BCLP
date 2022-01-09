@@ -14,6 +14,10 @@ class User extends Component {
 		await this.loadProducts();
 	}
 
+	componentWillUnmount() {
+		this.setState(this.getInitialState())
+	}
+
 	async loadUser() {
 		const { accessToken } = this.props.auth;
 		const {
@@ -67,6 +71,7 @@ class User extends Component {
 			console.log(msg)
 			this.loadRP()
 			this.handleClose()
+			this.successHandleShow()
 		})
 	}
 
@@ -86,17 +91,28 @@ class User extends Component {
 		this.setState({ show: false })
 	}
 
+	successHandleShow = () => {
+		this.setState({ success_show: true })
+	}
+
+	successHandleClose = () => {
+		this.setState({ success_show: false })
+	}
+
+	getInitialState = () => ({
+		loading: false,
+		user: undefined,
+		products: [],
+		show: false,
+		success_show: false,
+		redeem_merchant: '',
+		redeem_name: '',
+		redeem_quantity: 1
+	})
+
 	constructor(props) {
 		super(props)
-		this.state = {
-			loading: false,
-			user: undefined,
-			products: [],
-			show: false,
-			redeem_merchant: '',
-			redeem_name: '',
-			redeem_quantity: 1
-		}
+		this.state = this.getInitialState()
 	}
 
 	render() {
@@ -136,7 +152,7 @@ class User extends Component {
 								</div>
 							)
 						})}
-						
+
 					</div>
 				</div>
 
@@ -152,6 +168,19 @@ class User extends Component {
 						</Button>
 						<Button variant="primary" onClick={this.redeem}>
 							Yes
+						</Button>
+					</Modal.Footer>
+				</Modal>
+
+				{/* Modal */}
+				<Modal show={this.state.success_show} onHide={this.successHandleClose}>
+					<Modal.Header closeButton>
+						<Modal.Title>Redeem</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>Redeem products successfully!</Modal.Body>
+					<Modal.Footer>
+						<Button variant="secondary" onClick={this.successHandleClose}>
+							Close
 						</Button>
 					</Modal.Footer>
 				</Modal>

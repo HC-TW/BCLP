@@ -10,6 +10,7 @@ require('chai')
   .should()
 
 contract('RPToken', ([admin, bank1, issuer, unused2, unused3, bank2, user, merchant, unused4, unused5]) => {
+  console.log(unused5)
   let rpToken
   let bankLiability
   let productManager

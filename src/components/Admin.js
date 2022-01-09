@@ -1,3 +1,4 @@
+import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
 import Header from './Header';
 import $ from 'jquery';
@@ -6,7 +7,27 @@ import MyNavbar from './MyNavbar';
 class Admin extends Component {
 
 	async componentDidMount() {
+		await this.loadUser()
+	}
 
+	componentWillUnmount() {
+		this.setState(this.getInitialState())
+	}
+
+	async loadUser() {
+		const { accessToken } = this.props.auth;
+		const {
+			payload: { id },
+		} = jwtDecode(accessToken);
+
+		const response = await fetch(`http://localhost:8080/api/users/${id}`, {
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+			},
+		})
+		const user = await response.json()
+		this.setState({ user })
+		console.log(this.state.user)
 	}
 
 	addBank = () => {
@@ -78,17 +99,19 @@ class Admin extends Component {
 			.appendTo('#logs')
 	};
 
+	getInitialState = () => ({
+		user: undefined
+	})
+
 	constructor(props) {
 		super(props)
-		this.state = {
-
-		}
+		this.state = this.getInitialState()
 	}
 
 	render() {
 		return (
 			<div>
-				<MyNavbar account={this.props.account} role={this.props.role} onLoggedOut={this.props.onLoggedOut}/>
+				<MyNavbar account={this.props.account} role={this.props.role} onLoggedOut={this.props.onLoggedOut} />
 				<Header />
 				<div className="container px-4 px-lg-5">
 
@@ -140,7 +163,7 @@ class Admin extends Component {
 									</div>
 								</div>
 							</div>
-							
+
 							{/* <!-- Logs --> */}
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">

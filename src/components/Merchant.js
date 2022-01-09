@@ -18,6 +18,10 @@ class Merchant extends Component {
 		await this.loadEvents();
 	}
 
+	componentWillUnmount() {
+		this.setState(this.getInitialState())
+	}
+
 	async loadUser() {
 		const { accessToken } = this.props.auth;
 		const {
@@ -188,19 +192,21 @@ class Merchant extends Component {
 		this.setState({ show: false })
 	}
 
+	getInitialState = () => ({
+		user: undefined,
+		realize_validated: false,
+		upload_validated: false,
+		show: false,
+		products: [],
+		orders: [],
+		finishedOrders: [],
+		realizeEvents: [],
+		collapse: true
+	})
+
 	constructor(props) {
 		super(props)
-		this.state = {
-			user: undefined,
-			realize_validated: false,
-			upload_validated: false,
-			show: false,
-			products: [],
-			orders: [],
-			finishedOrders: [],
-			realizeEvents: [],
-			collapse: true
-		}
+		this.state = this.getInitialState()
 	}
 
 	render() {

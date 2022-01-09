@@ -19,12 +19,7 @@ class Bank extends Component {
 	}
 
 	componentWillUnmount() {
-		this.setState({ deliverEvents: [] })
-		this.setState({ realizeEvents: [] })
-		this.setState({ requestAcceptedEvents: [] })
-		this.setState({ acceptRequestEvents: [] })
-		this.setState({ transferRequests: [] })
-		this.setState({ confirmRemittances: [] })
+		this.setState(this.getInitialState())
 	}
 
 	async loadUser() {
@@ -288,25 +283,27 @@ class Bank extends Component {
 		this.setState({ updateRPRate_show: false })
 	}
 
+	getInitialState = () => ({
+		user: undefined,
+		rpRates: [],
+		deliverEvents: [],
+		realizeEvents: [],
+		requestAcceptedEvents: [],
+		acceptRequestEvents: [],
+		transferRequests: [],
+		confirmRemittances: [],
+		deliver_validated: false,
+		transferRequest_validated: false,
+		addRPRate_validated: false,
+		updateRPRate_validated: false,
+		removeRPRate_show: false,
+		updateRPRate_show: false,
+		collapse: true
+	})
+
 	constructor(props) {
 		super(props)
-		this.state = {
-			user: undefined,
-			rpRates: [],
-			deliverEvents: [],
-			realizeEvents: [],
-			requestAcceptedEvents: [],
-			acceptRequestEvents: [],
-			transferRequests: [],
-			confirmRemittances: [],
-			deliver_validated: false,
-			transferRequest_validated: false,
-			addRPRate_validated: false,
-			updateRPRate_validated: false,
-			removeRPRate_show: false,
-			updateRPRate_show: false,
-			collapse: true
-		}
+		this.state = this.getInitialState()
 	}
 
 	render() {
@@ -833,14 +830,14 @@ class Bank extends Component {
 				</Modal>
 
 				{/* Modal */}
-				<Modal show={this.state.updateRPRate_show} onHide={this.updateRPRate_handleClose}  centered>
+				<Modal show={this.state.updateRPRate_show} onHide={this.updateRPRate_handleClose} centered>
 					<Modal.Header closeButton>
 						<Modal.Title>Update RP Rate</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<Form noValidate validated={this.state.updateRPRate_validated} onSubmit={this.updateRPRate_handleSubmit}>
 							<Row className="mb-3">
-								<Form.Group as={Col} md="8">
+								<Form.Group as={Col} md="12">
 									<Form.Label>Rate</Form.Label>
 									<InputGroup hasValidation>
 										<Form.Control

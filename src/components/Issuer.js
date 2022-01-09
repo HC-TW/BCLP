@@ -15,8 +15,7 @@ class Issuer extends Component {
 	}
 
 	componentWillUnmount() {
-		this.setState({ deliverEvents: [] })
-		this.setState({ issueEvents: [] })
+		this.setState(this.getInitialState())
 	}
 
 	async loadUser() {
@@ -107,15 +106,17 @@ class Issuer extends Component {
 		this.setState({ validated: true });
 	};
 
+	getInitialState = () => ({
+		user: undefined,
+		validated: false,
+		deliverEvents: [],
+		issueEvents: [],
+		collapse: true
+	})
+
 	constructor(props) {
 		super(props)
-		this.state = {
-			user: undefined,
-			validated: false,
-			deliverEvents: [],
-			issueEvents: [],
-			collapse: true
-		}
+		this.state = this.getInitialState()
 	}
 
 	render() {

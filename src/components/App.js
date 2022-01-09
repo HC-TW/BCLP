@@ -13,11 +13,12 @@ import Admin from './Admin';
 import Footer from './Footer';
 import NotFound from './NotFound';
 import { Login } from './Login';
-import { Adminconfig } from '../config';
+import { Adminconfig, Regulatorconfig } from '../config';
 import $ from 'jquery';
 import { UserOrder } from './UserOrder';
 import Merchant from './Merchant';
 import { UserPointsExchange } from './UserPointsExchange';
+import Regulator from './Regulator';
 
 const LS_KEY = 'login-with-metamask:auth';
 
@@ -27,6 +28,10 @@ class App extends Component {
     await this.loadWeb3()
     await this.loadBlockchainData()
     await this.loadAccessToken()
+  }
+
+  componentWillUnmount() {
+    this.setState(this.getInitialState())
   }
 
   async loadWeb3() {
@@ -73,6 +78,8 @@ class App extends Component {
     const rpToken = window.rpToken
     if (this.state.account === Adminconfig.address.toLowerCase()) {
       this.setState({ role: 'Admin' })
+    } else if (this.state.account === Regulatorconfig.address.toLowerCase()) {
+      this.setState({ role: 'Regulator' })
     } else if (await rpToken.methods.isBank(this.state.account).call({ from: this.state.account })) {
       this.setState({ role: 'Bank' })
     } else if (await rpToken.methods.isIssuer(this.state.account).call({ from: this.state.account })) {
@@ -116,14 +123,16 @@ class App extends Component {
       .replaceAll('#appAlert')
   }
 
+  getInitialState = () => ({
+    account: '',
+    role: '',
+    auth: undefined,
+    sequelize: null
+  })
+
   constructor(props) {
     super(props)
-    this.state = {
-      account: '',
-      role: '',
-      auth: undefined,
-      sequelize: null
-    }
+    this.state = this.getInitialState()
   }
 
   render() {
@@ -139,7 +148,8 @@ class App extends Component {
                     case 'Issuer': return <Issuer account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                     case 'User': return <User account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                     case 'Merchant': return <Merchant account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
-                    case 'Admin': return <Admin account={this.state.account} role={this.state.role} onLoggedOut={this.handleLoggedOut} />;
+                    case 'Admin': return <Admin account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
+                    case 'Regulator': return <Regulator account={this.state.account} role={this.state.role} auth={this.state.auth} onLoggedOut={this.handleLoggedOut} />;
                     default: return <NotFound />;
                   }
                 })()
