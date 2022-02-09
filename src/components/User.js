@@ -100,7 +100,6 @@ class User extends Component {
 	}
 
 	getInitialState = () => ({
-		loading: false,
 		user: undefined,
 		products: [],
 		show: false,

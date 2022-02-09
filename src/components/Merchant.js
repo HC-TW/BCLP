@@ -133,6 +133,7 @@ class Merchant extends Component {
 					const endIdx = msg.indexOf('"},"stack"')
 					this.error_alert(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx), 'danger')
 				})
+			this.setState({ loading: false })
 		})
 	}
 
@@ -178,6 +179,7 @@ class Merchant extends Component {
 			event.stopPropagation();
 		}
 		else {
+			this.setState({ loading: true })
 			this.uploadProduct();
 		}
 		this.setState({ upload_validated: true });
@@ -201,7 +203,8 @@ class Merchant extends Component {
 		orders: [],
 		finishedOrders: [],
 		realizeEvents: [],
-		collapse: true
+		collapse: true,
+		loading: false
 	})
 
 	constructor(props) {
@@ -572,7 +575,7 @@ class Merchant extends Component {
 												Please provide a valid image.
 											</Form.Control.Feedback>
 										</Form.Group>
-										<Button className="btn-danger" type="submit">Upload Product</Button>
+										<Button className="btn-danger" type="submit">{this.state.loading ? "Loading..." : "Upload Product"}</Button>
 									</Form>
 								</div>
 							</div>

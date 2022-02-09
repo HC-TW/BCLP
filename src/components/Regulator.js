@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import React, { Component } from 'react';
-import { Tab, Nav, Collapse, InputGroup, FormControl, Row, Col, Form, Button } from 'react-bootstrap';
+import { Tab, Nav, Collapse, InputGroup, Row, Form } from 'react-bootstrap';
 
 import Navbar from './MyNavbar';
 import Header from './Header';
@@ -112,7 +112,7 @@ class Regulator extends Component {
 																placeholder="Merchant"
 																id="merchant"
 															/>
-															<button class="btn btn-outline-secondary" type="submit">Refresh</button>
+															<button className="btn btn-outline-secondary" type="submit">Refresh</button>
 														</InputGroup>
 													</Form.Group>
 												</Form>

@@ -211,7 +211,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 													<thead>
 														<tr>
 															<th scope="col">#</th>
-															<th scope="col">Issuer</th>
+															<th scope="col">Bank</th>
 															<th scope="col">Other Points</th>
 															<th scope="col">Amount</th>
 															<th scope="col">Timestamp</th>

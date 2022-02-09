@@ -8,17 +8,17 @@ contract PointsExchange is Context {
     address public _owner;
     PE_RPToken private _rp;
 
-	mapping(address => Rate) public _rpRates;
-	address[] private _existingIssuer2RPs;
-
-
-    mapping(address => string) _rp2other; 
+    uint public _rateCount = 0;
+	mapping(uint => Rate) public _rates;
+	mapping (address => uint[]) private _issuerKeys;
 
     struct Rate {
+        uint id;
         string imgHash;
         string name;
-        uint oldAsset;
-        uint newAsset;
+        uint otherPoint;
+        uint RP;
+        address bank;
         uint keysIdx;
     }
     /* struct Proposal {
@@ -32,9 +32,8 @@ contract PointsExchange is Context {
     mapping(uint256 => Proposal) public proposals;
     mapping(address => uint256[]) public proposalIds;
     mapping(uint256 => uint256) proposalIdToIndexes; */
-    event UpdateRPRate(address indexed bank, uint oldAsset, uint newAsset);
+    // event UpdateRPRate(address indexed bank, uint oldAsset, uint newAsset);
     event ExchangeRP(address indexed issuer, address indexed user, string name, uint oldAmount, uint amount);
-    event ChangeOtherRate(address indexed merchant, string rate);
 
     modifier onlyOwner() {
         require(_msgSender() == _owner, "You are not a contract owner");
@@ -51,31 +50,36 @@ contract PointsExchange is Context {
         _rp = PE_RPToken(RPTokenAddr);
     }
 
-    function addRPRate(string memory imgHash, string memory name, uint oldAsset, uint newAsset) public onlyBank {
-        require(bytes(_rpRates[_msgSender()].name).length == 0, "PointsExchange: You can only add points exchange rate for RP once");
+    function addRPRate(string memory imgHash, string memory name, uint otherPoint, uint rp) public onlyBank {
+        // require(bytes(_rpRates[_msgSender()].name).length == 0, "PointsExchange: You can only add points exchange rate for RP once");
         require(bytes(imgHash).length > 0, "PointsExchange: Points image hash cannot be empty");
         require(bytes(name).length > 0, "PointsExchange: Points name cannot be empty");
-		require(oldAsset > 0, "PointsExchange: Points exchange rate cannot be empty");
-        require(newAsset > 0, "PointsExchange: Points exchange rate cannot be empty");
-        _existingIssuer2RPs.push(_msgSender());
-        _rpRates[_msgSender()] = Rate(imgHash, name, oldAsset, newAsset, _existingIssuer2RPs.length-1);
+		require(otherPoint > 0, "PointsExchange: Points exchange rate cannot be empty");
+        require(rp > 0, "PointsExchange: Points exchange rate cannot be empty");
+        _issuerKeys[_msgSender()].push(++_rateCount);
+		_rates[_rateCount] = Rate(_rateCount, imgHash, name, otherPoint, rp, _msgSender(), _issuerKeys[_msgSender()].length - 1);
     }
 
-    function removeRPRate() public onlyBank {
-        require(bytes(_rpRates[_msgSender()].name).length > 0, "PointsExchange: You did not add points exchange rate for RP");
-        uint rowToDelete = _rpRates[_msgSender()].keysIdx;
-        address keyToMove = _existingIssuer2RPs[_existingIssuer2RPs.length-1];
-        _existingIssuer2RPs[rowToDelete] = keyToMove;
-        _rpRates[keyToMove].keysIdx = rowToDelete;
-        _existingIssuer2RPs.pop();
-        delete _rpRates[_msgSender()];
+    function removeRPRate(uint id) public onlyBank {
+        require(id <= _rateCount, "PointsExchange: No such rate");
+		Rate memory rate = _rates[id];
+		require(rate.bank == _msgSender(), "PointsExchange: You cannot remove other banks' rate");
+		uint[] storage keys = _issuerKeys[_msgSender()];
+        uint rowToDelete = rate.keysIdx;
+        uint keyToMove = keys[keys.length-1];
+        keys[rowToDelete] = keyToMove;
+        _rates[keyToMove].keysIdx = rowToDelete;
+        keys.pop();
+		delete _rates[id];
     }
 
-    function updateRPRate(uint oldAsset, uint newAsset) public onlyBank {
-        _rpRates[_msgSender()].oldAsset = oldAsset;
-        _rpRates[_msgSender()].newAsset = newAsset;
+    function updateRPRate(uint id, uint otherPoint, uint rp) public onlyBank {
+        require(id <= _rateCount, "PointsExchange: No such rate");
+		require(_rates[id].bank == _msgSender(), "PointsExchange: You cannot remove other banks' rate");
+        _rates[id].otherPoint = otherPoint;
+        _rates[id].RP = rp;
 
-        emit UpdateRPRate(_msgSender(), oldAsset, newAsset);
+        // emit UpdateRPRate(_msgSender(), otherPoint, rp);
     }
 
     function exchangeRP(address issuer, address user, string memory name, uint oldAmount, uint amount) public onlyOwner{
@@ -83,9 +87,10 @@ contract PointsExchange is Context {
         emit ExchangeRP(issuer, user, name, oldAmount, amount);
     }
 
-    function getExistingIssuer2RPs() public view returns (address[] memory) {
-        return _existingIssuer2RPs;
-    }
+    // Get Issuer Keys
+	function getIssuerKeys() public view onlyBank returns (uint[] memory) {
+		return _issuerKeys[_msgSender()];
+	}
 
     /* function propose(
         string memory wantPoint,

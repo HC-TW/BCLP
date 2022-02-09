@@ -6,7 +6,7 @@ import { Adminconfig } from '../config';
 import $ from 'jquery';
 
 export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
-	const [rpRates, setRPRates] = useState([]);
+	const [rates, setRates] = useState([]);
 	const [rp_exchange_issuer, setRPExchangeIssuer] = useState('');
 	const [rp_exchange_name, setRPExchangeName] = useState('');
 	const [rp_exchange_old_amount, setRPExchangeOldAmount] = useState(0);
@@ -15,11 +15,12 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 	const [success_show, setSuccessShow] = useState(false);
 
 	const loadExchangeLists = useCallback(async () => {
-		// setRPRates([])
-		const existingIssuer2RPs = await window.pointsExchange.methods.getExistingIssuer2RPs().call()
-		for (let i = 0; i < existingIssuer2RPs.length; i++) {
-			const rpRate = await window.pointsExchange.methods._rpRates(existingIssuer2RPs[i]).call()
-			setRPRates(oldRPRates => [...oldRPRates, [existingIssuer2RPs[i], rpRate]])
+		const rateCount = await window.pointsExchange.methods._rateCount().call()
+		for (let i = 1; i <= rateCount; i++) {
+			const rate = await window.pointsExchange.methods._rates(i).call()
+			if (Number(rate.id) !== 0) {
+				setRates(oldRates => [...oldRates, rate])
+			}
 		}
 	}, [])
 
@@ -95,31 +96,29 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 							</Nav>
 							<div className="card-body tab-content">
 								<Tab.Pane eventKey="rp2other">
-									<div className="row gx-4 gx-lg-5 row-cols-3 row-cols-md-4 row-cols-xl-5 justify-content-center">
-										{rpRates.map((product, idx) => {
+								<div className="row gx-4 gx-lg-5 row-cols-3 row-cols-md-4 row-cols-xl-5 justify-content-center">
+										{rates.map((rate) => {
 											return (
-												<div className="col mb-5" key={product.id}>
+												<div className="col mb-5" key={rate.id}>
 													<div className="card shadow h-100">
-														{/* <!-- Product image--> */}
-														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${product.imgHash}`} alt="..." />
-														{/* <!-- Product details--> */}
+														{/* <!-- Points image--> */}
+														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${rate.imgHash}`} alt="..." />
+														{/* <!-- Points details--> */}
 														<div className="card-body p-4">
 															<div className="text-center">
-																{/* <!-- Product merchant--> */}
-																<h5 className="fw-bolder">{product.merchant}</h5>
-																{/* <!-- Product name--> */}
-																<h5 className="fw-bolder">{product.name}</h5>
-																{/* <!-- Product description--> */}
-																<h6>{product.description}</h6>
-																{/* <!-- Product price--> */}
-																<h6>{product.price} RP</h6>
+																{/* <!-- Points Issuer--> */}
+																<h5 className="fw-bolder">{rate.bank}</h5>
+																{/* <!-- Points name--> */}
+																<h5 className="fw-bolder">{rate.name}</h5>
+																{/* <!-- Points rate--> */}
+																<h6>{rate.RP} RP {<i className="bi bi-arrow-right-circle-fill"></i>} {rate.otherPoint} {rate.name}</h6>
 															</div>
 														</div>
-														{/* <!-- Product actions--> */}
+														{/* <!-- Points actions--> */}
 														<div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
 															<div className="input-group text-center">
 																<input type="number" className="form-control" min="1" max="100" />
-																<button type="button" className="btn btn-outline-dark" onClick={(e) => this.handleShow(e, product.merchant, product.name, product.price)}>Redeem</button>
+																<button type="button" className="btn btn-outline-dark" onClick={(e) => rpHandleShow(e, rate.bank, rate.name, rate.otherPoint, rate.RP)}>Exchange</button>
 															</div>
 														</div>
 													</div>
@@ -130,28 +129,28 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 								</Tab.Pane>
 								<Tab.Pane eventKey="other2rp">
 									<div className="row gx-4 gx-lg-5 row-cols-3 row-cols-md-4 row-cols-xl-5 justify-content-center">
-										{rpRates.map((rpRate, idx) => {
+										{rates.map((rate) => {
 											return (
-												<div className="col mb-5" key={rpRate[1].name}>
+												<div className="col mb-5" key={'rp_' + rate.id}>
 													<div className="card shadow h-100">
 														{/* <!-- Points image--> */}
-														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${rpRate[1].imgHash}`} alt="..." />
+														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${rate.imgHash}`} alt="..." />
 														{/* <!-- Points details--> */}
 														<div className="card-body p-4">
 															<div className="text-center">
 																{/* <!-- Points Issuer--> */}
-																<h5 className="fw-bolder">{rpRate[0]}</h5>
+																<h5 className="fw-bolder">{rate.bank}</h5>
 																{/* <!-- Points name--> */}
-																<h5 className="fw-bolder">{rpRate[1].name}</h5>
+																<h5 className="fw-bolder">{rate.name}</h5>
 																{/* <!-- Points rate--> */}
-																<h6>{rpRate[1].oldAsset} {rpRate[1].name} {<i className="bi bi-arrow-right-circle-fill"></i>} {rpRate[1].newAsset} RP</h6>
+																<h6>{rate.otherPoint} {rate.name} {<i className="bi bi-arrow-right-circle-fill"></i>} {rate.RP} RP</h6>
 															</div>
 														</div>
 														{/* <!-- Points actions--> */}
 														<div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
 															<div className="input-group text-center">
 																<input type="number" className="form-control" min="1" max="100" />
-																<button type="button" className="btn btn-outline-dark" onClick={(e) => rpHandleShow(e, rpRate[0], rpRate[1].name, rpRate[1].oldAsset, rpRate[1].newAsset)}>Exchange</button>
+																<button type="button" className="btn btn-outline-dark" onClick={(e) => rpHandleShow(e, rate.bank, rate.name, rate.otherPoint, rate.RP)}>Exchange</button>
 															</div>
 														</div>
 													</div>

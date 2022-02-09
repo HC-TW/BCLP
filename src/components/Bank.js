@@ -64,12 +64,11 @@ class Bank extends Component {
 	}
 
 	async loadRates() {
-		this.setState({ rpRates: [] })
-		const rate = await window.pointsExchange.methods._rpRates(this.props.account).call()
-		if (rate.name !== '') {
-			this.setState({
-				rpRates: [...this.state.rpRates, rate]
-			})
+		this.setState({ rates: [] })
+		const keys = await window.pointsExchange.methods.getIssuerKeys().call({ from: this.props.account })
+		for (let i = 0; i < keys.length; i++) {
+			const rate = await window.pointsExchange.methods._rates(keys[i]).call()
+			this.setState({ rates: [...this.state.rates, rate] })
 		}
 	}
 
@@ -184,11 +183,12 @@ class Bank extends Component {
 				this.alert(msg, 'success')
 				this.loadRates()
 			})
+			this.setState({ loading: false })
 		})
 	}
 
 	removeRPRate = () => {
-		window.pointsExchange.methods.removeRPRate().send({ from: this.props.account }).on('receipt', receipt => {
+		window.pointsExchange.methods.removeRPRate(this.state.removeRPRateId).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
 			this.loadRates()
@@ -197,7 +197,7 @@ class Bank extends Component {
 	}
 
 	updateRPRate = () => {
-		window.pointsExchange.methods.updateRPRate($('#updateRPRateAmount1').val(), $('#updateRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
+		window.pointsExchange.methods.updateRPRate(this.state.updateRPRateId, $('#updateRPRateAmount1').val(), $('#updateRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
 			this.loadRates()
@@ -250,6 +250,7 @@ class Bank extends Component {
 			event.stopPropagation();
 		}
 		else {
+			this.setState({ loading: true })
 			this.addRPRate();
 		}
 		this.setState({ addRPRate_validated: true });
@@ -267,7 +268,8 @@ class Bank extends Component {
 		this.setState({ updateRPRate_validated: true });
 	};
 
-	removeRPRate_handleShow = () => {
+	removeRPRate_handleShow = (removeRPRateId) => {
+		this.setState({ removeRPRateId })
 		this.setState({ removeRPRate_show: true })
 	}
 
@@ -275,7 +277,8 @@ class Bank extends Component {
 		this.setState({ removeRPRate_show: false })
 	}
 
-	updateRPRate_handleShow = () => {
+	updateRPRate_handleShow = (updateRPRateId) => {
+		this.setState({ updateRPRateId})
 		this.setState({ updateRPRate_show: true })
 	}
 
@@ -285,7 +288,7 @@ class Bank extends Component {
 
 	getInitialState = () => ({
 		user: undefined,
-		rpRates: [],
+		rates: [],
 		deliverEvents: [],
 		realizeEvents: [],
 		requestAcceptedEvents: [],
@@ -298,7 +301,8 @@ class Bank extends Component {
 		updateRPRate_validated: false,
 		removeRPRate_show: false,
 		updateRPRate_show: false,
-		collapse: true
+		collapse: true,
+		loading: false
 	})
 
 	constructor(props) {
@@ -549,24 +553,24 @@ class Bank extends Component {
 								</div>
 								<div className="card-body">
 									<div className="row gx-4 gx-lg-5 row-cols-3 row-cols-md-4 row-cols-xl-5">
-										{this.state.rpRates.map((rpRate, idx) => {
+										{this.state.rates.map((rate, idx) => {
 											return (
-												<div className="col mb-2" key={rpRate.name + idx}>
+												<div className="col mb-2" key={rate.id}>
 													<div className="card shadow h-100">
 														{/* <!-- Remove button--> */}
 														<div className="col">
-															<button type="button" className="btn btn-sm float-end" onClick={this.removeRPRate_handleShow}><i className="bi bi-x-circle-fill text-secondary"></i></button>
+															<button type="button" className="btn btn-sm float-end" onClick={() => { this.removeRPRate_handleShow(rate.id) }}><i className="bi bi-x-circle-fill text-secondary"></i></button>
 														</div>
 														{/* <!-- Points image--> */}
-														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${rpRate.imgHash}`} alt="..." />
+														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${rate.imgHash}`} alt="..." />
 														{/* <!-- Points details--> */}
 														<div className="card-body p-4">
 															<div className="text-center">
 																{/* <!-- Points name--> */}
-																<h5 className="fw-bolder">{rpRate.name}</h5>
+																<h5 className="fw-bolder">{rate.name}</h5>
 																{/* <!-- Points rate--> */}
-																<h6>{rpRate.oldAsset} {rpRate.name} <i className="bi bi-arrow-right-circle-fill"></i> {rpRate.newAsset} RP</h6>
-																<button type="button" className="btn btn-outline-dark" onClick={this.updateRPRate_handleShow}>Update RP Rate</button>
+																<h6>{rate.otherPoint} {rate.name} <i className="bi bi-arrow-right-circle-fill"></i> {rate.RP} RP</h6>
+																<button type="button" className="btn btn-outline-dark" onClick={() => { this.updateRPRate_handleShow(rate.id) }}>Update RP Rate</button>
 															</div>
 														</div>
 
@@ -796,7 +800,7 @@ class Bank extends Component {
 												Please provide a valid image.
 											</Form.Control.Feedback>
 										</Form.Group>
-										<Button className="btn-primary" type="submit">Add RP Rate</Button>
+										<Button className="btn-primary" type="submit">{this.state.loading ? "Loading..." : "Add RP Rate"}</Button>
 									</Form>
 								</div>
 							</div>
@@ -863,7 +867,7 @@ class Bank extends Component {
 									</InputGroup>
 								</Form.Group>
 							</Row>
-							<Button className="btn-dark" type="submit">Update RP Rate</Button>
+							<button className="btn btn-dark" type="submit">Update RP Rate</button>
 						</Form>
 					</Modal.Body>
 				</Modal>
