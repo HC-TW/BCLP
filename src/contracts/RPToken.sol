@@ -34,6 +34,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     address public _owner;
     RP_BankLiability private _bl;
     RP_ProductManager private _pm;
+    address private _pe;
 
     mapping (address => bool) public _banks;
     mapping (address => bool) public _issuers;
@@ -51,6 +52,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     
     event Redeem(address indexed user, address indexed merchant, uint amount);
     event Realize(address indexed merchant, address indexed bank, uint amount);
+    event Recycle(address indexed bank, address indexed user, uint amount);
 
     modifier onlyOwner() {
         require(_msgSender() == _owner, "You are not a contract owner");
@@ -355,6 +357,10 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         _pm = RP_ProductManager(addr);
     }
 
+    function loadPointsExchange(address addr) public onlyOwner {
+        _pe = addr;
+    }
+
     /* function setCreditAddr(address addr) public onlyOwner {
         _Credit = addr;
     } */
@@ -450,6 +456,17 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         _bl.decreaseLiability(bank, amount);
 
         emit Realize(_msgSender(), bank, amount);
+        return true;
+    }
+
+    function recycle(address bank, address user, uint256 amount) public returns (bool) {
+        require(_msgSender() == _pe);
+        require(_banks[bank], "ERC20: Only banks can recycle RPs");
+        require(address(_bl) != address(0), "ERC20: BankLiability contract hasn't been loaded");
+        _burn(user, amount);
+        _bl.decreaseLiability(bank, amount);
+
+        emit Recycle(bank, user, amount);
         return true;
     }
 }

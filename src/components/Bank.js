@@ -89,6 +89,14 @@ class Bank extends Component {
 			const block = await window.web3.eth.getBlock(events.blockNumber)
 			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.merchant, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 		})
+		window.rpToken.events.Recycle({
+			filter: { bank: this.props.account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ recycleEvents: [...this.state.recycleEvents, [values.user, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
+		})
 		window.bankLiability.events.Accept({
 			filter: { sender: this.props.account },
 			fromBlock: 0
@@ -291,6 +299,7 @@ class Bank extends Component {
 		rates: [],
 		deliverEvents: [],
 		realizeEvents: [],
+		recycleEvents: [],
 		requestAcceptedEvents: [],
 		acceptRequestEvents: [],
 		transferRequests: [],
@@ -428,6 +437,9 @@ class Bank extends Component {
 												<Nav.Link eventKey="realize">Realize</Nav.Link>
 											</Nav.Item>
 											<Nav.Item>
+												<Nav.Link eventKey="recycle">Recycle</Nav.Link>
+											</Nav.Item>
+											<Nav.Item>
 												<Nav.Link eventKey="requestAccepted">Requests Accepted</Nav.Link>
 											</Nav.Item>
 											<Nav.Item>
@@ -477,6 +489,32 @@ class Bank extends Component {
 														</thead>
 														<tbody>
 															{this.state.realizeEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>- {event[1]} Liabilities</td>
+																		<td>{event[2]}</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+											<Tab.Pane eventKey="recycle">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">User</th>
+																<th scope="col">Amount</th>
+																<th scope="col">Timestamp</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.recycleEvents.map((event, idx) => {
 																return (
 																	<tr key={event[0] + idx}>
 																		<th scope="row">{idx + 1}</th>

@@ -33,7 +33,8 @@ contract PointsExchange is Context {
     mapping(address => uint256[]) public proposalIds;
     mapping(uint256 => uint256) proposalIdToIndexes; */
     // event UpdateRPRate(address indexed bank, uint oldAsset, uint newAsset);
-    event ExchangeRP(address indexed issuer, address indexed user, string name, uint oldAmount, uint amount);
+    event ExchangeRP(address indexed bank, address indexed user, string name, uint oldAmount, uint amount);
+    event ExchangeOther(address indexed bank, address indexed user, string name, uint oldAmount, uint amount);
 
     modifier onlyOwner() {
         require(_msgSender() == _owner, "You are not a contract owner");
@@ -82,9 +83,14 @@ contract PointsExchange is Context {
         // emit UpdateRPRate(_msgSender(), otherPoint, rp);
     }
 
-    function exchangeRP(address issuer, address user, string memory name, uint oldAmount, uint amount) public onlyOwner{
+    function exchangeRP(address bank, address user, string memory name, uint oldAmount, uint amount) public onlyOwner {
         _rp.transfer(user, amount);
-        emit ExchangeRP(issuer, user, name, oldAmount, amount);
+        emit ExchangeRP(bank, user, name, oldAmount, amount);
+    }
+
+    function exchangeOther(address bank, address user, string memory name, uint oldAmount, uint amount) public onlyOwner {
+        _rp.recycle(bank, user, oldAmount);
+        emit ExchangeOther(bank, user, name, oldAmount, amount);
     }
 
     // Get Issuer Keys
@@ -124,4 +130,5 @@ contract PointsExchange is Context {
 contract PE_RPToken {
     function _banks(address) public view returns (bool) {}
     function transfer(address recipient, uint256 amount) public virtual returns (bool) {}
+    function recycle(address bank, address user, uint256 amount) public returns (bool) {}
 }

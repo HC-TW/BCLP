@@ -7,12 +7,14 @@ import $ from 'jquery';
 
 export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 	const [rates, setRates] = useState([]);
-	const [rp_exchange_issuer, setRPExchangeIssuer] = useState('');
-	const [rp_exchange_name, setRPExchangeName] = useState('');
-	const [rp_exchange_old_amount, setRPExchangeOldAmount] = useState(0);
-	const [rp_exchange_amount, setRPExchangeAmount] = useState(0);
+	const [exchange_issuer, setExchangeIssuer] = useState('');
+	const [exchange_name, setExchangeName] = useState('');
+	const [exchange_old_amount, setExchangeOldAmount] = useState(0);
+	const [exchange_amount, setExchangeAmount] = useState(0);
 	const [rp_exchange_show, setRPExchangeShow] = useState(false);
-	const [success_show, setSuccessShow] = useState(false);
+	const [other_exchange_show, setOtherExchangeShow] = useState(false);
+	const [rp_exchange_success_show, setRPExchangeSuccessShow] = useState(false);
+	const [other_exchange_success_show, setOtherExchangeSuccessShow] = useState(false);
 
 	const loadExchangeLists = useCallback(async () => {
 		const rateCount = await window.pointsExchange.methods._rateCount().call()
@@ -33,14 +35,14 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 	}
 
 	const rpExchange = async () => {
-		console.log(rp_exchange_issuer)
+		console.log(exchange_issuer)
 		const web3 = window.web3
 		const pointsExchange = window.pointsExchange
 		const tx = {
 			from: Adminconfig.address,
 			to: pointsExchange.options.address,
 			gas: 6721975,
-			data: pointsExchange.methods.exchangeRP(rp_exchange_issuer, account, rp_exchange_name, rp_exchange_old_amount, rp_exchange_amount).encodeABI()
+			data: pointsExchange.methods.exchangeRP(exchange_issuer, account, exchange_name, exchange_old_amount, exchange_amount).encodeABI()
 		};
 		const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
 		web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', receipt => {
@@ -48,19 +50,53 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 			console.log(msg)
 			loadRP()
 			rpHandleClose()
-			successHandleShow()
+			rpSuccessHandleShow()
+		})
+		.on('error', error => {
+			const msg = error.message
+			const startIdx = msg.indexOf('"reason":') + 10
+			const endIdx = msg.indexOf('"},"stack"') - 8
+			window.alert(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx))
 		})
 	}
 
-	const rpHandleShow = (event, issuer, name, oldAsset, newAsset) => {
+	const otherExchange = async () => {
+		console.log(exchange_issuer)
+		const web3 = window.web3
+		const pointsExchange = window.pointsExchange
+		const tx = {
+			from: Adminconfig.address,
+			to: pointsExchange.options.address,
+			gas: 6721975,
+			data: pointsExchange.methods.exchangeOther(exchange_issuer, account, exchange_name, exchange_old_amount, exchange_amount).encodeABI()
+		};
+		const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
+		web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', receipt => {
+			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
+			console.log(msg)
+			loadRP()
+			otherHandleClose()
+			otherSuccessHandleShow()
+		})
+		.on('error', error => {
+			const msg = error.message
+			const startIdx = msg.indexOf('"reason":') + 10
+			const endIdx = msg.indexOf('"stack"') - 8
+			console.log(startIdx)
+			console.log(endIdx)
+			window.alert(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx))
+		})
+	}
+
+	const rpHandleShow = (event, issuer, name, otherPoint, RP) => {
 		const input = $(event.target.parentElement).find('input')
 		if (input.val() === '') {
 			input.val(1)
 		}
-		setRPExchangeIssuer(issuer)
-		setRPExchangeName(name)
-		setRPExchangeOldAmount(oldAsset * input.val())
-		setRPExchangeAmount(newAsset * input.val())
+		setExchangeIssuer(issuer)
+		setExchangeName(name)
+		setExchangeOldAmount(otherPoint * input.val())
+		setExchangeAmount(RP * input.val())
 		setRPExchangeShow(true)
 	}
 
@@ -68,12 +104,36 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 		setRPExchangeShow(false)
 	}
 
-	const successHandleShow = () => {
-		setSuccessShow(true)
+	const otherHandleShow = (event, issuer, name, RP, otherPoint) => {
+		const input = $(event.target.parentElement).find('input')
+		if (input.val() === '') {
+			input.val(1)
+		}
+		setExchangeIssuer(issuer)
+		setExchangeName(name)
+		setExchangeOldAmount(RP * input.val())
+		setExchangeAmount(otherPoint * input.val())
+		setOtherExchangeShow(true)
 	}
 
-	const successHandleClose = () => {
-		setSuccessShow(false)
+	const otherHandleClose = () => {
+		setOtherExchangeShow(false)
+	}
+
+	const rpSuccessHandleShow = () => {
+		setRPExchangeSuccessShow(true)
+	}
+
+	const rpSuccessHandleClose = () => {
+		setRPExchangeSuccessShow(false)
+	}
+
+	const otherSuccessHandleShow = () => {
+		setOtherExchangeSuccessShow(true)
+	}
+
+	const otherSuccessHandleClose = () => {
+		setOtherExchangeSuccessShow(false)
 	}
 
 	return (
@@ -118,7 +178,7 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 														<div className="card-footer p-4 pt-0 border-top-0 bg-transparent">
 															<div className="input-group text-center">
 																<input type="number" className="form-control" min="1" max="100" />
-																<button type="button" className="btn btn-outline-dark" onClick={(e) => rpHandleShow(e, rate.bank, rate.name, rate.otherPoint, rate.RP)}>Exchange</button>
+																<button type="button" className="btn btn-outline-dark" onClick={(e) => otherHandleShow(e, rate.bank, rate.name, rate.RP, rate.otherPoint)}>Exchange</button>
 															</div>
 														</div>
 													</div>
@@ -172,7 +232,7 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 				<Modal.Header closeButton>
 					<Modal.Title>Exchange</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Are you sure you want to exchange {rp_exchange_old_amount} {rp_exchange_name} for {rp_exchange_amount} RP?</Modal.Body>
+				<Modal.Body>Are you sure you want to exchange {exchange_old_amount} {exchange_name} for {exchange_amount} RP?</Modal.Body>
 				<Modal.Footer>
 					<Button variant="secondary" onClick={rpHandleClose}>
 						No
@@ -184,13 +244,42 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 			</Modal>
 
 			{/* Modal */}
-			<Modal show={success_show} onHide={successHandleClose}>
+			<Modal show={other_exchange_show} onHide={otherHandleClose} centered>
 				<Modal.Header closeButton>
 					<Modal.Title>Exchange</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Points exchange successfully!</Modal.Body>
+				<Modal.Body>Are you sure you want to exchange {exchange_old_amount} RP for {exchange_amount} {exchange_name}?</Modal.Body>
 				<Modal.Footer>
-					<Button variant="secondary" onClick={successHandleClose}>
+					<Button variant="secondary" onClick={otherHandleClose}>
+						No
+					</Button>
+					<Button variant="primary" onClick={otherExchange}>
+						Yes
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			{/* Modal */}
+			<Modal show={rp_exchange_success_show} onHide={rpSuccessHandleClose}>
+				<Modal.Header closeButton>
+					<Modal.Title>Exchange</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>Exchange {exchange_old_amount} {exchange_name} for {exchange_amount} RP successfully!</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={rpSuccessHandleClose}>
+						Close
+					</Button>
+				</Modal.Footer>
+			</Modal>
+
+			{/* Modal */}
+			<Modal show={other_exchange_success_show} onHide={otherSuccessHandleClose}>
+				<Modal.Header closeButton>
+					<Modal.Title>Exchange</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>Exchange {exchange_old_amount} RP for {exchange_amount} {exchange_name} successfully!</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={otherSuccessHandleClose}>
 						Close
 					</Button>
 				</Modal.Footer>

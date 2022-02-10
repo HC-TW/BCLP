@@ -25,6 +25,7 @@ module.exports = function (deployer) {
     // load other contracts' information
     instance.loadBankLiability(BankLiability.address);
     instance.loadProductManager(ProductManager.address);
+    instance.loadPointsExchange(PointsExchange.address);
   });
 
   /* deployer.deploy(RPToken, "Rewarding Points", "RP").then(function () {
