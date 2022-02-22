@@ -43,12 +43,12 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 			fromBlock: 0
 		}, async (error, events) => {
 			const values = events.returnValues
-			if (values.from !== window.pointsExchange._address) {
+			if (values.from !== window.pointExchange._address) {
 				const block = await window.web3.eth.getBlock(events.blockNumber)
 				setIssueEvents(oldIssueEvents => [...oldIssueEvents, [values.from, values.value, new Date(block.timestamp * 1000).toLocaleString()]])
 			}
 		})
-		window.pointsExchange.events.ExchangeRP({
+		window.pointExchange.events.ExchangeRP({
 			filter: { user: account },
 			fromBlock: 0
 		}, async (error, events) => {
@@ -56,7 +56,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 			const block = await window.web3.eth.getBlock(events.blockNumber)
 			setExchangeRPEvents(oldExchangeRPEvents => [...oldExchangeRPEvents, { bank: values.bank, name: values.name, oldAmount: values.oldAmount, amount: values.amount, timestamp: new Date(block.timestamp * 1000).toLocaleString() }])
 		})
-		window.pointsExchange.events.ExchangeOther({
+		window.pointExchange.events.ExchangeOther({
 			filter: { user: account },
 			fromBlock: 0
 		}, async (error, events) => {

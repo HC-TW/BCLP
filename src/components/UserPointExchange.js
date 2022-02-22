@@ -5,7 +5,7 @@ import Header from './Header';
 import { Adminconfig } from '../config';
 import $ from 'jquery';
 
-export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
+export const UserPointExchange = ({ account, role, onLoggedOut }) => {
 	const [rates, setRates] = useState([]);
 	const [other2otherRates, setOther2OtherRates] = useState([]);
 	const [exchange_issuer, setExchangeIssuer] = useState('');
@@ -60,13 +60,13 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 			// 30.25, result is 100 / GCD(3025, 100) = 100/25 = 4
 			return (dem / gcd(num, dem));
 		}
-		const rateCount = await window.pointsExchange.methods._rateCount().call()
+		const rateCount = await window.pointExchange.methods._rateCount().call()
 		for (let i = 1; i <= rateCount; i++) {
-			const rate = await window.pointsExchange.methods._rates(i).call()
+			const rate = await window.pointExchange.methods._rates(i).call()
 			if (Number(rate.id) !== 0) {
 				setRates(oldRates => [...oldRates, rate])
 				for (let j = i+1; j <= rateCount; j++) {
-					const anotherRate = await window.pointsExchange.methods._rates(j).call()
+					const anotherRate = await window.pointExchange.methods._rates(j).call()
 					if (Number(anotherRate.id) !== 0) {
 						const otherPointRate1 = Number(rate.RP) / Number(rate.otherPoint)
 						const otherPointRate2 = Number(anotherRate.RP) / Number(anotherRate.otherPoint)
@@ -98,12 +98,12 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 	const rp2otherExchange = async () => {
 		console.log(exchange_issuer)
 		const web3 = window.web3
-		const pointsExchange = window.pointsExchange
+		const pointExchange = window.pointExchange
 		const tx = {
 			from: Adminconfig.address,
-			to: pointsExchange.options.address,
+			to: pointExchange.options.address,
 			gas: 6721975,
-			data: pointsExchange.methods.exchangeOther(exchange_issuer, account, exchange_name2, exchange_old_amount, exchange_amount).encodeABI()
+			data: pointExchange.methods.exchangeOther(exchange_issuer, account, exchange_name2, exchange_old_amount, exchange_amount).encodeABI()
 		};
 		const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
 		web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', receipt => {
@@ -124,12 +124,12 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 	const other2rpExchange = async () => {
 		console.log(exchange_issuer)
 		const web3 = window.web3
-		const pointsExchange = window.pointsExchange
+		const pointExchange = window.pointExchange
 		const tx = {
 			from: Adminconfig.address,
-			to: pointsExchange.options.address,
+			to: pointExchange.options.address,
 			gas: 6721975,
-			data: pointsExchange.methods.exchangeRP(exchange_issuer, account, exchange_name1, exchange_old_amount, exchange_amount).encodeABI()
+			data: pointExchange.methods.exchangeRP(exchange_issuer, account, exchange_name1, exchange_old_amount, exchange_amount).encodeABI()
 		};
 		const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
 		web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', receipt => {
@@ -262,7 +262,7 @@ export const UserPointsExchange = ({ account, role, onLoggedOut }) => {
 														<div className="card-body p-4">
 															<div className="text-center">
 																{/* <!-- Points Issuer--> */}
-																<h5 className="fw-bolder">{window.pointsExchange._address}</h5>
+																<h5 className="fw-bolder">{window.pointExchange._address}</h5>
 																{/* <!-- Points name--> */}
 																<h5 className="fw-bolder">RP</h5>
 																{/* <!-- Points rate--> */}

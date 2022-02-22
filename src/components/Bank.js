@@ -65,9 +65,9 @@ class Bank extends Component {
 
 	async loadRates() {
 		this.setState({ rates: [] })
-		const keys = await window.pointsExchange.methods.getIssuerKeys().call({ from: this.props.account })
+		const keys = await window.pointExchange.methods.getIssuerKeys().call({ from: this.props.account })
 		for (let i = 0; i < keys.length; i++) {
-			const rate = await window.pointsExchange.methods._rates(keys[i]).call()
+			const rate = await window.pointExchange.methods._rates(keys[i]).call()
 			this.setState({ rates: [...this.state.rates, rate] })
 		}
 	}
@@ -186,7 +186,7 @@ class Bank extends Component {
 				console.error(error)
 				return
 			}
-			window.pointsExchange.methods.addRPRate(result[0].hash, $('#pointsName').val(), $('#addRPRateAmount1').val(), $('#addRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
+			window.pointExchange.methods.addRPRate(result[0].hash, $('#pointsName').val(), $('#addRPRateAmount1').val(), $('#addRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
 				const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 				this.alert(msg, 'success')
 				this.loadRates()
@@ -196,7 +196,7 @@ class Bank extends Component {
 	}
 
 	removeRPRate = () => {
-		window.pointsExchange.methods.removeRPRate(this.state.removeRPRateId).send({ from: this.props.account }).on('receipt', receipt => {
+		window.pointExchange.methods.removeRPRate(this.state.removeRPRateId).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
 			this.loadRates()
@@ -205,7 +205,7 @@ class Bank extends Component {
 	}
 
 	updateRPRate = () => {
-		window.pointsExchange.methods.updateRPRate(this.state.updateRPRateId, $('#updateRPRateAmount1').val(), $('#updateRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
+		window.pointExchange.methods.updateRPRate(this.state.updateRPRateId, $('#updateRPRateAmount1').val(), $('#updateRPRateAmount2').val()).send({ from: this.props.account }).on('receipt', receipt => {
 			const msg = 'Transaction: ' + receipt.transactionHash + '<br>Gas usage: ' + receipt.gasUsed + '<br>Block Number: ' + receipt.blockNumber;
 			this.alert(msg, 'success')
 			this.loadRates()
@@ -688,7 +688,7 @@ class Bank extends Component {
 							<div className="card shadow mb-4">
 								<div className="d-flex justify-content-between card-header py-3">
 									<h6 className="m-0 font-weight-bold text-primary">RP Related Functions</h6>
-									<h6 className="m-0 text-secondary">Points Exchange Contract: {window.pointsExchange._address}</h6>
+									<h6 className="m-0 text-secondary">Point Exchange Contract: {window.pointExchange._address}</h6>
 								</div>
 								<div className="card-body">
 									<Form noValidate validated={this.state.deliver_validated} onSubmit={this.deliver_handleSubmit}>
@@ -778,7 +778,7 @@ class Bank extends Component {
 
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
-									<h6 className="m-0 font-weight-bold text-primary">Points Exchange Related Functions</h6>
+									<h6 className="m-0 font-weight-bold text-primary">Point Exchange Related Functions</h6>
 								</div>
 								<div className="card-body">
 									<Form noValidate validated={this.state.addRPRate_validated} onSubmit={this.addRPRate_handleSubmit}>

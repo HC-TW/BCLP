@@ -357,7 +357,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         _pm = RP_ProductManager(addr);
     }
 
-    function loadPointsExchange(address addr) public onlyOwner {
+    function loadPointExchange(address addr) public onlyOwner {
         _pe = addr;
     }
 

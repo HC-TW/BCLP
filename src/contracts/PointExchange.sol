@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 
-contract PointsExchange is Context {
+contract PointExchange is Context {
     address public _owner;
     PE_RPToken private _rp;
 
@@ -52,19 +52,19 @@ contract PointsExchange is Context {
     }
 
     function addRPRate(string memory imgHash, string memory name, uint otherPoint, uint rp) public onlyBank {
-        // require(bytes(_rpRates[_msgSender()].name).length == 0, "PointsExchange: You can only add points exchange rate for RP once");
-        require(bytes(imgHash).length > 0, "PointsExchange: Points image hash cannot be empty");
-        require(bytes(name).length > 0, "PointsExchange: Points name cannot be empty");
-		require(otherPoint > 0, "PointsExchange: Points exchange rate cannot be empty");
-        require(rp > 0, "PointsExchange: Points exchange rate cannot be empty");
+        // require(bytes(_rpRates[_msgSender()].name).length == 0, "PointExchange: You can only add point exchange rate for RP once");
+        require(bytes(imgHash).length > 0, "PointExchange: Points image hash cannot be empty");
+        require(bytes(name).length > 0, "PointExchange: Points name cannot be empty");
+		require(otherPoint > 0, "PointExchange: Point exchange rate cannot be empty");
+        require(rp > 0, "PointExchange: Point exchange rate cannot be empty");
         _issuerKeys[_msgSender()].push(++_rateCount);
 		_rates[_rateCount] = Rate(_rateCount, imgHash, name, otherPoint, rp, _msgSender(), _issuerKeys[_msgSender()].length - 1);
     }
 
     function removeRPRate(uint id) public onlyBank {
-        require(id <= _rateCount, "PointsExchange: No such rate");
+        require(id <= _rateCount, "PointExchange: No such rate");
 		Rate memory rate = _rates[id];
-		require(rate.bank == _msgSender(), "PointsExchange: You cannot remove other banks' rate");
+		require(rate.bank == _msgSender(), "PointExchange: You cannot remove other banks' rate");
 		uint[] storage keys = _issuerKeys[_msgSender()];
         uint rowToDelete = rate.keysIdx;
         uint keyToMove = keys[keys.length-1];
@@ -75,8 +75,8 @@ contract PointsExchange is Context {
     }
 
     function updateRPRate(uint id, uint otherPoint, uint rp) public onlyBank {
-        require(id <= _rateCount, "PointsExchange: No such rate");
-		require(_rates[id].bank == _msgSender(), "PointsExchange: You cannot remove other banks' rate");
+        require(id <= _rateCount, "PointExchange: No such rate");
+		require(_rates[id].bank == _msgSender(), "PointExchange: You cannot remove other banks' rate");
         _rates[id].otherPoint = otherPoint;
         _rates[id].RP = rp;
 

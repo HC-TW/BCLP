@@ -2,7 +2,7 @@ const RPToken = artifacts.require("RPToken");
 const BankLiability = artifacts.require("BankLiability");
 const ProductManager = artifacts.require("ProductManager")
 // const Credit = artifacts.require("Credit");
-const PointsExchange = artifacts.require("PointsExchange");
+const PointExchange = artifacts.require("PointExchange");
 
 module.exports = function (deployer) {
   deployer.deploy(RPToken, "Rewarding Points", "RP").then(function () {
@@ -10,7 +10,7 @@ module.exports = function (deployer) {
   }).then(function () {
     return deployer.deploy(ProductManager, RPToken.address);
   }).then(function () {
-    return deployer.deploy(PointsExchange, RPToken.address);
+    return deployer.deploy(PointExchange, RPToken.address);
   }).then(function () {
     return RPToken.deployed();
   }).then(function (instance) {     
@@ -20,12 +20,12 @@ module.exports = function (deployer) {
     instance.addIssuer('0x22d491Bde2303f2f43325b2108D26f1eAbA1e32b');
     instance.addUser('0x3E5e9111Ae8eB78Fe1CC3bb8915d5D461F3Ef9A9');
     instance.addMerchant('0x28a8746e75304c0780E011BEd21C72cD78cd535E');
-    // Points Exchange role
-    instance.addIssuer(PointsExchange.address);
+    // Point Exchange role
+    instance.addIssuer(PointExchange.address);
     // load other contracts' information
     instance.loadBankLiability(BankLiability.address);
     instance.loadProductManager(ProductManager.address);
-    instance.loadPointsExchange(PointsExchange.address);
+    instance.loadPointExchange(PointExchange.address);
   });
 
   /* deployer.deploy(RPToken, "Rewarding Points", "RP").then(function () {
@@ -33,7 +33,7 @@ module.exports = function (deployer) {
   }).then(function () {
     return deployer.deploy(Credit, RPToken.address);
   }).then(function () {
-    return deployer.deploy(PointsExchange, RPToken.address);
+    return deployer.deploy(PointExchange, RPToken.address);
   }).then(function () {
     return RPToken.deployed();
   }).then(function (instance) { // load other contracts' information

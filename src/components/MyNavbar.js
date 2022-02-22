@@ -14,7 +14,7 @@ class MyNavbar extends Component {
 		if (this.props.role === 'User') {
 			$('#rp').text(await window.rpToken.methods.balanceOf(this.props.account).call({ from: this.props.account }))
 		} else if (this.props.role === 'Admin') {
-			$('#rp').text(await window.rpToken.methods.balanceOf(window.pointsExchange._address).call({ from: this.props.account }))
+			$('#rp').text(await window.rpToken.methods.balanceOf(window.pointExchange._address).call({ from: this.props.account }))
 		}
 	}
 
@@ -48,7 +48,7 @@ class MyNavbar extends Component {
 							>
 								<NavLink end to="/" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Home</NavLink>
 								{this.props.role === 'User' ? <NavLink end to="/UserOrder" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Order</NavLink> : null}
-								{this.props.role === 'User' ? <NavLink end to="/UserPointsExchange" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Points Exchange</NavLink> : null}
+								{this.props.role === 'User' ? <NavLink end to="/UserPointExchange" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Point Exchange</NavLink> : null}
 								{/* <NavDropdown title="Shop" id="navbarScrollingDropdown">
 									<NavDropdown.Item href="/#">All Products</NavDropdown.Item>
 									<NavDropdown.Divider />

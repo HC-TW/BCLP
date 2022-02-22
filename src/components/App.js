@@ -5,7 +5,7 @@ import Web3 from 'web3';
 import RPToken from '../abis/RPToken.json';
 import BankLiability from '../abis/BankLiability.json'
 import ProductManager from '../abis/ProductManager.json'
-import PointsExchange from '../abis/PointsExchange.json'
+import PointExchange from '../abis/PointExchange.json'
 import User from './User';
 import Bank from './Bank';
 import Issuer from './Issuer';
@@ -17,7 +17,7 @@ import { Adminconfig, Regulatorconfig } from '../config';
 import $ from 'jquery';
 import { UserOrder } from './UserOrder';
 import Merchant from './Merchant';
-import { UserPointsExchange } from './UserPointsExchange';
+import { UserPointExchange } from './UserPointExchange';
 import Regulator from './Regulator';
 
 const LS_KEY = 'login-with-metamask:auth';
@@ -54,12 +54,12 @@ class App extends Component {
     const RPToken_networkData = RPToken.networks[networkId]
     const BankLiability_networkData = BankLiability.networks[networkId]
     const ProductManager_networkData = ProductManager.networks[networkId]
-    const PointsExchange_networkData = PointsExchange.networks[networkId]
-    if (RPToken_networkData && BankLiability_networkData && ProductManager_networkData && PointsExchange_networkData) {
+    const PointExchange_networkData = PointExchange.networks[networkId]
+    if (RPToken_networkData && BankLiability_networkData && ProductManager_networkData && PointExchange_networkData) {
       window.rpToken = new web3.eth.Contract(RPToken.abi, RPToken_networkData.address)
       window.bankLiability = new web3.eth.Contract(BankLiability.abi, BankLiability_networkData.address)
       window.productManager = new web3.eth.Contract(ProductManager.abi, ProductManager_networkData.address)
-      window.pointsExchange = new web3.eth.Contract(PointsExchange.abi, PointsExchange_networkData.address)
+      window.pointExchange = new web3.eth.Contract(PointExchange.abi, PointExchange_networkData.address)
       this.loadRole();
       // console.log(RPToken_networkData.address)
     } else {
@@ -155,7 +155,7 @@ class App extends Component {
                 })()
               } />
               <Route path="/UserOrder" element={this.state.role === 'User' ? <UserOrder account={this.state.account} role={this.state.role} onLoggedOut={this.handleLoggedOut} /> : <NotFound />} />
-              <Route path="/UserPointsExchange" element={this.state.role === 'User' ? <UserPointsExchange account={this.state.account} role={this.state.role} onLoggedOut={this.handleLoggedOut} /> : <NotFound />} />
+              <Route path="/UserPointExchange" element={this.state.role === 'User' ? <UserPointExchange account={this.state.account} role={this.state.role} onLoggedOut={this.handleLoggedOut} /> : <NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             : <Login account={this.state.account} onLoggedIn={this.handleLoggedIn} />
