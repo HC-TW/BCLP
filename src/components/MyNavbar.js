@@ -38,7 +38,7 @@ class MyNavbar extends Component {
 			<div>
 				<Navbar bg="light" expand="lg">
 					<Container className="px-4 px-lg-5">
-						<Navbar.Brand href="/">BCOIP PRO</Navbar.Brand>
+						<Navbar.Brand href="/">BCLP</Navbar.Brand>
 						<Navbar.Toggle aria-controls="navbarScroll" />
 						<Navbar.Collapse id="navbarScroll">
 							<Nav

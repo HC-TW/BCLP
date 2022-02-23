@@ -240,13 +240,13 @@ export const UserPointExchange = ({ account, role, onLoggedOut }) => {
 						<Tab.Container defaultActiveKey="rp2other">
 							<Nav variant="pills">
 								<Nav.Item>
-									<Nav.Link eventKey="rp2other">RP {<i className="bi bi-arrow-right-circle-fill"></i>} Other Points</Nav.Link>
+									<Nav.Link eventKey="rp2other">RP {<i className="bi bi-arrow-right-circle-fill"></i>} Other Point</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link eventKey="other2rp">Other points {<i className="bi bi-arrow-right-circle-fill"></i>} RP</Nav.Link>
+									<Nav.Link eventKey="other2rp">Other Point {<i className="bi bi-arrow-right-circle-fill"></i>} RP</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link eventKey="other2other">Other Points {<i className="bi bi-arrow-right-circle-fill"></i>} Other Points</Nav.Link>
+									<Nav.Link eventKey="other2other">Other Point {<i className="bi bi-arrow-right-circle-fill"></i>} Other Point</Nav.Link>
 								</Nav.Item>
 							</Nav>
 							<div className="card-body tab-content">

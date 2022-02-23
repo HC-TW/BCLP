@@ -181,10 +181,10 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 											<Nav.Link eventKey="issue">Issue</Nav.Link>
 										</Nav.Item>
 										<Nav.Item>
-											<Nav.Link eventKey="rp2other">RP {<i className="bi bi-arrow-right-circle-fill"></i>} Other points</Nav.Link>
+											<Nav.Link eventKey="rp2other">RP {<i className="bi bi-arrow-right-circle-fill"></i>} Other Point</Nav.Link>
 										</Nav.Item>
 										<Nav.Item>
-											<Nav.Link eventKey="other2rp">Other points {<i className="bi bi-arrow-right-circle-fill"></i>} RP</Nav.Link>
+											<Nav.Link eventKey="other2rp">Other Point {<i className="bi bi-arrow-right-circle-fill"></i>} RP</Nav.Link>
 										</Nav.Item>
 										<button type="button" className="ms-auto btn btn-sm float-end" onClick={changeCollapse} aria-expanded={collapse}><i className="bi bi-caret-down-fill text-secondary"></i></button>
 									</Nav>
@@ -252,7 +252,7 @@ export const UserOrder = ({ account, role, onLoggedOut }) => {
 														<tr>
 															<th scope="col">#</th>
 															<th scope="col">Bank</th>
-															<th scope="col">Other Points</th>
+															<th scope="col">Other Point</th>
 															<th scope="col">Amount</th>
 															<th scope="col">Timestamp</th>
 														</tr>

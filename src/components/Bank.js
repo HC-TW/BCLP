@@ -89,14 +89,6 @@ class Bank extends Component {
 			const block = await window.web3.eth.getBlock(events.blockNumber)
 			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.merchant, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 		})
-		window.rpToken.events.Recycle({
-			filter: { bank: this.props.account },
-			fromBlock: 0
-		}, async (error, events) => {
-			const values = events.returnValues
-			const block = await window.web3.eth.getBlock(events.blockNumber)
-			this.setState({ recycleEvents: [...this.state.recycleEvents, [values.user, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
-		})
 		window.bankLiability.events.Accept({
 			filter: { sender: this.props.account },
 			fromBlock: 0
@@ -112,6 +104,22 @@ class Bank extends Component {
 			const values = events.returnValues
 			const block = await window.web3.eth.getBlock(events.blockNumber)
 			this.setState({ realizeEvents: [...this.state.realizeEvents, [values.sender, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
+		})
+		window.pointExchange.events.ExchangeOther({
+			filter: { bank: this.props.account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ exchangeOtherEvents: [...this.state.exchangeOtherEvents, [values.user, values.name, values.oldAmount, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
+		})
+		window.pointExchange.events.ExchangeRP({
+			filter: { bank: this.props.account },
+			fromBlock: 0
+		}, async (error, events) => {
+			const values = events.returnValues
+			const block = await window.web3.eth.getBlock(events.blockNumber)
+			this.setState({ exchangeRPEvents: [...this.state.exchangeRPEvents, [values.user, values.name, values.oldAmount, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 		})
 	}
 
@@ -302,6 +310,8 @@ class Bank extends Component {
 		recycleEvents: [],
 		requestAcceptedEvents: [],
 		acceptRequestEvents: [],
+		exchangeOtherEvents: [],
+		exchangeRPEvents: [],
 		transferRequests: [],
 		confirmRemittances: [],
 		deliver_validated: false,
@@ -437,13 +447,16 @@ class Bank extends Component {
 												<Nav.Link eventKey="realize">Realize</Nav.Link>
 											</Nav.Item>
 											<Nav.Item>
-												<Nav.Link eventKey="recycle">Recycle</Nav.Link>
-											</Nav.Item>
-											<Nav.Item>
 												<Nav.Link eventKey="requestAccepted">Requests Accepted</Nav.Link>
 											</Nav.Item>
 											<Nav.Item>
 												<Nav.Link eventKey="acceptRequest">Accept Others' Requests</Nav.Link>
+											</Nav.Item>
+											<Nav.Item>
+												<Nav.Link eventKey="exchangeOther">Exchange Other Point</Nav.Link>
+											</Nav.Item>
+											<Nav.Item>
+												<Nav.Link eventKey="exchangeRP">Exchange RP</Nav.Link>
 											</Nav.Item>
 											<button type="button" className="ms-auto btn btn-sm float-end" onClick={this.collapse} aria-expanded={this.state.collapse}><i className="bi bi-caret-down-fill text-secondary"></i></button>
 										</Nav>
@@ -502,32 +515,6 @@ class Bank extends Component {
 													</table>
 												</div>
 											</Tab.Pane>
-											<Tab.Pane eventKey="recycle">
-												<div className="table-responsive">
-													<table className="table table-striped table-hover align-middle">
-														<thead>
-															<tr>
-																<th scope="col">#</th>
-																<th scope="col">User</th>
-																<th scope="col">Amount</th>
-																<th scope="col">Timestamp</th>
-															</tr>
-														</thead>
-														<tbody>
-															{this.state.recycleEvents.map((event, idx) => {
-																return (
-																	<tr key={event[0] + idx}>
-																		<th scope="row">{idx + 1}</th>
-																		<td>{event[0]}</td>
-																		<td>- {event[1]} Liabilities</td>
-																		<td>{event[2]}</td>
-																	</tr>
-																)
-															})}
-														</tbody>
-													</table>
-												</div>
-											</Tab.Pane>
 											<Tab.Pane eventKey="requestAccepted">
 												<div className="table-responsive">
 													<table className="table table-striped table-hover align-middle">
@@ -573,6 +560,60 @@ class Bank extends Component {
 																		<td>{event[0]}</td>
 																		<td>{event[1]} Liabilities</td>
 																		<td>{event[2]}</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+											<Tab.Pane eventKey="exchangeOther">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">User</th>
+																<th scope="col">Content</th>
+																<th scope="col">Result</th>
+																<th scope="col">Timestamp</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.exchangeOtherEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[2]} RP {<i className="bi bi-arrow-right-circle-fill"></i>} {event[3]} {event[1]}</td>
+																		<td>- {event[2]} Liabilities</td>
+																		<td>{event[4]}</td>
+																	</tr>
+																)
+															})}
+														</tbody>
+													</table>
+												</div>
+											</Tab.Pane>
+											<Tab.Pane eventKey="exchangeRP">
+												<div className="table-responsive">
+													<table className="table table-striped table-hover align-middle">
+														<thead>
+															<tr>
+																<th scope="col">#</th>
+																<th scope="col">User</th>
+																<th scope="col">Content</th>
+																<th scope="col">Timestamp</th>
+															</tr>
+														</thead>
+														<tbody>
+															{this.state.exchangeRPEvents.map((event, idx) => {
+																return (
+																	<tr key={event[0] + idx}>
+																		<th scope="row">{idx + 1}</th>
+																		<td>{event[0]}</td>
+																		<td>{event[2]} {event[1]} {<i className="bi bi-arrow-right-circle-fill"></i>} {event[3]} RP</td>
+																		<td>{event[4]}</td>
 																	</tr>
 																)
 															})}
