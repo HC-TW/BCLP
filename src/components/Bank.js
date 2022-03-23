@@ -65,7 +65,7 @@ class Bank extends Component {
 
 	async loadRates() {
 		this.setState({ rates: [] })
-		const keys = await window.pointExchange.methods.getIssuerKeys().call({ from: this.props.account })
+		const keys = await window.pointExchange.methods.getBankKeys().call({ from: this.props.account })
 		for (let i = 0; i < keys.length; i++) {
 			const rate = await window.pointExchange.methods._rates(keys[i]).call()
 			this.setState({ rates: [...this.state.rates, rate] })
@@ -177,11 +177,13 @@ class Bank extends Component {
 		event.preventDefault()
 		const file = event.target.files[0]
 		const reader = new window.FileReader()
-		reader.readAsArrayBuffer(file)
-
-		reader.onloadend = () => {
-			this.setState({ buffer: Buffer(reader.result) })
-			console.log('buffer', this.state.buffer)
+		if (file)
+		{
+			reader.readAsArrayBuffer(file)
+			reader.onloadend = () => {
+				this.setState({ buffer: Buffer(reader.result) })
+				console.log('buffer', this.state.buffer)
+			}
 		}
 	}
 
@@ -307,7 +309,6 @@ class Bank extends Component {
 		rates: [],
 		deliverEvents: [],
 		realizeEvents: [],
-		recycleEvents: [],
 		requestAcceptedEvents: [],
 		acceptRequestEvents: [],
 		exchangeOtherEvents: [],
@@ -353,7 +354,7 @@ class Bank extends Component {
 									<div className="row no-gutters align-items-center">
 										<div className="col mr-2">
 											<div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
-												Bank Liabilities</div>
+												Point Liabilities</div>
 											<div className="h5 mb-0 font-weight-bold text-gray-800" id="bankLiabilities"></div>
 										</div>
 										<div className="col-auto">
@@ -649,7 +650,7 @@ class Bank extends Component {
 																<h5 className="fw-bolder">{rate.name}</h5>
 																{/* <!-- Points rate--> */}
 																<h6>{rate.otherPoint} {rate.name} <i className="bi bi-arrow-right-circle-fill"></i> {rate.RP} RP</h6>
-																<button type="button" className="btn btn-outline-dark" onClick={() => { this.updateRPRate_handleShow(rate.id) }}>Update RP Rate</button>
+																<button type="button" className="btn btn-outline-dark" onClick={() => { this.updateRPRate_handleShow(rate.id) }}>Update Rate</button>
 															</div>
 														</div>
 
@@ -665,7 +666,7 @@ class Bank extends Component {
 							<div className="card-group">
 								<div className="card shadow mb-4">
 									<div className="card-header py-3">
-										<h6 className="m-0 font-weight-bold text-danger">Bank Liabilities Transfer Requests</h6>
+										<h6 className="m-0 font-weight-bold text-danger">Point Liabilities Transfer Requests</h6>
 									</div>
 									<div className="card-body">
 										<div className="table-responsive">
@@ -696,7 +697,7 @@ class Bank extends Component {
 								</div>
 								<div className="card shadow mb-4">
 									<div className="card-header py-3">
-										<h6 className="m-0 font-weight-bold text-primary">Bank Liabilities Remittance Confirmations</h6>
+										<h6 className="m-0 font-weight-bold text-primary">Point Liabilities Remittance Confirmations</h6>
 									</div>
 									<div className="card-body">
 										<div className="table-responsive">
@@ -774,7 +775,7 @@ class Bank extends Component {
 
 							<div className="card shadow mb-4">
 								<div className="card-header py-3">
-									<h6 className="m-0 font-weight-bold text-danger">Bank Liabilities Related Functions</h6>
+									<h6 className="m-0 font-weight-bold text-danger">Point Liabilities Related Functions</h6>
 								</div>
 								<div className="card-body">
 									<Form noValidate validated={this.state.transferRequest_validated} onSubmit={this.transferRequest_handleSubmit}>
@@ -879,7 +880,7 @@ class Bank extends Component {
 												Please provide a valid image.
 											</Form.Control.Feedback>
 										</Form.Group>
-										<Button className="btn-primary" type="submit">{this.state.loading ? "Loading..." : "Add RP Rate"}</Button>
+										<Button className="btn-primary" type="submit">{this.state.loading ? "Loading..." : "Add RP Exchange Rate"}</Button>
 									</Form>
 								</div>
 							</div>
@@ -899,7 +900,7 @@ class Bank extends Component {
 				{/* Modal */}
 				<Modal show={this.state.removeRPRate_show} onHide={this.removeRPRate_handleClose} centered>
 					<Modal.Header closeButton>
-						<Modal.Title>Remove RP Rate</Modal.Title>
+						<Modal.Title>Remove RP Exchange Rate</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>Are you sure you want to remove this rate?</Modal.Body>
 					<Modal.Footer>
@@ -915,7 +916,7 @@ class Bank extends Component {
 				{/* Modal */}
 				<Modal show={this.state.updateRPRate_show} onHide={this.updateRPRate_handleClose} centered>
 					<Modal.Header closeButton>
-						<Modal.Title>Update RP Rate</Modal.Title>
+						<Modal.Title>Update RP Exchange Rate</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<Form noValidate validated={this.state.updateRPRate_validated} onSubmit={this.updateRPRate_handleSubmit}>
@@ -946,7 +947,7 @@ class Bank extends Component {
 									</InputGroup>
 								</Form.Group>
 							</Row>
-							<button className="btn btn-dark" type="submit">Update RP Rate</button>
+							<button className="btn btn-dark" type="submit">Update Rate</button>
 						</Form>
 					</Modal.Body>
 				</Modal>

@@ -104,11 +104,13 @@ class Merchant extends Component {
 		event.preventDefault()
 		const file = event.target.files[0]
 		const reader = new window.FileReader()
-		reader.readAsArrayBuffer(file)
-
-		reader.onloadend = () => {
-			this.setState({ buffer: Buffer(reader.result) })
-			console.log('buffer', this.state.buffer)
+		if (file)
+		{
+			reader.readAsArrayBuffer(file)
+			reader.onloadend = () => {
+				this.setState({ buffer: Buffer(reader.result) })
+				console.log('buffer', this.state.buffer)
+			}
 		}
 	}
 

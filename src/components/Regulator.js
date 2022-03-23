@@ -41,7 +41,7 @@ class Regulator extends Component {
 			fromBlock: 0
 		}, async (error, events) => {
 			const values = events.returnValues
-			if (merchant === '' || merchant === values.merchant) {
+			if (merchant === '' || values.merchant.includes(merchant)) {
 				const block = await window.web3.eth.getBlock(events.blockNumber)
 				this.setState({ redeemEvents: [...this.state.redeemEvents, [values.user, values.merchant, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 			}
@@ -50,7 +50,7 @@ class Regulator extends Component {
 			fromBlock: 0
 		}, async (error, events) => {
 			const values = events.returnValues
-			if (merchant === '' || merchant ===  values.merchant) {
+			if (merchant === '' || values.merchant.includes(merchant)) {
 				const block = await window.web3.eth.getBlock(events.blockNumber)
 				this.setState({ realizeEvents: [...this.state.realizeEvents, [values.merchant, values.bank, values.amount, new Date(block.timestamp * 1000).toLocaleString()]] })
 			}

@@ -5,7 +5,7 @@ const ProductManager = artifacts.require("ProductManager")
 const PointExchange = artifacts.require("PointExchange");
 
 module.exports = function (deployer) {
-  deployer.deploy(RPToken, "Rewarding Points", "RP").then(function () {
+  deployer.deploy(RPToken, "Reward Points", "RP").then(function () {
     return deployer.deploy(BankLiability, RPToken.address);
   }).then(function () {
     return deployer.deploy(ProductManager, RPToken.address);

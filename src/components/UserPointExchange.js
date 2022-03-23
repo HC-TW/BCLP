@@ -4,6 +4,7 @@ import Navbar from './MyNavbar';
 import Header from './Header';
 import { Adminconfig } from '../config';
 import $ from 'jquery';
+import RPImage from '../images/RP.png';
 
 export const UserPointExchange = ({ account, role, onLoggedOut }) => {
 	const [rates, setRates] = useState([]);
@@ -257,7 +258,7 @@ export const UserPointExchange = ({ account, role, onLoggedOut }) => {
 												<div className="col mb-5" key={rate.id}>
 													<div className="card shadow h-100">
 														{/* <!-- Points image--> */}
-														<img className="card-img-top" src={`https://ipfs.infura.io/ipfs/${rate.imgHash}`} alt="..." />
+														<img className="card-img-top" src={RPImage} alt="..." />
 														{/* <!-- Points details--> */}
 														<div className="card-body p-4">
 															<div className="text-center">

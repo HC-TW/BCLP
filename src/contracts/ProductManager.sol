@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/Context.sol";
 
 contract ProductManager is Context{
 
-	address public _RPToken;
     PM_RPToken private _rp;
 	uint public _productCount = 0;
 	mapping(uint => Product) public _products;
@@ -58,7 +57,6 @@ contract ProductManager is Context{
     }
 	
 	constructor (address RPTokenAddr) {
-		_RPToken = RPTokenAddr;
         _rp = PM_RPToken(RPTokenAddr);
 	}
 
@@ -89,7 +87,7 @@ contract ProductManager is Context{
 	}
 	// Create Orders
 	function createOrder(address user, address merchant, string memory name, uint quantity, uint amount) public {
-		require(_msgSender() == _RPToken);
+		require(_msgSender() == address(_rp));
 		if (_orders[user][merchant].length == 0) {
 			_orderParites[user].push(merchant);
 			_orderParites[merchant].push(user);
@@ -98,7 +96,7 @@ contract ProductManager is Context{
 	}
 	// Finish Orders
 	function finishOrder(address user, address merchant, uint idx) public {
-		require(_msgSender() == _RPToken);
+		require(_msgSender() == address(_rp));
 		Order[] storage orders = _orders[user][merchant];
 		require(idx < orders.length, "Product: No such order");
 		require(!orders[idx].isFinished, "Product: The order is finished");

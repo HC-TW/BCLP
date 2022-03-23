@@ -149,10 +149,10 @@ contract RPToken is Context, IERC20, IERC20Metadata {
      * - the caller must have a balance of at least `amount`.
      */
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
-        require((isBank(_msgSender()) && isIssuer(recipient)) 
-        || (isIssuer(_msgSender()) && isUser(recipient)) 
-        || (isUser(_msgSender()) && isMerchant(recipient)) 
-        || (isMerchant(_msgSender()) && isBank(recipient)));
+        require((_banks[_msgSender()] && _issuers[recipient]) 
+        || (_issuers[_msgSender()] && _users[recipient]) 
+        || (_users[_msgSender()] && _merchants[recipient]) 
+        || (_merchants[_msgSender()] && _banks[recipient]));
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
@@ -347,7 +347,7 @@ contract RPToken is Context, IERC20, IERC20Metadata {
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
     
-    /* User-defined function here */
+    // User-defined functions start here 
     
     function loadBankLiability(address addr) public onlyOwner {
         _bl = RP_BankLiability(addr);
@@ -372,10 +372,6 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     function removeBank(address addr) public onlyOwner {
         delete _banks[addr];
     }
-
-    function isBank(address addr) public view returns (bool) {
-        return _banks[addr];
-    }
     
     function addIssuer(address addr) public onlyOwner {
         _issuers[addr] = true;
@@ -384,10 +380,6 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     function removeIssuer(address addr) public onlyOwner {
         delete _issuers[addr];
     }
-
-    function isIssuer(address addr) public view returns (bool) {
-        return _issuers[addr];
-    }
     
     function addUser(address addr) public onlyOwner {
         _users[addr] = true;
@@ -395,10 +387,6 @@ contract RPToken is Context, IERC20, IERC20Metadata {
     
     function removeUser(address addr) public onlyOwner {
         delete _users[addr];
-    }
-
-    function isUser(address addr) public view returns (bool) {
-        return _users[addr];
     }
     
     function addMerchant(address addr) public onlyOwner {
@@ -409,12 +397,8 @@ contract RPToken is Context, IERC20, IERC20Metadata {
         delete _merchants[addr];
     }
 
-    function isMerchant(address addr) public view returns (bool) {
-        return _merchants[addr];
-    }
     // Bank -> Issuer
     function deliver(address issuer, uint256 amount) public onlyBank returns (bool) {
-        //require((_msgSender() == bank && _banks[_msgSender()]) || _msgSender() == _Credit);
         require(_issuers[issuer], "ERC20: You can only deliver RPs to the issuer");
         require(address(_bl) != address(0), "BankLiability contract hasn't been loaded");
         _mint(issuer, amount);

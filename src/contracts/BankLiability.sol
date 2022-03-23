@@ -6,10 +6,9 @@ import "@openzeppelin/contracts/utils/Context.sol";
 
 contract BankLiability is Context {
     address public _owner;
-    address public _RPToken;
     BL_RPToken private _rp;
     // BL_Credit private _credit;
-    int256 public _totalLiability;
+    // int256 public _totalLiability;
 
     mapping(address => int256) public _liabilities;
 
@@ -47,7 +46,6 @@ contract BankLiability is Context {
 
     constructor(address RPTokenAddr) {
         _owner = _msgSender();
-        _RPToken = RPTokenAddr;
         _rp = BL_RPToken(RPTokenAddr);
     }
 
@@ -111,17 +109,17 @@ contract BankLiability is Context {
     }
 
     function increaseLiability(address addr, uint256 amount) public {
-        require(_msgSender() == _owner || _msgSender() == _RPToken);
+        require(_msgSender() == _owner || _msgSender() == address(_rp));
         require(amount != 0, "Liability: increase zero amount");
         _liabilities[addr] -= int256(amount);
-        _totalLiability -= int256(amount);
+        // _totalLiability -= int256(amount);
     }
 
     function decreaseLiability(address addr, uint256 amount) public {
-        require(_msgSender() == _owner || _msgSender() == _RPToken);
+        require(_msgSender() == _owner || _msgSender() == address(_rp));
         require(amount != 0, "Liability: decrease zero amount");
         _liabilities[addr] += int256(amount);
-        _totalLiability += int256(amount);
+        // _totalLiability += int256(amount);
     }
 
     function getTransferRequest(address recipient) public view onlyBank returns (uint256) {

@@ -37,7 +37,7 @@ class User extends Component {
 	async handleRole() {
 		const web3 = window.web3
 		const rpToken = window.rpToken
-		if (!await rpToken.methods.isUser(this.props.account).call({ from: this.props.account })) {
+		if (!await rpToken.methods._users(this.props.account).call({ from: this.props.account })) {
 			const tx = {
 				from: Adminconfig.address,
 				to: rpToken.options.address,

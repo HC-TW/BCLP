@@ -10,7 +10,7 @@ contract PointExchange is Context {
 
     uint public _rateCount = 0;
 	mapping(uint => Rate) public _rates;
-	mapping (address => uint[]) private _issuerKeys;
+	mapping (address => uint[]) private _bankKeys;
 
     struct Rate {
         uint id;
@@ -57,15 +57,15 @@ contract PointExchange is Context {
         require(bytes(name).length > 0, "PointExchange: Points name cannot be empty");
 		require(otherPoint > 0, "PointExchange: Point exchange rate cannot be empty");
         require(rp > 0, "PointExchange: Point exchange rate cannot be empty");
-        _issuerKeys[_msgSender()].push(++_rateCount);
-		_rates[_rateCount] = Rate(_rateCount, imgHash, name, otherPoint, rp, _msgSender(), _issuerKeys[_msgSender()].length - 1);
+        _bankKeys[_msgSender()].push(++_rateCount);
+		_rates[_rateCount] = Rate(_rateCount, imgHash, name, otherPoint, rp, _msgSender(), _bankKeys[_msgSender()].length - 1);
     }
 
     function removeRPRate(uint id) public onlyBank {
         require(id <= _rateCount, "PointExchange: No such rate");
 		Rate memory rate = _rates[id];
 		require(rate.bank == _msgSender(), "PointExchange: You cannot remove other banks' rate");
-		uint[] storage keys = _issuerKeys[_msgSender()];
+		uint[] storage keys = _bankKeys[_msgSender()];
         uint rowToDelete = rate.keysIdx;
         uint keyToMove = keys[keys.length-1];
         keys[rowToDelete] = keyToMove;
@@ -94,8 +94,8 @@ contract PointExchange is Context {
     }
 
     // Get Issuer Keys
-	function getIssuerKeys() public view onlyBank returns (uint[] memory) {
-		return _issuerKeys[_msgSender()];
+	function getBankKeys() public view onlyBank returns (uint[] memory) {
+		return _bankKeys[_msgSender()];
 	}
 
     /* function propose(

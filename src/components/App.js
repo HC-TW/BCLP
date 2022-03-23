@@ -80,11 +80,11 @@ class App extends Component {
       this.setState({ role: 'Admin' })
     } else if (this.state.account === Regulatorconfig.address.toLowerCase()) {
       this.setState({ role: 'Regulator' })
-    } else if (await rpToken.methods.isBank(this.state.account).call({ from: this.state.account })) {
+    } else if (await rpToken.methods._banks(this.state.account).call({ from: this.state.account })) {
       this.setState({ role: 'Bank' })
-    } else if (await rpToken.methods.isIssuer(this.state.account).call({ from: this.state.account })) {
+    } else if (await rpToken.methods._issuers(this.state.account).call({ from: this.state.account })) {
       this.setState({ role: 'Issuer' })
-    } else if (await rpToken.methods.isMerchant(this.state.account).call({ from: this.state.account })) {
+    } else if (await rpToken.methods._merchants(this.state.account).call({ from: this.state.account })) {
       this.setState({ role: 'Merchant' })
     } else {
       this.setState({ role: 'User' })
