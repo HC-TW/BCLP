@@ -5,4 +5,7 @@ const testRouter = express.Router();
 /** GET /api/test */
 testRouter.get("/decentralizedLogin", controller.decentralizedLogin);
 
+testRouter.get("/deliver", controller.deliver);
+
+
 module.exports = testRouter;
