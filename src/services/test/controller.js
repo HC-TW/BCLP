@@ -3,8 +3,11 @@ const web3 = new Web3('http://localhost:8545');
 const fetch = require('node-fetch');
 
 const RPToken = require('../../abis/RPToken.json');
+// const BankLiability = require('../../abis/RPToken.json');
 const RPToken_networkData = RPToken.networks[56]
+// const BankLiability_networkData = BankLiability.networks[56]
 const rpToken = new web3.eth.Contract(RPToken.abi, RPToken_networkData.address)
+// const bankLiability = new web3.eth.Contract(BankLiability.abi, BankLiability_networkData.address)
 
 const system = '0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1';
 const bank1 = '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0';
@@ -68,15 +71,72 @@ exports.decentralizedLogin = (req, res, next) => {
 		.catch(next)
 }
 
-exports.deliver = (req, res, next) => {
-	rpToken.methods.deliver(issuer, 1).send({ from: bank1 })
+exports.deliver = async (req, res, next) => {
+	const tx = {
+		from: bank1,
+		to: rpToken._address,
+		gas: 6721975,
+		data: rpToken.methods.deliver(issuer, 1).encodeABI()
+	};
+	const signedTx = await web3.eth.accounts.signTransaction(tx, '6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1')
+	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
-		.on('error', error => {
-			const msg = error.message
-			const startIdx = msg.indexOf('"reason":') + 10
-			const endIdx = msg.indexOf('"},"stack"')
-			console.log(msg.substr(startIdx, endIdx - startIdx) === '' ? msg : msg.substr(startIdx, endIdx - startIdx), 'danger')
+}
+
+exports.issue = async (req, res, next) => {
+	const tx = {
+		from: issuer,
+		to: rpToken._address,
+		gas: 6721975,
+		data: rpToken.methods.issue(user, 1).encodeABI()
+	};
+	const signedTx = await web3.eth.accounts.signTransaction(tx, '6370fd033278c143179d81c5526140625662b8daa446c22ee2d73db3707e620c')
+	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+		.on('receipt', receipt => {
+			return res.json(receipt)
+		})
+}
+
+exports.redeem = async (req, res, next) => {
+	const tx = {
+		from: user,
+		to: rpToken._address,
+		gas: 6721975,
+		data: rpToken.methods.redeem(merchant, 'test', 1, 1).encodeABI()
+	};
+	const signedTx = await web3.eth.accounts.signTransaction(tx, 'e485d098507f54e7733a205420dfddbe58db035fa577fc294ebd14db90767a52')
+	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+		.on('receipt', receipt => {
+			return res.json(receipt)
+		})
+}
+
+exports.redeem5000 = async (req, res, next) => {
+	const tx = {
+		from: user,
+		to: rpToken._address,
+		gas: 6721975,
+		data: rpToken.methods.redeem(merchant, 'test5000', 1, 5000).encodeABI()
+	};
+	const signedTx = await web3.eth.accounts.signTransaction(tx, 'e485d098507f54e7733a205420dfddbe58db035fa577fc294ebd14db90767a52')
+	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+		.on('receipt', receipt => {
+			return res.json(receipt)
+		})
+}
+
+exports.realize = async (req, res, next) => {
+	const tx = {
+		from: merchant,
+		to: rpToken._address,
+		gas: 6721975,
+		data: rpToken.methods.realize(bank1, 1).encodeABI()
+	};
+	const signedTx = await web3.eth.accounts.signTransaction(tx, 'a453611d9419d0e56f499079478fd72c37b251a94bfde4d19872c44cf65386e3')
+	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+		.on('receipt', receipt => {
+			return res.json(receipt)
 		})
 }

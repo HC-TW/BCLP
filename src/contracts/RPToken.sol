@@ -32,9 +32,9 @@ import "@openzeppelin/contracts/utils/Context.sol";
  */
 contract RPToken is Context, IERC20, IERC20Metadata {
     address public _owner;
-    RP_BankLiability private _bl;
-    RP_ProductManager private _pm;
-    address private _pe;
+    RP_BankLiability public _bl;
+    RP_ProductManager public _pm;
+    address public _pe;
 
     mapping (address => bool) public _banks;
     mapping (address => bool) public _issuers;
