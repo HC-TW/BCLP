@@ -40,11 +40,10 @@ exports.decentralizedLogin = (req, res, next) => {
 	const handleSignMessage = async (user) => {
 		try {
 			const publicAddress = user.publicAddress;
-			const signature = await web3.eth.sign(
+			const signature = await web3.eth.accounts.sign(
 				`I am signing my one-time nonce: ${user.nonce}`,
-				publicAddress
-			);
-			console.log(signature)
+				privateKey
+			).signature;
 
 			return { publicAddress, signature };
 		} catch (err) {
@@ -62,6 +61,7 @@ exports.decentralizedLogin = (req, res, next) => {
 		return await response.json();
 	};
 	const publicAddress = req.query.publicAddress;
+	const privateKey = req.query.privateKey;
 
 	// Look if user with current publicAddress is already present on backend
 	return fetch(
@@ -82,6 +82,7 @@ exports.decentralizedLogin = (req, res, next) => {
 
 exports.addUser = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(Adminconfig.address, 'pending'),
 		from: Adminconfig.address,
 		to: rpToken._address,
 		gas: 6721975,
@@ -97,6 +98,7 @@ exports.addUser = async (req, res, next) => {
 
 exports.deliver = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(bank1, 'pending'),
 		from: bank1,
 		to: rpToken._address,
 		gas: 6721975,
@@ -112,6 +114,7 @@ exports.deliver = async (req, res, next) => {
 
 exports.issue = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(issuer, 'pending'),
 		from: issuer,
 		to: rpToken._address,
 		gas: 6721975,
@@ -127,6 +130,7 @@ exports.issue = async (req, res, next) => {
 
 exports.redeem = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(user, 'pending'),
 		from: user,
 		to: rpToken._address,
 		gas: 6721975,
@@ -142,6 +146,7 @@ exports.redeem = async (req, res, next) => {
 
 exports.redeem5000 = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(user, 'pending'),
 		from: user,
 		to: rpToken._address,
 		gas: 6721975,
@@ -157,6 +162,7 @@ exports.redeem5000 = async (req, res, next) => {
 
 exports.realize = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(merchant, 'pending'),
 		from: merchant,
 		to: rpToken._address,
 		gas: 6721975,
@@ -172,6 +178,7 @@ exports.realize = async (req, res, next) => {
 
 exports.exchangeRP = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(Adminconfig.address, 'pending'),
 		from: Adminconfig.address,
 		to: pointExchange._address,
 		gas: 6721975,
@@ -187,6 +194,7 @@ exports.exchangeRP = async (req, res, next) => {
 
 exports.exchangeOther = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(Adminconfig.address, 'pending'),
 		from: Adminconfig.address,
 		to: pointExchange._address,
 		gas: 6721975,
@@ -202,6 +210,7 @@ exports.exchangeOther = async (req, res, next) => {
 
 exports.uploadProduct = async (req, res, next) => {
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(merchant, 'pending'),
 		from: merchant,
 		to: productManager._address,
 		gas: 6721975,
@@ -218,6 +227,7 @@ exports.uploadProduct = async (req, res, next) => {
 exports.removeProduct = async (req, res, next) => {
 	const id = req.query.id
 	const tx = {
+		nonce: await web3.eth.getTransactionCount(merchant, 'pending'),
 		from: merchant,
 		to: productManager._address,
 		gas: 6721975,
