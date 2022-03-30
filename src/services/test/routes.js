@@ -4,7 +4,7 @@ const testRouter = express.Router();
 
 /** GET /api/test */
 testRouter.get("/decentralizedLogin", controller.decentralizedLogin);
-
+testRouter.get("/login", controller.login);
 testRouter.get("/addUser", controller.addUser);
 
 testRouter.get("/deliver", controller.deliver);

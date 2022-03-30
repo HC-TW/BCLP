@@ -1,6 +1,9 @@
 const Web3 = require('web3');
 const web3 = new Web3('http://localhost:8545');
 const fetch = require('node-fetch');
+const jwt = require('jsonwebtoken');
+const { JWTconfig } = require('../../config');
+const User = require('../../models').user;
 
 const Adminconfig = require('../../config.js').Adminconfig;
 const RPToken = require('../../abis/RPToken.json');
@@ -77,6 +80,135 @@ exports.decentralizedLogin = (req, res, next) => {
 		// Send signature to backend on the /auth route
 		.then(handleAuthenticate)
 		.then((accessToken) => res.json({ accessToken }))
+		.catch(next)
+}
+
+exports.login = (req, res, next) => {
+	const handleAuthenticate = async ({ publicAddress, signature }) => {
+		console.log({ publicAddress, signature })
+		
+		return (
+			User.findOne({ where: { publicAddress } })
+				////////////////////////////////////////////////////
+				// Step 1: Get the user with the given publicAddress
+				////////////////////////////////////////////////////
+				.then((user) => {
+					if (!user) {
+						res.status(401).send({
+							error: `User with publicAddress ${publicAddress} is not found in database`,
+						});
+
+						return null;
+					}
+					return user;
+				})
+				////////////////////////////////////////////////////
+				// Step 2: Verify digital signature
+				////////////////////////////////////////////////////
+				.then((user) => {
+					if (!(user instanceof User)) {
+						// Should not happen, we should have already sent the response
+						throw new Error(
+							'User is not defined in "Verify digital signature".'
+						);
+					}
+
+					if (publicAddress === account && signature === password) {
+						return user;
+					} else {
+						res.status(401).send({
+							error: 'Signature verification failed',
+						});
+
+						return null;
+					}
+				})
+				////////////////////////////////////////////////////
+				// Step 3: Generate a new nonce for the user
+				////////////////////////////////////////////////////
+				.then((user) => {
+					if (!(user instanceof User)) {
+						// Should not happen, we should have already sent the response
+
+						throw new Error(
+							'User is not defined in "Generate a new nonce for the user".'
+						);
+					}
+
+					user.nonce = Math.floor(Math.random() * 1000000);
+					return user.save();
+				})
+				////////////////////////////////////////////////////
+				// Step 4: Create JWT
+				////////////////////////////////////////////////////
+				.then((user) => {
+					return new Promise((resolve, reject) => {
+						// https://github.com/auth0/node-jsonwebtoken
+						jwt.sign(
+							{
+								payload: {
+									id: user.id,
+									account,
+								},
+							},
+							JWTconfig.secret,
+							{
+								algorithm: JWTconfig.algorithms[0],
+							},
+							(err, token) => {
+								if (err) {
+									return reject(err);
+								}
+								if (!token) {
+									return new Error('Empty token');
+								}
+								return resolve(token);
+							}
+						)
+					});
+				})
+				.catch(next)
+		);
+	};
+	const handleSignMessage = async (user) => {
+		try {
+			const publicAddress = user.publicAddress;
+			const signature = 'password';
+
+			return { publicAddress, signature };
+		} catch (err) {
+			console.log(err)
+		}
+	};
+	const handleSignup = async (publicAddress) => {
+		const response = await fetch(`http://localhost:8080/api/users`, {
+			body: JSON.stringify({ publicAddress }),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'POST',
+		});
+		return await response.json();
+	};
+
+	const account = req.query.publicAddress;
+	const password = 'password';
+	// Look if user with current publicAddress is already present on backend
+	return fetch(
+		`http://localhost:8080/api/users?publicAddress=${account}`
+	)
+		.then((response) => response.json())
+		// If yes, retrieve it. If no, create it.
+		.then((users) =>
+			users.length ? users[0] : handleSignup(account)
+		)
+		// Popup MetaMask confirmation modal to sign message
+		.then(handleSignMessage)
+		// Send signature to backend on the /auth route
+		.then(handleAuthenticate)
+		.then((accessToken) => {
+			res.json( {accessToken: {'accessToken': accessToken}} )
+		})
 		.catch(next)
 }
 
