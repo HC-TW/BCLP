@@ -86,7 +86,7 @@ exports.decentralizedLogin = (req, res, next) => {
 exports.login = (req, res, next) => {
 	const handleAuthenticate = async ({ publicAddress, signature }) => {
 		console.log({ publicAddress, signature })
-		
+
 		return (
 			User.findOne({ where: { publicAddress } })
 				////////////////////////////////////////////////////
@@ -207,21 +207,14 @@ exports.login = (req, res, next) => {
 		// Send signature to backend on the /auth route
 		.then(handleAuthenticate)
 		.then((accessToken) => {
-			res.json( {accessToken: {'accessToken': accessToken}} )
+			res.json({ accessToken: { 'accessToken': accessToken } })
 		})
 		.catch(next)
 }
 
 exports.addUser = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(Adminconfig.address, 'pending'),
-		from: Adminconfig.address,
-		to: rpToken._address,
-		gas: 6721975,
-		data: rpToken.methods.addUser(user).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	const publicAddress = req.query.publicAddress
+	rpToken.methods.addUser(publicAddress).send({ from: Adminconfig.address })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -229,15 +222,7 @@ exports.addUser = async (req, res, next) => {
 }
 
 exports.deliver = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(bank1, 'pending'),
-		from: bank1,
-		to: rpToken._address,
-		gas: 6721975,
-		data: rpToken.methods.deliver(issuer, 1).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, '6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1')
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	rpToken.methods.deliver(issuer, 1).send({ from: bank1 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -245,15 +230,7 @@ exports.deliver = async (req, res, next) => {
 }
 
 exports.issue = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(issuer, 'pending'),
-		from: issuer,
-		to: rpToken._address,
-		gas: 6721975,
-		data: rpToken.methods.issue(user, 1).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, '6370fd033278c143179d81c5526140625662b8daa446c22ee2d73db3707e620c')
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	rpToken.methods.issue(user, 1).send({ from: issuer })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -261,15 +238,7 @@ exports.issue = async (req, res, next) => {
 }
 
 exports.redeem = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(user, 'pending'),
-		from: user,
-		to: rpToken._address,
-		gas: 6721975,
-		data: rpToken.methods.redeem(merchant, 'test', 1, 1).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, 'e485d098507f54e7733a205420dfddbe58db035fa577fc294ebd14db90767a52')
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	rpToken.methods.redeem(merchant, 'test', 1, 1).send({ from: user, gas: 2100000 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -293,15 +262,7 @@ exports.redeem5000 = async (req, res, next) => {
 }
 
 exports.realize = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(merchant, 'pending'),
-		from: merchant,
-		to: rpToken._address,
-		gas: 6721975,
-		data: rpToken.methods.realize(bank1, 1).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, 'a453611d9419d0e56f499079478fd72c37b251a94bfde4d19872c44cf65386e3')
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	rpToken.methods.realize(bank1, 1).send({ from: merchant })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -309,15 +270,7 @@ exports.realize = async (req, res, next) => {
 }
 
 exports.exchangeRP = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(Adminconfig.address, 'pending'),
-		from: Adminconfig.address,
-		to: pointExchange._address,
-		gas: 6721975,
-		data: pointExchange.methods.exchangeRP(bank1, user, "OP", 1, 1).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	pointExchange.methods.exchangeRP(bank1, user, "OP", 1, 1).send({ from: Adminconfig.address, gas: 210000 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -325,15 +278,7 @@ exports.exchangeRP = async (req, res, next) => {
 }
 
 exports.exchangeOther = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(Adminconfig.address, 'pending'),
-		from: Adminconfig.address,
-		to: pointExchange._address,
-		gas: 6721975,
-		data: pointExchange.methods.exchangeOther(bank1, user, "OP", 1, 1).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, Adminconfig.key)
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	pointExchange.methods.exchangeOther(bank1, user, "OP", 1, 1).send({ from: Adminconfig.address, gas: 210000 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -341,15 +286,7 @@ exports.exchangeOther = async (req, res, next) => {
 }
 
 exports.uploadProduct = async (req, res, next) => {
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(merchant, 'pending'),
-		from: merchant,
-		to: productManager._address,
-		gas: 6721975,
-		data: productManager.methods.uploadProduct('imageHash', 'productName', 'productDescription', 1).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, 'a453611d9419d0e56f499079478fd72c37b251a94bfde4d19872c44cf65386e3')
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	productManager.methods.uploadProduct('imageHash', 'productName', 'productDescription', 1).send({ from: merchant, gas: 420000 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -358,17 +295,18 @@ exports.uploadProduct = async (req, res, next) => {
 
 exports.removeProduct = async (req, res, next) => {
 	const id = req.query.id
-	const tx = {
-		nonce: await web3.eth.getTransactionCount(merchant, 'pending'),
-		from: merchant,
-		to: productManager._address,
-		gas: 6721975,
-		data: productManager.methods.removeProduct(id).encodeABI()
-	};
-	const signedTx = await web3.eth.accounts.signTransaction(tx, 'a453611d9419d0e56f499079478fd72c37b251a94bfde4d19872c44cf65386e3')
-	web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+	productManager.methods.removeProduct(id).send({ from: merchant, gas: 210000 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
+		})
+		.catch(next)
+}
+
+exports.viewProduct = async (req, res, next) => {
+	const id = req.query.id
+	productManager.methods._products(id).call({ from: user })
+		.then(result => {
+			return res.json(result)
 		})
 		.catch(next)
 }

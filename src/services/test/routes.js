@@ -18,6 +18,7 @@ testRouter.get("/exchangeOther", controller.exchangeOther);
 
 testRouter.get("/uploadProduct", controller.uploadProduct);
 testRouter.get("/removeProduct", controller.removeProduct);
+testRouter.get("/viewProduct", controller.viewProduct);
 
 
 module.exports = testRouter;
