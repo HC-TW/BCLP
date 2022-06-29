@@ -134,7 +134,6 @@ Before getting started, you should build [the blockchain environment](https://gi
     
 5. Compile smart contract code
     ```sh
-    truffle compile
     truffle migrate --reset
     ```
     
