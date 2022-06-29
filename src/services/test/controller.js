@@ -222,7 +222,7 @@ exports.addUser = async (req, res, next) => {
 }
 
 exports.deliver = async (req, res, next) => {
-	rpToken.methods.deliver(issuer, 1).send({ from: bank1 })
+	rpToken.methods.deliver(issuer, 1).send({ from: bank1, gas: 2100000 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})
@@ -230,7 +230,7 @@ exports.deliver = async (req, res, next) => {
 }
 
 exports.issue = async (req, res, next) => {
-	rpToken.methods.issue(user, 1).send({ from: issuer })
+	rpToken.methods.issue(user, 1).send({ from: issuer, gas: 2100000 })
 		.on('receipt', receipt => {
 			return res.json(receipt)
 		})

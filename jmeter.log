@@ -1,0 +1,341 @@
+2022-06-14 20:48:36,812 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2022-06-14 20:48:36,850 INFO o.a.j.JMeter: Loading user properties from: /usr/local/Cellar/jmeter/5.4.3/libexec/bin/user.properties
+2022-06-14 20:48:36,850 INFO o.a.j.JMeter: Loading system properties from: /usr/local/Cellar/jmeter/5.4.3/libexec/bin/system.properties
+2022-06-14 20:48:36,859 INFO o.a.j.JMeter: Copyright (c) 1998-2021 The Apache Software Foundation
+2022-06-14 20:48:36,859 INFO o.a.j.JMeter: Version 5.4.3
+2022-06-14 20:48:36,859 INFO o.a.j.JMeter: java.version=17.0.2
+2022-06-14 20:48:36,859 INFO o.a.j.JMeter: java.vm.name=OpenJDK 64-Bit Server VM
+2022-06-14 20:48:36,859 INFO o.a.j.JMeter: os.name=Mac OS X
+2022-06-14 20:48:36,859 INFO o.a.j.JMeter: os.arch=x86_64
+2022-06-14 20:48:36,860 INFO o.a.j.JMeter: os.version=12.3
+2022-06-14 20:48:36,860 INFO o.a.j.JMeter: file.encoding=UTF-8
+2022-06-14 20:48:36,860 INFO o.a.j.JMeter: java.awt.headless=null
+2022-06-14 20:48:36,860 INFO o.a.j.JMeter: Max memory     =1073741824
+2022-06-14 20:48:36,860 INFO o.a.j.JMeter: Available Processors =8
+2022-06-14 20:48:36,872 INFO o.a.j.JMeter: Default Locale=English (EN)
+2022-06-14 20:48:36,872 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2022-06-14 20:48:36,872 INFO o.a.j.JMeter: JMeterHome=/usr/local/Cellar/jmeter/5.4.3/libexec
+2022-06-14 20:48:36,872 INFO o.a.j.JMeter: user.dir  =/Users/hc/Documents/Thesis/BCLP
+2022-06-14 20:48:36,873 INFO o.a.j.JMeter: PWD       =/Users/hc/Documents/Thesis/BCLP
+2022-06-14 20:48:36,874 INFO o.a.j.JMeter: IP: 127.0.0.1 Name: HC.local FullName: localhost
+2022-06-14 20:48:37,791 INFO o.a.j.JMeter: Setting LAF to: laf:com.apple.laf.AquaLookAndFeel
+2022-06-14 20:48:39,271 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
+2022-06-14 20:48:41,182 INFO o.j.r.JARSourceHTTP: Requesting https://jmeter-plugins.org/repo/?installID=mac_os_x-5450e11e7b713131e87f6a4c4de50d77-gui
+2022-06-14 20:48:43,831 INFO o.j.r.PluginManager: Plugins Status: [jpgc-plugins-manager=1.7, jmeter-core=5.4.3, jmeter-ftp=5.4.3, jmeter-http=5.4.3, jmeter-jdbc=5.4.3, jmeter-jms=5.4.3, jmeter-junit=5.4.3, jmeter-java=5.4.3, jmeter-ldap=5.4.3, jmeter-mail=5.4.3, jmeter-mongodb=5.4.3, jmeter-native=5.4.3, jmeter-tcp=5.4.3, jmeter-components=5.4.3]
+2022-06-14 20:52:15,166 INFO o.a.j.s.FileServer: Default base='/Users/hc/Documents/Thesis/BCLP'
+2022-06-14 20:52:15,170 INFO o.a.j.g.a.Load: Loading file: /Users/hc/Documents/Thesis/BCLP_Test.jmx
+2022-06-14 20:52:15,171 INFO o.a.j.s.FileServer: Set new base='/Users/hc/Documents/Thesis'
+2022-06-14 20:52:15,395 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2022-06-14 20:52:15,405 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2022-06-14 20:52:15,406 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2022-06-14 20:52:15,408 INFO o.a.j.s.SaveService: Loading file: /Users/hc/Documents/Thesis/BCLP_Test.jmx
+2022-06-14 20:52:15,410 WARN o.j.r.p.TestPlanAnalyzer: Failed read jmx file
+java.io.FileNotFoundException: /Users/hc/Documents/Thesis/BCLP_Test.jmx (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method) ~[?:?]
+	at java.io.FileInputStream.open(FileInputStream.java:216) ~[?:?]
+	at java.io.FileInputStream.<init>(FileInputStream.java:157) ~[?:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.readBytesFromFile(TestPlanAnalyzer.java:68) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.getNodeListWithClassNames(TestPlanAnalyzer.java:111) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.analyze(TestPlanAnalyzer.java:37) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.analyzeTestPlan(PluginSuggester.java:51) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.findPluginsToInstall(PluginSuggester.java:44) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.checkAndSuggest(PluginSuggester.java:28) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.logging.LoggerAppender.append(LoggerAppender.java:33) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender0(AppenderControl.java:134) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppenderPreventRecursion(AppenderControl.java:125) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender(AppenderControl.java:89) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.callAppenders(LoggerConfig.java:542) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.processLogEvent(LoggerConfig.java:500) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:483) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:417) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AwaitCompletionReliabilityStrategy.log(AwaitCompletionReliabilityStrategy.java:82) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.Logger.log(Logger.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.tryLogMessage(AbstractLogger.java:2205) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageTrackRecursion(AbstractLogger.java:2159) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageSafely(AbstractLogger.java:2142) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessage(AbstractLogger.java:2034) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logIfEnabled(AbstractLogger.java:1899) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.slf4j.Log4jLogger.info(Log4jLogger.java:184) ~[log4j-slf4j-impl-2.17.0.jar:2.17.0]
+	at org.apache.jmeter.save.SaveService.loadTree(SaveService.java:428) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:129) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:101) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.LoadRecentProject.doActionAfterCheck(LoadRecentProject.java:71) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.AbstractActionWithNoRunningTest.doAction(AbstractActionWithNoRunningTest.java:44) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.performAction(ActionRouter.java:87) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.lambda$actionPerformed$0(ActionRouter.java:69) ~[ApacheJMeter_core.jar:5.4.3]
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318) ~[?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:771) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:722) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:716) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:741) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+2022-06-14 20:52:15,431 WARN o.j.r.p.TestPlanAnalyzer: Cannot parse file: /Users/hc/Documents/Thesis/BCLP_Test.jmx
+org.xml.sax.SAXParseException: Premature end of file.
+	at org.apache.xerces.parsers.DOMParser.parse(Unknown Source) ~[xercesImpl-2.12.0.jar:?]
+	at org.apache.xerces.jaxp.DocumentBuilderImpl.parse(Unknown Source) ~[xercesImpl-2.12.0.jar:?]
+	at javax.xml.parsers.DocumentBuilder.parse(DocumentBuilder.java:122) ~[?:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.getNodeListWithClassNames(TestPlanAnalyzer.java:112) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.analyze(TestPlanAnalyzer.java:37) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.analyzeTestPlan(PluginSuggester.java:51) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.findPluginsToInstall(PluginSuggester.java:44) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.checkAndSuggest(PluginSuggester.java:28) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.logging.LoggerAppender.append(LoggerAppender.java:33) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender0(AppenderControl.java:134) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppenderPreventRecursion(AppenderControl.java:125) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender(AppenderControl.java:89) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.callAppenders(LoggerConfig.java:542) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.processLogEvent(LoggerConfig.java:500) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:483) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:417) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AwaitCompletionReliabilityStrategy.log(AwaitCompletionReliabilityStrategy.java:82) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.Logger.log(Logger.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.tryLogMessage(AbstractLogger.java:2205) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageTrackRecursion(AbstractLogger.java:2159) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageSafely(AbstractLogger.java:2142) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessage(AbstractLogger.java:2034) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logIfEnabled(AbstractLogger.java:1899) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.slf4j.Log4jLogger.info(Log4jLogger.java:184) ~[log4j-slf4j-impl-2.17.0.jar:2.17.0]
+	at org.apache.jmeter.save.SaveService.loadTree(SaveService.java:428) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:129) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:101) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.LoadRecentProject.doActionAfterCheck(LoadRecentProject.java:71) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.AbstractActionWithNoRunningTest.doAction(AbstractActionWithNoRunningTest.java:44) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.performAction(ActionRouter.java:87) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.lambda$actionPerformed$0(ActionRouter.java:69) ~[ApacheJMeter_core.jar:5.4.3]
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318) ~[?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:771) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:722) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:716) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:741) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+2022-06-14 20:52:15,432 WARN o.a.j.g.a.Load: Error reading file. java.io.FileNotFoundException: /Users/hc/Documents/Thesis/BCLP_Test.jmx (No such file or directory)
+2022-06-14 20:52:15,432 ERROR o.a.j.u.JMeterUtils: /Users/hc/Documents/Thesis/BCLP_Test.jmx (No such file or directory)
+2022-06-14 20:52:44,056 INFO o.a.j.g.a.Load: Loading file: /Users/hc/Documents/Thesis/BCLP_Test.jmx
+2022-06-14 20:52:44,057 INFO o.a.j.s.FileServer: Set new base='/Users/hc/Documents/Thesis'
+2022-06-14 20:52:44,057 INFO o.a.j.s.SaveService: Loading file: /Users/hc/Documents/Thesis/BCLP_Test.jmx
+2022-06-14 20:52:44,060 WARN o.j.r.p.TestPlanAnalyzer: Failed read jmx file
+java.io.FileNotFoundException: /Users/hc/Documents/Thesis/BCLP_Test.jmx (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method) ~[?:?]
+	at java.io.FileInputStream.open(FileInputStream.java:216) ~[?:?]
+	at java.io.FileInputStream.<init>(FileInputStream.java:157) ~[?:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.readBytesFromFile(TestPlanAnalyzer.java:68) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.getNodeListWithClassNames(TestPlanAnalyzer.java:111) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.analyze(TestPlanAnalyzer.java:37) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.analyzeTestPlan(PluginSuggester.java:51) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.findPluginsToInstall(PluginSuggester.java:44) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.checkAndSuggest(PluginSuggester.java:28) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.logging.LoggerAppender.append(LoggerAppender.java:33) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender0(AppenderControl.java:134) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppenderPreventRecursion(AppenderControl.java:125) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender(AppenderControl.java:89) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.callAppenders(LoggerConfig.java:542) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.processLogEvent(LoggerConfig.java:500) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:483) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:417) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AwaitCompletionReliabilityStrategy.log(AwaitCompletionReliabilityStrategy.java:82) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.Logger.log(Logger.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.tryLogMessage(AbstractLogger.java:2205) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageTrackRecursion(AbstractLogger.java:2159) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageSafely(AbstractLogger.java:2142) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessage(AbstractLogger.java:2034) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logIfEnabled(AbstractLogger.java:1899) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.slf4j.Log4jLogger.info(Log4jLogger.java:184) ~[log4j-slf4j-impl-2.17.0.jar:2.17.0]
+	at org.apache.jmeter.save.SaveService.loadTree(SaveService.java:428) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:129) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:101) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.LoadRecentProject.doActionAfterCheck(LoadRecentProject.java:71) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.AbstractActionWithNoRunningTest.doAction(AbstractActionWithNoRunningTest.java:44) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.performAction(ActionRouter.java:87) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.lambda$actionPerformed$0(ActionRouter.java:69) ~[ApacheJMeter_core.jar:5.4.3]
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318) ~[?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:771) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:722) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:716) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:741) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+2022-06-14 20:52:44,061 WARN o.j.r.p.TestPlanAnalyzer: Cannot parse file: /Users/hc/Documents/Thesis/BCLP_Test.jmx
+org.xml.sax.SAXParseException: Premature end of file.
+	at org.apache.xerces.parsers.DOMParser.parse(Unknown Source) ~[xercesImpl-2.12.0.jar:?]
+	at org.apache.xerces.jaxp.DocumentBuilderImpl.parse(Unknown Source) ~[xercesImpl-2.12.0.jar:?]
+	at javax.xml.parsers.DocumentBuilder.parse(DocumentBuilder.java:122) ~[?:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.getNodeListWithClassNames(TestPlanAnalyzer.java:112) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.analyze(TestPlanAnalyzer.java:37) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.analyzeTestPlan(PluginSuggester.java:51) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.findPluginsToInstall(PluginSuggester.java:44) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.checkAndSuggest(PluginSuggester.java:28) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.jmeterplugins.repository.logging.LoggerAppender.append(LoggerAppender.java:33) ~[jmeter-plugins-manager-1.7.jar:?]
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender0(AppenderControl.java:134) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppenderPreventRecursion(AppenderControl.java:125) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender(AppenderControl.java:89) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.callAppenders(LoggerConfig.java:542) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.processLogEvent(LoggerConfig.java:500) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:483) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:417) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.config.AwaitCompletionReliabilityStrategy.log(AwaitCompletionReliabilityStrategy.java:82) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.core.Logger.log(Logger.java:161) ~[log4j-core-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.tryLogMessage(AbstractLogger.java:2205) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageTrackRecursion(AbstractLogger.java:2159) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageSafely(AbstractLogger.java:2142) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessage(AbstractLogger.java:2034) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.log4j.spi.AbstractLogger.logIfEnabled(AbstractLogger.java:1899) ~[log4j-api-2.17.0.jar:2.17.0]
+	at org.apache.logging.slf4j.Log4jLogger.info(Log4jLogger.java:184) ~[log4j-slf4j-impl-2.17.0.jar:2.17.0]
+	at org.apache.jmeter.save.SaveService.loadTree(SaveService.java:428) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:129) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:101) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.LoadRecentProject.doActionAfterCheck(LoadRecentProject.java:71) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.AbstractActionWithNoRunningTest.doAction(AbstractActionWithNoRunningTest.java:44) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.performAction(ActionRouter.java:87) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.action.ActionRouter.lambda$actionPerformed$0(ActionRouter.java:69) ~[ApacheJMeter_core.jar:5.4.3]
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318) ~[?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:771) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:722) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:716) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:741) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+2022-06-14 20:52:44,063 WARN o.a.j.g.a.Load: Error reading file. java.io.FileNotFoundException: /Users/hc/Documents/Thesis/BCLP_Test.jmx (No such file or directory)
+2022-06-14 20:52:44,063 ERROR o.a.j.u.JMeterUtils: /Users/hc/Documents/Thesis/BCLP_Test.jmx (No such file or directory)
+2022-06-14 20:53:03,181 INFO o.a.j.g.a.Load: Loading file: /Users/hc/Documents/Thesis/Test/BCLP_Test.jmx
+2022-06-14 20:53:03,181 INFO o.a.j.s.FileServer: Set new base='/Users/hc/Documents/Thesis/Test'
+2022-06-14 20:53:03,182 INFO o.a.j.s.SaveService: Loading file: /Users/hc/Documents/Thesis/Test/BCLP_Test.jmx
+2022-06-14 20:53:03,364 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2022-06-14 20:53:03,365 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2022-06-14 20:53:03,365 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2022-06-14 20:53:03,365 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2022-06-14 20:53:03,365 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2022-06-14 20:53:03,365 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2022-06-14 20:53:03,659 INFO o.a.j.s.FileServer: Set new base='/Users/hc/Documents/Thesis/Test'
+2022-06-15 09:45:07,212 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2022-06-15 09:45:07,215 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to ISO-8859-1
+2022-06-15 09:45:07,215 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2022-06-15 09:45:07,215 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2022-06-15 09:45:07,218 INFO o.a.j.s.SampleEvent: List of sample_variables: []
+2022-06-15 15:08:52,363 WARN o.a.j.s.CSVSaveService: Insufficient columns to parse field 'Latency' at line 2202
+2022-06-15 15:08:52,378 WARN o.a.j.r.ResultCollector: Problem reading JTL file: /Users/hc/Documents/Thesis/Test/test.csv
+org.apache.jorphan.util.JMeterError: java.lang.ArrayIndexOutOfBoundsException: Index 14 out of bounds for length 14
+	at org.apache.jmeter.save.CSVSaveService.makeResultFromDelimitedString(CSVSaveService.java:381) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.save.CSVSaveService.processSamples(CSVSaveService.java:170) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.reporters.ResultCollector.loadExistingFile(ResultCollector.java:379) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.visualizers.gui.AbstractVisualizer.stateChanged(AbstractVisualizer.java:247) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.util.FilePanelEntry.fireFileChanged(FilePanelEntry.java:140) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.util.FilePanelEntry.actionPerformed(FilePanelEntry.java:158) ~[ApacheJMeter_core.jar:5.4.3]
+	at javax.swing.JTextField.fireActionPerformed(JTextField.java:525) ~[?:?]
+	at javax.swing.JTextField.postActionEvent(JTextField.java:740) ~[?:?]
+	at javax.swing.JTextField$NotifyAction.actionPerformed(JTextField.java:856) ~[?:?]
+	at javax.swing.SwingUtilities.notifyAction(SwingUtilities.java:1810) ~[?:?]
+	at javax.swing.JComponent.processKeyBinding(JComponent.java:2947) ~[?:?]
+	at javax.swing.JComponent.processKeyBindings(JComponent.java:2995) ~[?:?]
+	at javax.swing.JComponent.processKeyEvent(JComponent.java:2909) ~[?:?]
+	at java.awt.Component.processEvent(Component.java:6403) ~[?:?]
+	at java.awt.Container.processEvent(Container.java:2266) ~[?:?]
+	at java.awt.Component.dispatchEventImpl(Component.java:5001) ~[?:?]
+	at java.awt.Container.dispatchEventImpl(Container.java:2324) ~[?:?]
+	at java.awt.Component.dispatchEvent(Component.java:4833) ~[?:?]
+	at java.awt.KeyboardFocusManager.redispatchEvent(KeyboardFocusManager.java:1952) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.dispatchKeyEvent(DefaultKeyboardFocusManager.java:883) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.preDispatchKeyEvent(DefaultKeyboardFocusManager.java:1150) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.typeAheadAssertions(DefaultKeyboardFocusManager.java:1020) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.dispatchEvent(DefaultKeyboardFocusManager.java:848) ~[?:?]
+	at java.awt.Component.dispatchEventImpl(Component.java:4882) ~[?:?]
+	at java.awt.Container.dispatchEventImpl(Container.java:2324) ~[?:?]
+	at java.awt.Window.dispatchEventImpl(Window.java:2780) ~[?:?]
+	at java.awt.Component.dispatchEvent(Component.java:4833) ~[?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:722) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:716) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) ~[?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:97) ~[?:?]
+	at java.awt.EventQueue$5.run(EventQueue.java:746) ~[?:?]
+	at java.awt.EventQueue$5.run(EventQueue.java:744) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:743) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 14 out of bounds for length 14
+	at org.apache.jmeter.save.CSVSaveService.makeResultFromDelimitedString(CSVSaveService.java:334) ~[ApacheJMeter_core.jar:5.4.3]
+	... 43 more
+2022-06-15 15:33:45,975 WARN o.a.j.s.CSVSaveService: Insufficient columns to parse field 'dataType' at line 2413
+2022-06-15 15:33:45,978 WARN o.a.j.r.ResultCollector: Problem reading JTL file: /Users/hc/Documents/Thesis/Test/test.csv
+org.apache.jorphan.util.JMeterError: java.lang.ArrayIndexOutOfBoundsException
+	at org.apache.jmeter.save.CSVSaveService.makeResultFromDelimitedString(CSVSaveService.java:381) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.save.CSVSaveService.processSamples(CSVSaveService.java:170) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.reporters.ResultCollector.loadExistingFile(ResultCollector.java:379) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.visualizers.gui.AbstractVisualizer.stateChanged(AbstractVisualizer.java:247) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.util.FilePanelEntry.fireFileChanged(FilePanelEntry.java:140) ~[ApacheJMeter_core.jar:5.4.3]
+	at org.apache.jmeter.gui.util.FilePanelEntry.actionPerformed(FilePanelEntry.java:158) ~[ApacheJMeter_core.jar:5.4.3]
+	at javax.swing.JTextField.fireActionPerformed(JTextField.java:525) ~[?:?]
+	at javax.swing.JTextField.postActionEvent(JTextField.java:740) ~[?:?]
+	at javax.swing.JTextField$NotifyAction.actionPerformed(JTextField.java:856) ~[?:?]
+	at javax.swing.SwingUtilities.notifyAction(SwingUtilities.java:1810) ~[?:?]
+	at javax.swing.JComponent.processKeyBinding(JComponent.java:2947) ~[?:?]
+	at javax.swing.JComponent.processKeyBindings(JComponent.java:2995) ~[?:?]
+	at javax.swing.JComponent.processKeyEvent(JComponent.java:2909) ~[?:?]
+	at java.awt.Component.processEvent(Component.java:6403) ~[?:?]
+	at java.awt.Container.processEvent(Container.java:2266) ~[?:?]
+	at java.awt.Component.dispatchEventImpl(Component.java:5001) ~[?:?]
+	at java.awt.Container.dispatchEventImpl(Container.java:2324) ~[?:?]
+	at java.awt.Component.dispatchEvent(Component.java:4833) ~[?:?]
+	at java.awt.KeyboardFocusManager.redispatchEvent(KeyboardFocusManager.java:1952) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.dispatchKeyEvent(DefaultKeyboardFocusManager.java:883) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.preDispatchKeyEvent(DefaultKeyboardFocusManager.java:1150) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.typeAheadAssertions(DefaultKeyboardFocusManager.java:1020) ~[?:?]
+	at java.awt.DefaultKeyboardFocusManager.dispatchEvent(DefaultKeyboardFocusManager.java:848) ~[?:?]
+	at java.awt.Component.dispatchEventImpl(Component.java:4882) ~[?:?]
+	at java.awt.Container.dispatchEventImpl(Container.java:2324) ~[?:?]
+	at java.awt.Window.dispatchEventImpl(Window.java:2780) ~[?:?]
+	at java.awt.Component.dispatchEvent(Component.java:4833) ~[?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:722) ~[?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:716) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) ~[?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:97) ~[?:?]
+	at java.awt.EventQueue$5.run(EventQueue.java:746) ~[?:?]
+	at java.awt.EventQueue$5.run(EventQueue.java:744) ~[?:?]
+	at java.security.AccessController.doPrivileged(AccessController.java:399) [?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:743) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+Caused by: java.lang.ArrayIndexOutOfBoundsException
