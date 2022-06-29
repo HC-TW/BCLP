@@ -44,6 +44,10 @@
     <img src="images/Ecosystem.png" alt="Ecosystem" width="80%" style="border: 1px solid;"/>
 </p>
 
+<p align="center">
+    <img src="images/RP_and_Money_Flow.png" alt="Ecosystem" width="80%" style="border: 1px solid;"/>
+</p>
+
 More and more brands or companies have implemented loyalty programs in recent years. However, there are too many types of reward points to circulate, and most may have expired before they can be redeemed. In addition, small merchants cannot develop robust loyalty pro- grams on their own like large corporations, and if they join a consortium loyalty program, they will be limited to a certain extent.
 
 To address these issues, we propose a blockchain-based collaborative loyalty program for a business consortium (BCLP). The system allows enterprises to integrate into the business alliance independently, without the need for the central party to dominate, and customers can exchange one point for various items at any time, without worrying about the point expiration. Ethereum smart contracts can record our core information: reward points (RP) in a decentralized way, and provide antitampering, auditing events, and other functions to avoid attacks. The main contributions of this paper are as follows: 
@@ -134,7 +138,7 @@ Before getting started, you should build [the blockchain environment](https://gi
 The following figure demonstrates the system use case.
 
 <p align="center">
-    <img src="images/usage-flow.png" alt="usage-flow" width="80%"/>
+    <img src="images/Use_Case_Diagram.png" alt="system_use_case" width="80%"/>
 </p>
 
 <!-- CONTACT -->
