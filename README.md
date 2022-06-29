@@ -116,20 +116,40 @@ Before getting started, you should build [the blockchain environment](https://gi
     ```sh
     npm install
     ```
+3. Set up some predefined roles ([2_deploy_contracts.js](https://github.com/HC-TW/BCLP/blob/main/migrations/2_deploy_contracts.js))
+    ```javascript
+    // Pre-defined role
+    instance.addBank('You can change to your own public address');
+    instance.addBank('You can change to your own public address');
+    instance.addIssuer('You can change to your own public address');
+    instance.addUser('You can change to your own public address');
+    instance.addMerchant('You can change to your own public address');
+    ```
+    
+4. Set up Admin & Regulator ([config.js](https://github.com/HC-TW/BCLP/blob/main/src/config.js))
+    ```javascript
+    exports.Adminconfig = {
+	  address: 'You can change to your own public address',
+	  key: 'You must change to the corresponding private key'
+    }
 
-3. Compile smart contract code
+    exports.Regulatorconfig = {
+      address: 'You can change to your own public address',
+    }
+    ```
+    
+5. Compile smart contract code
     ```sh
-    truffle init
     truffle compile
     truffle migrate --reset
     ```
     
-4. Launch backend server
+6. Launch backend server
    ```sh
    node src/server.js
    ```
    
-5. Launch Dapp
+7. Launch Dapp
    ```sh
    npm run start
    ```
