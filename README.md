@@ -25,12 +25,6 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
-        <li>
-          <a href="#docker">Docker</a>
-          <ul>
-            <li><a href="#multiple-organizations-folder-structure">Multiple organizations folder structure</a></li>
-          </ul>
-        </li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
