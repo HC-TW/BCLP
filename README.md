@@ -39,7 +39,7 @@
 </p>
 
 <p align="center">
-    <img src="images/RP_and_Money_Flow.png" alt="Ecosystem" width="80%" style="border: 1px solid;"/>
+    <img src="images/RP_and_Money_Flow.png" alt="rp_and_money_flow" width="80%" style="border: 1px solid;"/>
 </p>
 
 More and more brands or companies have implemented loyalty programs in recent years. However, there are too many types of reward points to circulate, and most may have expired before they can be redeemed. In addition, small merchants cannot develop robust loyalty pro- grams on their own like large corporations, and if they join a consortium loyalty program, they will be limited to a certain extent.
@@ -56,6 +56,10 @@ To address these issues, we propose a blockchain-based collaborative loyalty pro
 - Regulatory Authority 
   - Regulatory authorities are required to monitor abnormal behavior in the system.
 
+## System Architecture
+<p align="center">
+    <img src="images/System_Architecture.png" alt="system_architecture" width="80%" style="border: 1px solid;"/>
+</p>
 
 ### Built With
 
